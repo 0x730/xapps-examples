@@ -11,27 +11,27 @@ The important rule is the same as on Node:
 ## Read This First
 
 - canonical tenant backend contract:
-  - [../../docs/backend/README.md](/home/dacrise/x/xapps/apps/tenants/docs/backend/README.md)
+  - [../../docs/backend/README.md](../../docs/backend/README.md)
 - PHP route map:
-  - [routes/README.md](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/README.md)
+  - [routes/README.md](./routes/README.md)
 - canonical tenant guide:
-  - [../../docs/README.md](/home/dacrise/x/xapps/apps/tenants/docs/README.md)
+  - [../../docs/README.md](../../docs/README.md)
 
 ## What Lives Here
 
 This local backend now mainly owns:
 
 - startup and config mapping:
-  - [bootstrap.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/bootstrap.php)
-  - [lib/config.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/config.php)
+  - [bootstrap.php](./bootstrap.php)
+  - [lib/config.php](./lib/config.php)
 - app-surface and host pages:
-  - [lib/appSurfaceModule.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/appSurfaceModule.php)
-  - [routes/host/pages.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/host/pages.php)
-  - [routes/host/shared.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/host/shared.php)
+  - [lib/appSurfaceModule.php](./lib/appSurfaceModule.php)
+  - [routes/host/pages.php](./routes/host/pages.php)
+  - [routes/host/shared.php](./routes/host/shared.php)
 - tenant-specific subject-profile defaults:
-  - [lib/subjectProfiles/defaultProfiles.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/subjectProfiles/defaultProfiles.php)
+  - [lib/subjectProfiles/defaultProfiles.php](./lib/subjectProfiles/defaultProfiles.php)
 - thin mode docs:
-  - [modes/README.md](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/modes/README.md)
+  - [modes/README.md](./modes/README.md)
 
 ## Recommended Folder Structure
 
@@ -83,10 +83,10 @@ The PHP backend kit now owns the default tenant backend behavior for:
 
 Source anchors:
 
-- [functions.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/functions.php)
-- [BackendKit.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/BackendKit.php)
-- [Backend/Routes](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/reference.php)
-- [Backend/Modes/index.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/index.php)
+- [functions.php](../../../../packages/xapps-backend-kit-php/src/functions.php)
+- [BackendKit.php](../../../../packages/xapps-backend-kit-php/src/BackendKit.php)
+- [Backend/Routes](../../../../packages/xapps-backend-kit-php/src/Backend/Routes/reference.php)
+- [Backend/Modes/index.php](../../../../packages/xapps-backend-kit-php/src/Backend/Modes/index.php)
 
 ## Local Run
 

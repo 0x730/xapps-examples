@@ -5,23 +5,23 @@ Use this folder as the practical route map for the PHP tenant backend.
 If a tenant integrator asks "what is the core contract we must expose?", start
 with:
 
-- [hostApiCore.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiCore.php)
+- [hostApiCore.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiCore.php)
 
 Consumer rule:
 
-- PHP apps should load [functions.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/functions.php)
+- PHP apps should load [functions.php](../../../../../packages/xapps-backend-kit-php/src/functions.php)
 - package `src/Backend/Routes/...` links here are source anchors, not the
   preferred wiring pattern
 
 This file should stay easy to compare with the canonical Node map in
-[../../xconect/backend/routes/README.md](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/README.md).
+[../../xconect/backend/routes/README.md](../../../xconect/backend/routes/README.md).
 
 ## Browser Host And Marketplace Pages
 
 These files serve the tenant-visible host shell and host assets:
 
-- [host/pages.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/host/pages.php)
-- [host/shared.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/host/shared.php)
+- [host/pages.php](./host/pages.php)
+- [host/shared.php](./host/shared.php)
 
 Recommended local routing rule:
 
@@ -40,7 +40,7 @@ Routes:
 
 Code anchor:
 
-- [hostApiCore.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiCore.php)
+- [hostApiCore.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiCore.php)
 
 ## Required Marketplace Lifecycle
 
@@ -53,7 +53,7 @@ Routes:
 
 Code anchor:
 
-- [hostApiLifecycle.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiLifecycle.php)
+- [hostApiLifecycle.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiLifecycle.php)
 
 ## Optional Advanced Bridge
 
@@ -65,20 +65,20 @@ Routes:
 
 Code anchor:
 
-- [hostApiBridge.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiBridge.php)
+- [hostApiBridge.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiBridge.php)
 
 ## Other Default Tenant Seams
 
 - payment:
-  - [payment.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/payment.php)
+  - [payment.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/payment.php)
 - guard:
-  - [guard.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/guard.php)
+  - [guard.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/guard.php)
 - subject profiles:
-  - [subjectProfiles.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/subjectProfiles.php)
+  - [subjectProfiles.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/subjectProfiles.php)
 - reference:
-  - [reference.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/reference.php)
+  - [reference.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/reference.php)
 - health:
-  - [health.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Routes/health.php)
+  - [health.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/health.php)
 
 ## Practical Rule
 

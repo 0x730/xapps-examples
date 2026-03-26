@@ -15,7 +15,7 @@ What the backend does not own here:
 
 Code in this folder:
 
-- [payment.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/publisher-delegated/payment.ts)
-- [paymentSession.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/publisher-delegated/paymentSession.ts)
-- [policy.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/publisher-delegated/policy.ts)
-- [policyContext.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/publisher-delegated/policyContext.ts)
+- [payment.js](../../../../../../packages/backend-kit/src/backend/modes/publisher-delegated/payment.ts)
+- [paymentSession.js](../../../../../../packages/backend-kit/src/backend/modes/publisher-delegated/paymentSession.ts)
+- [policy.js](../../../../../../packages/backend-kit/src/backend/modes/publisher-delegated/policy.ts)
+- [policyContext.js](../../../../../../packages/backend-kit/src/backend/modes/publisher-delegated/policyContext.ts)

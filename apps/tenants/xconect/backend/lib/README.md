@@ -4,16 +4,16 @@ This folder is for local backend support code that still belongs to `xconect`.
 
 Current local ownership:
 
-- [config.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/config.js)
+- [config.js](./config.js)
   - env/config loading for the backend
-- [appSurfaceModule.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/appSurfaceModule.js)
+- [appSurfaceModule.js](./appSurfaceModule.js)
   - local health/asset registration that depends on tenant branding and local
     host assets
-- [payments](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/payments)
+- [payments](./payments)
   - tiny local payment readers/parsers only
-- [subjectProfiles/defaultProfiles.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/subjectProfiles/defaultProfiles.js)
+- [subjectProfiles/defaultProfiles.js](./subjectProfiles/defaultProfiles.js)
   - tenant-specific subject-profile catalog
-- [policies](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/policies)
+- [policies](./policies)
   - docs-only reminder that default policy core moved into the backend kit
 
 Rule:

@@ -7,12 +7,12 @@ If a file exists here, at least two modes should need it.
 
 Files:
 
-- [shared.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/payments/shared.js)
+- [shared.js](./shared.js)
   - tiny readers/parsers used by payment helpers
 
 Default hosted-session, payment-page API, payment-page asset route, and signed-evidence runtime now come from:
 
-- [index.js](/home/dacrise/x/xapps/packages/backend-kit/src/index.ts)
+- [index.js](../../../../../../packages/backend-kit/src/index.ts)
 
 Not here anymore:
 

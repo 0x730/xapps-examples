@@ -7,30 +7,30 @@ It is also the current tenant base used in the first `xconect + xplace` producti
 ## Read this first
 
 - tenant implementation guide:
-  - [docs/README.md](/home/dacrise/x/xapps/apps/tenants/docs/README.md)
+  - [docs/README.md](../docs/README.md)
 - shared lane hub:
-  - [docs/guides/xconect-xplace/README.md](/home/dacrise/x/xapps/docs/guides/xconect-xplace/README.md)
+  - [docs/guides/xconect-xplace/README.md](../../../docs/guides/xconect-xplace/README.md)
 
 Suggested reading order:
 
-1. [docs/README.md](/home/dacrise/x/xapps/apps/tenants/docs/README.md)
-2. [docs/backend/README.md](/home/dacrise/x/xapps/apps/tenants/docs/backend/README.md)
-3. [docs/host/README.md](/home/dacrise/x/xapps/apps/tenants/docs/host/README.md)
-4. [docs/guards/README.md](/home/dacrise/x/xapps/apps/tenants/docs/guards/README.md)
-5. [docs/integrations/README.md](/home/dacrise/x/xapps/apps/tenants/docs/integrations/README.md)
-6. [docs/modules/README.md](/home/dacrise/x/xapps/apps/tenants/docs/modules/README.md)
-7. [docs/tooling/README.md](/home/dacrise/x/xapps/apps/tenants/docs/tooling/README.md)
-8. [docs/publishing/README.md](/home/dacrise/x/xapps/apps/tenants/docs/publishing/README.md)
-9. [docs/data-seams/README.md](/home/dacrise/x/xapps/apps/tenants/docs/data-seams/README.md)
+1. [docs/README.md](../docs/README.md)
+2. [docs/backend/README.md](../docs/backend/README.md)
+3. [docs/host/README.md](../docs/host/README.md)
+4. [docs/guards/README.md](../docs/guards/README.md)
+5. [docs/integrations/README.md](../docs/integrations/README.md)
+6. [docs/modules/README.md](../docs/modules/README.md)
+7. [docs/tooling/README.md](../docs/tooling/README.md)
+8. [docs/publishing/README.md](../docs/publishing/README.md)
+9. [docs/data-seams/README.md](../docs/data-seams/README.md)
 
 ## What lives here
 
 - tenant backend reference:
-  - [backend/README.md](/home/dacrise/x/xapps/apps/tenants/xconect/backend/README.md)
+  - [backend/README.md](./backend/README.md)
 - tenant host reference:
-  - [host/README.md](/home/dacrise/x/xapps/apps/tenants/xconect/host/README.md)
+  - [host/README.md](./host/README.md)
 - tenant-owned xapps and guards:
-  - [xapps/README.md](/home/dacrise/x/xapps/apps/tenants/xconect/xapps/README.md)
+  - [xapps/README.md](./xapps/README.md)
 
 ## Current role
 
@@ -83,8 +83,8 @@ npm run seed:xconect-policy-publisher
 
 Workspace-owned wrapper entrypoints now live under:
 
-- [scripts/provision-tenant.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-tenant.mjs)
-- [scripts/provision-tenant-admin.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-tenant-admin.mjs)
-- [scripts/provision-policy-publisher.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-policy-publisher.mjs)
+- [scripts/provision-tenant.mjs](./scripts/provision-tenant.mjs)
+- [scripts/provision-tenant-admin.mjs](./scripts/provision-tenant-admin.mjs)
+- [scripts/provision-policy-publisher.mjs](./scripts/provision-policy-publisher.mjs)
 
-Those wrappers delegate to the shared root implementations in [scripts](/home/dacrise/x/xapps/scripts), while keeping the tenant-owned operational entrypoints inside the `xconect` workspace.
+Those wrappers delegate to the shared root implementations in [scripts](../../../scripts), while keeping the tenant-owned operational entrypoints inside the `xconect` workspace.

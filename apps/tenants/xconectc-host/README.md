@@ -4,10 +4,10 @@
 
 It is the Laravel counterpart to:
 
-- [`integration-host`](/home/dacrise/x/xapps/samples/tenants/integration-host/README.md) for the Node host path
-- [`xconectc`](/home/dacrise/x/xapps/apps/tenants/xconectc/README.md) for the paired Laravel full-tenant path
-- [`x-api`](/home/dacrise/x/xapps/samples/tenants/x-api/README.md) for the Node tenant/backend path
-- [`publisher-api`](/home/dacrise/x/xapps/samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
+- [`integration-host`](../../../samples/tenants/integration-host/README.md) for the Node host path
+- [`xconectc`](../xconectc/README.md) for the paired Laravel full-tenant path
+- [`x-api`](../../../samples/tenants/x-api/README.md) for the Node tenant/backend path
+- [`publisher-api`](../../../samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
 
 It keeps the host/integrator shell local, while the actual tenant-side host APIs stay on `xconectc`.
 

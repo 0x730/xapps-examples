@@ -8,28 +8,28 @@ This document defines how the current private `xplace` publisher should split in
 
 It is the concrete implementation companion for:
 
-- [Public Example Reference Layer Audit](/home/dacrise/x/xapps/dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
-- [TASK-041](/home/dacrise/x/xapps/dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
+- [Public Example Reference Layer Audit](../../../../dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
+- [TASK-041](../../../../dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
 
 ## Current `xplace` surface
 
 Current workspace files:
 
 - backend:
-  - [backend/server.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/server.js)
-  - [backend/db/repo.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/db/repo.js)
-  - [backend/db/schema.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/db/schema.js)
-  - [backend/domain/constants.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/domain/constants.js)
-  - [backend/domain/tools.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/domain/tools.js)
+  - [backend/server.js](../../xplace/backend/server.js)
+  - [backend/db/repo.js](../../xplace/backend/db/repo.js)
+  - [backend/db/schema.js](../../xplace/backend/db/schema.js)
+  - [backend/domain/constants.js](../../xplace/backend/domain/constants.js)
+  - [backend/domain/tools.js](../../xplace/backend/domain/tools.js)
 - workspace scripts:
-  - [scripts/provision-publisher.mjs](/home/dacrise/x/xapps/apps/publishers/xplace/scripts/provision-publisher.mjs)
-  - [scripts/provision-publisher-admin.mjs](/home/dacrise/x/xapps/apps/publishers/xplace/scripts/provision-publisher-admin.mjs)
-  - [scripts/prepare-republish-manifests.mjs](/home/dacrise/x/xapps/apps/publishers/xplace/scripts/prepare-republish-manifests.mjs)
+  - [scripts/provision-publisher.mjs](../../xplace/scripts/provision-publisher.mjs)
+  - [scripts/provision-publisher-admin.mjs](../../xplace/scripts/provision-publisher-admin.mjs)
+  - [scripts/prepare-republish-manifests.mjs](../../xplace/scripts/prepare-republish-manifests.mjs)
 - xapp families:
-  - [xplace-certs](/home/dacrise/x/xapps/apps/publishers/xplace/xapps/xplace-certs/README.md)
-  - [xplace-certs-gateway-stripe](/home/dacrise/x/xapps/apps/publishers/xplace/xapps/xplace-certs-gateway-stripe/README.md)
-  - [xplace-certs-tenant-delegated-stripe](/home/dacrise/x/xapps/apps/publishers/xplace/xapps/xplace-certs-tenant-delegated-stripe/README.md)
-  - [xplace-weather-now-gateway-stripe](/home/dacrise/x/xapps/apps/publishers/xplace/xapps/xplace-weather-now-gateway-stripe/README.md)
+  - [xplace-certs](../../xplace/xapps/xplace-certs/README.md)
+  - [xplace-certs-gateway-stripe](../../xplace/xapps/xplace-certs-gateway-stripe/README.md)
+  - [xplace-certs-tenant-delegated-stripe](../../xplace/xapps/xplace-certs-tenant-delegated-stripe/README.md)
+  - [xplace-weather-now-gateway-stripe](../../xplace/xapps/xplace-weather-now-gateway-stripe/README.md)
 
 ## Classification
 
@@ -48,15 +48,15 @@ These should become reusable between private `xplace` and public `xplace-example
 
 Current likely shared-core file candidates:
 
-- [backend/db/repo.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/db/repo.js)
-- [backend/db/schema.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/db/schema.js)
-- [backend/domain/constants.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/domain/constants.js)
-- generic pieces inside [backend/server.js](/home/dacrise/x/xapps/apps/publishers/xplace/backend/server.js)
-- generic workspace wrappers under [scripts](/home/dacrise/x/xapps/apps/publishers/xplace/scripts)
+- [backend/db/repo.js](../../xplace/backend/db/repo.js)
+- [backend/db/schema.js](../../xplace/backend/db/schema.js)
+- [backend/domain/constants.js](../../xplace/backend/domain/constants.js)
+- generic pieces inside [backend/server.js](../../xplace/backend/server.js)
+- generic workspace wrappers under [scripts](../../xplace/scripts)
 
 First extracted shared-core path:
 
-- [apps/publishers/shared/xplace-core](/home/dacrise/x/xapps/apps/publishers/shared/xplace-core/README.md)
+- [apps/publishers/shared/xplace-core](../../shared/xplace-core/README.md)
 
 Landed so far:
 

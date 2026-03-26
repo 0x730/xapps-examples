@@ -4,16 +4,16 @@ This folder mirrors the same tenant mode surface as the Node reference.
 
 Consumer rule:
 
-- load the PHP backend kit through [functions.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/functions.php)
+- load the PHP backend kit through [functions.php](../../../../../packages/xapps-backend-kit-php/src/functions.php)
 - treat the package `src/Backend/Modes/...` links below as source anchors, not
   the preferred bootstrap pattern
 
 Current mode families:
 
-- [gateway-managed](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/modes/gateway-managed/README.md)
-- [tenant-delegated](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/modes/tenant-delegated/README.md)
-- [publisher-delegated](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/modes/publisher-delegated/README.md)
-- [owner-managed](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/modes/owner-managed/README.md)
+- [gateway-managed](./gateway-managed/README.md)
+- [tenant-delegated](./tenant-delegated/README.md)
+- [publisher-delegated](./publisher-delegated/README.md)
+- [owner-managed](./owner-managed/README.md)
 
 The rule is simple:
 

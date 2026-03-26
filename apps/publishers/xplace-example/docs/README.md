@@ -15,14 +15,14 @@ Planned role:
 
 Important distinction:
 
-- private production publisher surface: [xplace](/home/dacrise/x/xapps/apps/publishers/xplace/README.md)
+- private production publisher surface: [xplace](../../xplace/README.md)
 - public publisher reference surface: `xplace-example`
 
 Current shell:
 
 - backend runtime:
-  - [backend/server.js](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/server.js)
-  - [backend/package.json](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/package.json)
+  - [backend/server.js](../backend/server.js)
+  - [backend/package.json](../backend/package.json)
 
 Implementation note:
 
@@ -31,4 +31,4 @@ Implementation note:
 
 Concrete implementation map:
 
-- [IMPLEMENTATION_MAP.md](/home/dacrise/x/xapps/apps/publishers/xplace-example/docs/IMPLEMENTATION_MAP.md)
+- [IMPLEMENTATION_MAP.md](./IMPLEMENTATION_MAP.md)

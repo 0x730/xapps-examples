@@ -31,7 +31,7 @@ What the tenant does not implement here:
 
 Code in this folder:
 
-- [payment.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/gateway-managed/payment.ts)
-- [paymentSession.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/gateway-managed/paymentSession.ts)
-- [policy.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/gateway-managed/policy.ts)
-- [policyContext.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/gateway-managed/policyContext.ts)
+- [payment.js](../../../../../../packages/backend-kit/src/backend/modes/gateway-managed/payment.ts)
+- [paymentSession.js](../../../../../../packages/backend-kit/src/backend/modes/gateway-managed/paymentSession.ts)
+- [policy.js](../../../../../../packages/backend-kit/src/backend/modes/gateway-managed/policy.ts)
+- [policyContext.js](../../../../../../packages/backend-kit/src/backend/modes/gateway-managed/policyContext.ts)

@@ -4,12 +4,12 @@ This folder is only for PHP adapter code that must stay local.
 
 Current local ownership:
 
-- [config.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/config.php)
+- [config.php](./config.php)
   - env/config loading for the backend
-- [appSurfaceModule.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/appSurfaceModule.php)
+- [appSurfaceModule.php](./appSurfaceModule.php)
   - local health/asset registration that depends on tenant branding and local
     host assets
-- [subjectProfiles/defaultProfiles.php](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/lib/subjectProfiles/defaultProfiles.php)
+- [subjectProfiles/defaultProfiles.php](./subjectProfiles/defaultProfiles.php)
   - tenant-specific subject-profile catalog
 
 Rule:

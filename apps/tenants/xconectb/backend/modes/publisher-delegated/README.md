@@ -5,8 +5,8 @@ are publisher-scoped.
 
 Package implementation:
 
-- [payment.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/PublisherDelegated/payment.php)
-- [policy.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/PublisherDelegated/policy.php)
+- [payment.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/PublisherDelegated/payment.php)
+- [policy.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/PublisherDelegated/policy.php)
 
 Local ownership remains small:
 

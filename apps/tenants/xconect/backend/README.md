@@ -10,28 +10,28 @@ The important rule for integrators is simple:
 ## Read This First
 
 - tenant backend contract:
-  - [../docs/backend/README.md](/home/dacrise/x/xapps/apps/tenants/docs/backend/README.md)
+  - [../docs/backend/README.md](../../docs/backend/README.md)
 - route map:
-  - [routes/README.md](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/README.md)
+  - [routes/README.md](./routes/README.md)
 - tenant guide:
-  - [../docs/README.md](/home/dacrise/x/xapps/apps/tenants/docs/README.md)
+  - [../docs/README.md](../../docs/README.md)
 
 ## What Lives Here
 
 This local backend now mainly owns:
 
 - startup and config mapping:
-  - [server.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/server.js)
-  - [lib/config.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/config.js)
+  - [server.js](./server.js)
+  - [lib/config.js](./lib/config.js)
 - app-surface and host pages:
-  - [lib/appSurfaceModule.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/appSurfaceModule.js)
-  - [routes/host.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host.js)
-  - [routes/host/pages.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host/pages.js)
-  - [routes/host/shared.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host/shared.js)
+  - [lib/appSurfaceModule.js](./lib/appSurfaceModule.js)
+  - [routes/host.js](./routes/host.js)
+  - [routes/host/pages.js](./routes/host/pages.js)
+  - [routes/host/shared.js](./routes/host/shared.js)
 - tenant-specific subject-profile defaults:
-  - [lib/subjectProfiles/defaultProfiles.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/lib/subjectProfiles/defaultProfiles.js)
+  - [lib/subjectProfiles/defaultProfiles.js](./lib/subjectProfiles/defaultProfiles.js)
 - thin mode entry surface:
-  - [modes/index.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/modes/index.js)
+  - [modes/index.js](./modes/index.js)
 
 ## Recommended Folder Structure
 
@@ -84,10 +84,10 @@ The backend kit now owns the default tenant backend behavior for:
 
 Source anchors:
 
-- [packages/backend-kit/src/index.ts](/home/dacrise/x/xapps/packages/backend-kit/src/index.ts)
-- [packages/backend-kit/src/backend/routes](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/reference.ts)
-- [packages/backend-kit/src/backend/routes/gateway](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApi.ts)
-- [packages/backend-kit/src/backend/modes/index.ts](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/index.ts)
+- [packages/backend-kit/src/index.ts](../../../../packages/backend-kit/src/index.ts)
+- [packages/backend-kit/src/backend/routes](../../../../packages/backend-kit/src/backend/routes/reference.ts)
+- [packages/backend-kit/src/backend/routes/gateway](../../../../packages/backend-kit/src/backend/routes/gateway/hostApi.ts)
+- [packages/backend-kit/src/backend/modes/index.ts](../../../../packages/backend-kit/src/backend/modes/index.ts)
 
 ## Local Run
 

@@ -4,9 +4,9 @@ Shared hosted-integrator proof scaffold for the tenant reference hosts.
 
 This folder is not a reusable package. It is the shared app/support layer used by:
 
-- [xconect-host](/home/dacrise/x/xapps/apps/tenants/xconect-host/README.md)
-- [xconectb-host](/home/dacrise/x/xapps/apps/tenants/xconectb-host/README.md)
-- [xconectc-host](/home/dacrise/x/xapps/apps/tenants/xconectc-host/README.md)
+- [xconect-host](../xconect-host/README.md)
+- [xconectb-host](../xconectb-host/README.md)
+- [xconectc-host](../xconectc-host/README.md)
 
 Publication policy:
 
@@ -28,6 +28,6 @@ It does not own:
 
 Those stay in:
 
-- [packages/browser-host/README.md](/home/dacrise/x/xapps/packages/browser-host/README.md)
-- [packages/backend-kit/README.md](/home/dacrise/x/xapps/packages/backend-kit/README.md)
-- [packages/xapps-backend-kit-php/README.md](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/README.md)
+- [packages/browser-host/README.md](../../../packages/browser-host/README.md)
+- [packages/backend-kit/README.md](../../../packages/backend-kit/README.md)
+- [packages/xapps-backend-kit-php/README.md](../../../packages/xapps-backend-kit-php/README.md)

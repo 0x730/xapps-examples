@@ -4,12 +4,12 @@ Public publisher reference backend shell.
 
 Current shape:
 
-- thin runtime shell in [server.js](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/server.js)
-- local package boundary in [package.json](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/package.json)
-- sample env in [.env.example](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/.env.example)
-- local dev env in [.env.dev](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/.env.dev)
+- thin runtime shell in [server.js](./server.js)
+- local package boundary in [package.json](./package.json)
+- sample env in [.env.example](.env.example)
+- local dev env in [.env.dev](.env.dev)
 - shared publisher core consumed from
-  [apps/publishers/shared/xplace-core](/home/dacrise/x/xapps/apps/publishers/shared/xplace-core/README.md)
+  [apps/publishers/shared/xplace-core](../../shared/xplace-core/README.md)
 
 Near-term rule:
 

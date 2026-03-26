@@ -38,6 +38,6 @@ What the owner may later extend here:
 
 Code in this folder:
 
-- [payment.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/payment.php)
-- [policy.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/policy.php)
-- [paymentPageApi.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/paymentPageApi.php)
+- [payment.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/payment.php)
+- [policy.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/policy.php)
+- [paymentPageApi.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/OwnerManaged/paymentPageApi.php)

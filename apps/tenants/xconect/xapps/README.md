@@ -4,8 +4,8 @@ This folder contains tenant-owned xapps for the `xconect` tenant workspace (for 
 
 Start with the grouped lane docs before using the local manifest notes here:
 
-- [docs/guides/xconect-xplace/README.md](/home/dacrise/x/xapps/docs/guides/xconect-xplace/README.md)
-- [docs/guides/xconect-xplace/production-lane-runbook.md](/home/dacrise/x/xapps/docs/guides/xconect-xplace/production-lane-runbook.md)
+- [docs/guides/xconect-xplace/README.md](../../../../docs/guides/xconect-xplace/README.md)
+- [docs/guides/xconect-xplace/production-lane-runbook.md](../../../../docs/guides/xconect-xplace/production-lane-runbook.md)
 
 ## Current V1 path (important)
 
@@ -28,9 +28,9 @@ npm run seed:xconect-policy-publisher
 
 Owned wrapper entrypoints for that baseline live under:
 
-- [../scripts/provision-tenant.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-tenant.mjs)
-- [../scripts/provision-tenant-admin.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-tenant-admin.mjs)
-- [../scripts/provision-policy-publisher.mjs](/home/dacrise/x/xapps/apps/tenants/xconect/scripts/provision-policy-publisher.mjs)
+- [../scripts/provision-tenant.mjs](../scripts/provision-tenant.mjs)
+- [../scripts/provision-tenant-admin.mjs](../scripts/provision-tenant-admin.mjs)
+- [../scripts/provision-policy-publisher.mjs](../scripts/provision-policy-publisher.mjs)
 
 ## Internal CLI workflow (manifest-first)
 

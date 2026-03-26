@@ -4,7 +4,7 @@ This local folder intentionally has no policy implementation files.
 
 Default tenant policy behavior now lives in:
 
-- [common.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/policies/common.ts)
+- [common.js](../../../../../../packages/backend-kit/src/backend/policies/common.ts)
   - shared payment-policy verification flow
   - shared payload/context normalization
   - shared payment action helper

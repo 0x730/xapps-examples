@@ -1,0 +1,197 @@
+services:
+  xconect:
+    restart: unless-stopped
+    stop_grace_period: 60s
+    image: ${XAPPS_RUNTIME_IMAGE:-xapps-runtime-partners-examples:local}
+    build:
+      context: ../../../..
+      dockerfile: deploy/modes/partners-examples/docker/Dockerfile.partners-examples
+      args:
+        NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
+    command: ["node", "apps/tenants/xconect/backend/server.js"]
+    environment:
+      NODE_ENV: ${XCONECT_NODE_ENV:-production}
+      XCONECT_PORT: ${XCONECT_PORT:-3312}
+      XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      XCONECT_GATEWAY_API_KEY: ${XCONECT_GATEWAY_API_KEY:-}
+      XCONECT_GUARD_INGEST_API_KEY: ${XCONECT_GUARD_INGEST_API_KEY:-}
+      XCONECT_ALLOWED_ORIGINS: ${XCONECT_ALLOWED_ORIGINS:-}
+      XCONECT_HOST_BOOTSTRAP_API_KEYS: ${XCONECT_HOST_BOOTSTRAP_API_KEYS:-}
+      XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET: ${XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET:-}
+      XCONECT_TENANT_PAYMENT_URL: ${XCONECT_TENANT_PAYMENT_URL:-}
+      XCONECT_TENANT_PAYMENT_RETURN_SECRET: ${XCONECT_TENANT_PAYMENT_RETURN_SECRET:-}
+      XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF: ${XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF:-}
+      XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST: ${XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST:-}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECT_PORT:-3312}:3312"
+
+  xconect-host:
+    restart: unless-stopped
+    stop_grace_period: 30s
+    image: ${XAPPS_RUNTIME_IMAGE:-xapps-runtime-partners-examples:local}
+    profiles: ["host-proof"]
+    command: ["node", "--import", "tsx", "apps/tenants/xconect-host/server.ts"]
+    environment:
+      XCONECT_HOST_PORT: ${XCONECT_HOST_PORT:-3412}
+      XCONECT_HOST_BACKEND_BASE_URL: ${XCONECT_HOST_BACKEND_BASE_URL:-${XCONECT_PUBLIC_BASE_URL:-https://xconect-example.0x730.com}}
+      XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL: ${XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL:-http://xconect:${XCONECT_PORT:-3312}}
+      XCONECT_HOST_PUBLIC_BASE_URL: ${XCONECT_HOST_PUBLIC_BASE_URL:-https://xconect-example-host.0x730.com}
+      XCONECT_HOST_BOOTSTRAP_API_KEY: ${XCONECT_HOST_BOOTSTRAP_API_KEY:-${XCONECT_HOST_BOOTSTRAP_API_KEYS:-}}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECT_HOST_PORT:-3412}:3412"
+    depends_on:
+      xconect:
+        condition: service_started
+
+  xconectb:
+    restart: unless-stopped
+    stop_grace_period: 60s
+    image: ${XAPPS_RUNTIME_PHP_IMAGE:-xapps-runtime-partners-examples-php:local}
+    build:
+      context: ../../../..
+      dockerfile: deploy/modes/partners-examples/docker/Dockerfile.partners-examples-php
+      args:
+        NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
+    profiles: ["tenant-b"]
+    command:
+      [
+        "php",
+        "-S",
+        "0.0.0.0:${XCONECTB_PORT:-3313}",
+        "-t",
+        "apps/tenants/xconectb/backend/public",
+        "apps/tenants/xconectb/backend/public/index.php",
+      ]
+    environment:
+      XCONECTB_PORT: ${XCONECTB_PORT:-3313}
+      XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      XCONECTB_GATEWAY_API_KEY: ${XCONECTB_GATEWAY_API_KEY:-${XCONECTB_TENANT_API_KEY:-}}
+      XCONECTB_GUARD_INGEST_API_KEY: ${XCONECTB_GUARD_INGEST_API_KEY:-}
+      XCONECTB_ALLOWED_ORIGINS: ${XCONECTB_ALLOWED_ORIGINS:-}
+      XCONECTB_HOST_BOOTSTRAP_API_KEYS: ${XCONECTB_HOST_BOOTSTRAP_API_KEYS:-}
+      XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET: ${XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET:-}
+      XCONECTB_TENANT_PAYMENT_URL: ${XCONECTB_TENANT_PAYMENT_URL:-}
+      XCONECTB_TENANT_PAYMENT_RETURN_SECRET: ${XCONECTB_TENANT_PAYMENT_RETURN_SECRET:-}
+      XCONECTB_TENANT_PAYMENT_RETURN_SECRET_REF: ${XCONECTB_TENANT_PAYMENT_RETURN_SECRET_REF:-}
+      XCONECTB_TENANT_PAYMENT_RETURN_URL_ALLOWLIST: ${XCONECTB_TENANT_PAYMENT_RETURN_URL_ALLOWLIST:-}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECTB_PORT:-3313}:3313"
+
+  xconectb-host:
+    restart: unless-stopped
+    stop_grace_period: 30s
+    image: ${XAPPS_RUNTIME_IMAGE:-xapps-runtime-partners-examples:local}
+    profiles: ["tenant-b-host-proof"]
+    command: ["node", "--import", "tsx", "apps/tenants/xconectb-host/server.ts"]
+    environment:
+      XCONECTB_HOST_PORT: ${XCONECTB_HOST_PORT:-3413}
+      XCONECTB_HOST_BACKEND_BASE_URL: ${XCONECTB_HOST_BACKEND_BASE_URL:-${XCONECTB_PUBLIC_BASE_URL:-https://xconectb-example.0x730.com}}
+      XCONECTB_HOST_BOOTSTRAP_BACKEND_BASE_URL: ${XCONECTB_HOST_BOOTSTRAP_BACKEND_BASE_URL:-http://xconectb:${XCONECTB_PORT:-3313}}
+      XCONECTB_HOST_PUBLIC_BASE_URL: ${XCONECTB_HOST_PUBLIC_BASE_URL:-https://xconectb-example-host.0x730.com}
+      XCONECTB_HOST_BOOTSTRAP_API_KEY: ${XCONECTB_HOST_BOOTSTRAP_API_KEY:-${XCONECTB_HOST_BOOTSTRAP_API_KEYS:-}}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECTB_HOST_PORT:-3413}:3413"
+    depends_on:
+      xconectb:
+        condition: service_started
+
+  xconectc:
+    restart: unless-stopped
+    stop_grace_period: 60s
+    image: ${XAPPS_RUNTIME_PHP_IMAGE:-xapps-runtime-partners-examples-php:local}
+    build:
+      context: ../../../..
+      dockerfile: deploy/modes/partners-examples/docker/Dockerfile.partners-examples-php
+      args:
+        NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
+    profiles: ["tenant-c"]
+    command:
+      [
+        "php",
+        "artisan",
+        "serve",
+        "--host=0.0.0.0",
+        "--port=${XCONECTC_PORT:-8001}",
+      ]
+    environment:
+      APP_ENV: ${XCONECTC_APP_ENV:-production}
+      APP_DEBUG: ${XCONECTC_APP_DEBUG:-false}
+      APP_URL: ${XCONECTC_PUBLIC_BASE_URL:-https://xconectc-example.0x730.com}
+      DB_CONNECTION: sqlite
+      DB_DATABASE: database/database.sqlite
+      XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      XAPPS_API_KEY: ${XCONECTC_TENANT_API_KEY:-}
+      XCONECTC_GUARD_INGEST_API_KEY: ${XCONECTC_GUARD_INGEST_API_KEY:-}
+      PUBLISHER_API_URL: ${XCONECTC_PUBLISHER_API_URL:-http://xplace-example:${XPLACE_EXAMPLE_PORT:-3016}}
+      IDP_BASE_URL: ${XCONECTC_IDP_BASE_URL:-${XCONECTC_PUBLIC_BASE_URL:-https://xconectc-example.0x730.com}/api}
+      XCONECTC_ALLOWED_ORIGINS: ${XCONECTC_ALLOWED_ORIGINS:-}
+      XCONECTC_HOST_BOOTSTRAP_API_KEYS: ${XCONECTC_HOST_BOOTSTRAP_API_KEYS:-}
+      XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET: ${XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET:-}
+      XCONECTC_TENANT_PAYMENT_URL: ${XCONECTC_TENANT_PAYMENT_URL:-}
+      XCONECTC_TENANT_PAYMENT_RETURN_SECRET: ${XCONECTC_TENANT_PAYMENT_RETURN_SECRET:-}
+      XCONECTC_TENANT_PAYMENT_RETURN_SECRET_REF: ${XCONECTC_TENANT_PAYMENT_RETURN_SECRET_REF:-}
+      XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST: ${XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST:-}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECTC_PORT:-8001}:${XCONECTC_PORT:-8001}"
+
+  xconectc-host:
+    restart: unless-stopped
+    stop_grace_period: 60s
+    image: ${XAPPS_RUNTIME_PHP_IMAGE:-xapps-runtime-partners-examples-php:local}
+    build:
+      context: ../../../..
+      dockerfile: deploy/modes/partners-examples/docker/Dockerfile.partners-examples-php
+      args:
+        NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
+    profiles: ["tenant-c-host-proof"]
+    command:
+      [
+        "php",
+        "artisan",
+        "serve",
+        "--host=0.0.0.0",
+        "--port=${XCONECTC_HOST_PORT:-8002}",
+      ]
+    environment:
+      APP_ENV: ${XCONECTC_HOST_APP_ENV:-production}
+      APP_DEBUG: ${XCONECTC_HOST_APP_DEBUG:-false}
+      APP_URL: ${XCONECTC_HOST_PUBLIC_BASE_URL:-https://xconectc-example-host.0x730.com}
+      DB_CONNECTION: sqlite
+      DB_DATABASE: database/database.sqlite
+      XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      XAPPS_API_KEY: ${XCONECTC_HOST_BOOTSTRAP_API_KEY:-}
+      PUBLISHER_API_URL: ${XCONECTC_HOST_PUBLISHER_API_URL:-http://xplace-example:${XPLACE_EXAMPLE_PORT:-3016}}
+      IDP_BASE_URL: ${XCONECTC_HOST_IDP_BASE_URL:-${XCONECTC_HOST_PUBLIC_BASE_URL:-https://xconectc-example-host.0x730.com}/api}
+      XCONECTC_HOST_PUBLIC_BASE_URL: ${XCONECTC_HOST_PUBLIC_BASE_URL:-https://xconectc-example-host.0x730.com}
+      XCONECTC_HOST_BACKEND_BASE_URL: ${XCONECTC_HOST_BACKEND_BASE_URL:-${XCONECTC_PUBLIC_BASE_URL:-https://xconectc-example.0x730.com}}
+      XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL: ${XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL:-http://xconectc:${XCONECTC_PORT:-8001}}
+      XCONECTC_HOST_BOOTSTRAP_API_KEY: ${XCONECTC_HOST_BOOTSTRAP_API_KEY:-}
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECTC_HOST_PORT:-8002}:${XCONECTC_HOST_PORT:-8002}"
+    depends_on:
+      xconectc:
+        condition: service_started
+
+  xplace-example:
+    restart: unless-stopped
+    stop_grace_period: 60s
+    image: ${XAPPS_RUNTIME_IMAGE:-xapps-runtime-partners-examples:local}
+    profiles: ["example-publisher"]
+    command: ["node", "apps/publishers/xplace-example/backend/server.js"]
+    environment:
+      NODE_ENV: production
+      XPLACE_EXAMPLE_PORT: ${XPLACE_EXAMPLE_PORT:-3016}
+      XPLACE_EXAMPLE_DATABASE_URL: ${XPLACE_EXAMPLE_DATABASE_URL:-postgresql://xapps:xapps@host.docker.internal:5432/xplace_example}
+      GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
+      XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY: ${XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY:-}
+      XPLACE_EXAMPLE_XAPP_INGEST_API_KEY: ${XPLACE_EXAMPLE_XAPP_INGEST_API_KEY:-}
+      XPLACE_EXAMPLE_ADMIN_KEY: ${XPLACE_EXAMPLE_ADMIN_KEY:-}
+      XPLACE_EXAMPLE_WEATHER_API_BASE_URL: ${XPLACE_EXAMPLE_WEATHER_API_BASE_URL:-https://api.open-meteo.com}
+      XPLACE_EXAMPLE_ANAF_API_BASE_URL: ${XPLACE_EXAMPLE_ANAF_API_BASE_URL:-https://webservicesp.anaf.ro}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XPLACE_EXAMPLE_PORT:-3016}:${XPLACE_EXAMPLE_PORT:-3016}"

@@ -4,10 +4,10 @@
 
 It is the Laravel counterpart to:
 
-- [`x-api`](/home/dacrise/x/xapps/samples/tenants/x-api/README.md) for the Node tenant/backend path
-- [`integration-host`](/home/dacrise/x/xapps/samples/tenants/integration-host/README.md) for the Node host path
-- [`xconectc-host`](/home/dacrise/x/xapps/apps/tenants/xconectc-host/README.md) for the Laravel hosted-integrator path
-- [`publisher-api`](/home/dacrise/x/xapps/samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
+- [`x-api`](../../../samples/tenants/x-api/README.md) for the Node tenant/backend path
+- [`integration-host`](../../../samples/tenants/integration-host/README.md) for the Node host path
+- [`xconectc-host`](../xconectc-host/README.md) for the Laravel hosted-integrator path
+- [`publisher-api`](../../../samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
 
 It keeps OIDC, local tenant business APIs, and the full PHP backend-kit host surface in one Laravel starter/reference app.
 

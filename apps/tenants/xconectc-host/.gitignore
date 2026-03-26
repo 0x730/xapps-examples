@@ -1,12 +1,7 @@
 /vendor/
 /node_modules/
-# NOTE: For this repo we intentionally commit `apps/connectors/laravel-tenant/.env`
-# so Forge/0x730 deployments have the required defaults (SQLite path, demo keys).
-# If you need per-environment secrets, override via runtime env vars or a server-side `.env`.
-#
-# Keep ignoring env variants, but commit the 0x730 env file.
+.env
 .env.*
-!.env.0x730
 !.env.example
 /storage/*.sqlite
 /storage/*.sqlite-journal

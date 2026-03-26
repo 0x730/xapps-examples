@@ -13,6 +13,14 @@ It is not intended to be:
 - an npm package
 - a Packagist package
 
+Included public surfaces:
+
+- tenant/reference apps under `apps/tenants/`
+- shared public tenant docs under `apps/tenants/docs/`
+- public package docs under `docs/packages/`
+- publisher reference app under `apps/publishers/xplace-example/`
+- example deploy lane under `deploy/modes/partners-examples/`
+
 Dependency rule:
 
 - use published npm / Packagist packages for reusable SDK/runtime surfaces where they exist

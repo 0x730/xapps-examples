@@ -39,27 +39,27 @@ Current deployment rule:
 Current workspace pieces:
 
 - backend shell:
-  - [backend/server.js](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/server.js)
-  - [backend/package.json](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/package.json)
-  - [backend/.env.example](/home/dacrise/x/xapps/apps/publishers/xplace-example/backend/.env.example)
+  - [backend/server.js](./backend/server.js)
+  - [backend/package.json](./backend/package.json)
+  - [backend/.env.example](./backend/.env.example)
 - workspace scripts:
-  - [scripts/provision-publisher.mjs](/home/dacrise/x/xapps/apps/publishers/xplace-example/scripts/provision-publisher.mjs)
-  - [scripts/provision-publisher-admin.mjs](/home/dacrise/x/xapps/apps/publishers/xplace-example/scripts/provision-publisher-admin.mjs)
-  - [scripts/prepare-republish-manifests.mjs](/home/dacrise/x/xapps/apps/publishers/xplace-example/scripts/prepare-republish-manifests.mjs)
+  - [scripts/provision-publisher.mjs](./scripts/provision-publisher.mjs)
+  - [scripts/provision-publisher-admin.mjs](./scripts/provision-publisher-admin.mjs)
+  - [scripts/prepare-republish-manifests.mjs](./scripts/prepare-republish-manifests.mjs)
 - root entrypoints:
-  - [scripts/provision-xplace-example-publisher.mjs](/home/dacrise/x/xapps/scripts/provision-xplace-example-publisher.mjs)
-  - [scripts/provision-xplace-example-publisher-admin.mjs](/home/dacrise/x/xapps/scripts/provision-xplace-example-publisher-admin.mjs)
-  - [scripts/prepare-xplace-example-republish-manifests.mjs](/home/dacrise/x/xapps/scripts/prepare-xplace-example-republish-manifests.mjs)
+  - [scripts/provision-xplace-example-publisher.mjs](../../../scripts/provision-xplace-example-publisher.mjs)
+  - [scripts/provision-xplace-example-publisher-admin.mjs](../../../scripts/provision-xplace-example-publisher-admin.mjs)
+  - [scripts/prepare-xplace-example-republish-manifests.mjs](../../../scripts/prepare-xplace-example-republish-manifests.mjs)
 - docs:
-  - [docs/README.md](/home/dacrise/x/xapps/apps/publishers/xplace-example/docs/README.md)
-  - [docs/IMPLEMENTATION_MAP.md](/home/dacrise/x/xapps/apps/publishers/xplace-example/docs/IMPLEMENTATION_MAP.md)
+  - [docs/README.md](./docs/README.md)
+  - [docs/IMPLEMENTATION_MAP.md](./docs/IMPLEMENTATION_MAP.md)
 
 Related references:
 
-- [Public Example Reference Layer Audit](/home/dacrise/x/xapps/dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
-- [TASK-041](/home/dacrise/x/xapps/dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
-- [xplace workspace](/home/dacrise/x/xapps/apps/publishers/xplace/README.md)
-- [Implementation map](/home/dacrise/x/xapps/apps/publishers/xplace-example/docs/IMPLEMENTATION_MAP.md)
+- [Public Example Reference Layer Audit](../../../dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
+- [TASK-041](../../../dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
+- [xplace workspace](../xplace/README.md)
+- [Implementation map](./docs/IMPLEMENTATION_MAP.md)
 
 Current operator commands:
 

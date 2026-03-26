@@ -21,11 +21,11 @@ Dependency rule:
 ## Read First
 
 - canonical tenant guide:
-  - [../docs/README.md](/home/dacrise/x/xapps/apps/tenants/docs/README.md)
+  - [../docs/README.md](../docs/README.md)
 - PHP backend reference:
-  - [backend/README.md](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/README.md)
+  - [backend/README.md](./backend/README.md)
 - PHP quickstart note:
-  - [../docs/tooling/php-laravel-quickstart.md](/home/dacrise/x/xapps/apps/tenants/docs/tooling/php-laravel-quickstart.md)
+  - [../docs/tooling/php-laravel-quickstart.md](../docs/tooling/php-laravel-quickstart.md)
 
 ## What Lives Here
 

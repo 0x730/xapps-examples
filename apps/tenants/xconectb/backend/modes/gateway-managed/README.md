@@ -31,5 +31,5 @@ What the tenant does not implement here:
 
 Code in this folder:
 
-- [payment.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/GatewayManaged/payment.php)
-- [policy.php](/home/dacrise/x/xapps/packages/xapps-backend-kit-php/src/Backend/Modes/GatewayManaged/policy.php)
+- [payment.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/GatewayManaged/payment.php)
+- [policy.php](../../../../../../packages/xapps-backend-kit-php/src/Backend/Modes/GatewayManaged/policy.php)

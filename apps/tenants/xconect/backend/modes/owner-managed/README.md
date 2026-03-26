@@ -38,9 +38,9 @@ What the tenant may later extend here:
 
 Code in this folder:
 
-- [payment.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/payment.ts)
-- [paymentSession.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/paymentSession.ts)
-- [policy.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/policy.ts)
-- [policyContext.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/policyContext.ts)
-- [paymentAssets.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/paymentAssets.ts)
-- [paymentPageApi.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/modes/owner-managed/paymentPageApi.ts)
+- [payment.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/payment.ts)
+- [paymentSession.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/paymentSession.ts)
+- [policy.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/policy.ts)
+- [policyContext.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/policyContext.ts)
+- [paymentAssets.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/paymentAssets.ts)
+- [paymentPageApi.js](../../../../../../packages/backend-kit/src/backend/modes/owner-managed/paymentPageApi.ts)

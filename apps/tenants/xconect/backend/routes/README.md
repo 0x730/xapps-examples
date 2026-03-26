@@ -2,25 +2,25 @@
 
 Use this folder as the practical route map for the tenant backend.
 
-If a tenant integrator asks “what is the core contract we must expose?”, start with [hostApiCore.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApiCore.ts).
+If a tenant integrator asks “what is the core contract we must expose?”, start with [hostApiCore.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostApiCore.ts).
 
-The PHP reference tenant should mirror this map under [../../xconectb/backend/routes/README.md](/home/dacrise/x/xapps/apps/tenants/xconectb/backend/routes/README.md), not invent a second contract.
+The PHP reference tenant should mirror this map under [../../xconectb/backend/routes/README.md](../../../xconectb/backend/routes/README.md), not invent a second contract.
 
 ## Browser host + marketplace pages
 
 These files serve the tenant-visible host shell and host assets.
 
 - composition entry:
-  - [host.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host.js)
+  - [host.js](./host.js)
 - host-only folder:
-  - [host/pages.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host/pages.js)
-  - [host/shared.js](/home/dacrise/x/xapps/apps/tenants/xconect/backend/routes/host/shared.js)
+  - [host/pages.js](./host/pages.js)
+  - [host/shared.js](./host/shared.js)
 
 ## Mandatory tenant integration contract
 
 This is the core route surface a tenant host needs to participate in the ecosystem browser flow.
 
-- [hostApiCore.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApiCore.ts)
+- [hostApiCore.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostApiCore.ts)
 
 Routes:
 
@@ -47,7 +47,7 @@ Canonical request shape for tenant implementations:
 
 This is part of the required tenant marketplace contract for `xconect`.
 
-- [hostApiLifecycle.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApiLifecycle.ts)
+- [hostApiLifecycle.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostApiLifecycle.ts)
 
 Routes:
 
@@ -62,7 +62,7 @@ Treat this file as required for the tenant marketplace, because users need insta
 
 Add these only when the tenant host needs bridge renewal or advanced signing/vendor assertions.
 
-- [hostApiBridge.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApiBridge.ts)
+- [hostApiBridge.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostApiBridge.ts)
 
 Routes:
 
@@ -76,13 +76,13 @@ This is the last layer to add.
 
 This is the current composition layer for the tenant host contract. It should stay easy to scan.
 
-- [hostApi.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostApi.ts)
+- [hostApi.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostApi.ts)
 
 ## Contract boundary helper
 
 This helper keeps alias normalization and small ingestion compatibility out of the actual route logic.
 
-- [hostContractBoundary.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/hostContractBoundary.ts)
+- [hostContractBoundary.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostContractBoundary.ts)
 
 Treat this as the only place where the Node reference should translate legacy/snake_case payloads into the canonical camelCase contract.
 
@@ -105,15 +105,15 @@ For a consuming tenant app, that means:
 
 These routes are also part of the gateway-facing tenant integration surface, even though they are not part of the host proxy contract itself.
 
-- [payment.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/payment.ts)
-- [guard.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/guard.ts)
-- [subjectProfiles.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/gateway/subjectProfiles.ts)
+- [payment.js](../../../../../packages/backend-kit/src/backend/routes/gateway/payment.ts)
+- [guard.js](../../../../../packages/backend-kit/src/backend/routes/gateway/guard.ts)
+- [subjectProfiles.js](../../../../../packages/backend-kit/src/backend/routes/gateway/subjectProfiles.ts)
 
 `xconect` consumes these default gateway seams from the backend kit instead of owning local copies.
 
 ## Root support routes
 
-- [reference.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/reference.ts)
-- [health.js](/home/dacrise/x/xapps/packages/backend-kit/src/backend/routes/health.ts)
+- [reference.js](../../../../../packages/backend-kit/src/backend/routes/reference.ts)
+- [health.js](../../../../../packages/backend-kit/src/backend/routes/health.ts)
 
 `/api/reference` is the canonical self-describing route catalog for the tenant contract. Keep the PHP reference tenant close to this surface so cross-stack parity stays easy to review.
