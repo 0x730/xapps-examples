@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Hosted Tenant Workspace</title>
+    <link rel="stylesheet" href="/host/proof-host.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero">
+        <article class="intro-panel panel">
+          <div class="eyebrow">Hosted Workspace</div>
+          <h1 id="proof-name">Hosted Tenant Workspace</h1>
+          <p>
+            This workspace runs on its own origin and reaches the tenant backend remotely through
+            the same browser-host contract integrators are expected to use.
+          </p>
+          <div class="meta-list">
+            <div class="meta-item">
+              <strong>Workspace</strong>
+              <span id="proof-workspace">-</span>
+            </div>
+            <div class="meta-item">
+              <strong>Backend stack</strong>
+              <span id="proof-stack">-</span>
+            </div>
+            <div class="meta-item">
+              <strong>Remote backend</strong>
+              <code id="proof-backend-base">-</code>
+            </div>
+          </div>
+        </article>
+
+        <section class="launcher">
+          <h2>Resolve one subject and launch the workspace</h2>
+          <form id="entry-form">
+            <div class="field-grid">
+              <label>
+                Full name
+                <input id="name" name="name" type="text" value="Hosted Integrator Demo User" />
+              </label>
+              <label>
+                Email
+                <input id="email" name="email" type="email" value="user@hosted-integrator.test" />
+              </label>
+            </div>
+
+            <div class="modes">
+              <label class="mode-option">
+                <input type="radio" name="mode" value="single-panel" checked />
+                <span class="mode-card">
+                  <strong>Single-panel workspace</strong>
+                  <span
+                    >Leanest way to open the remote tenant lane through the shared host
+                    contract.</span
+                  >
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="mode" value="split-panel" />
+                <span class="mode-card">
+                  <strong>Split-panel workspace</strong>
+                  <span
+                    >Catalog and widget stay separated while still using the remote backend.</span
+                  >
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="mode" value="single-xapp" />
+                <span class="mode-card">
+                  <strong>Single-xapp surface</strong>
+                  <span
+                    >Open one xapp directly while keeping the same remote host API and bootstrap
+                    flow.</span
+                  >
+                </span>
+              </label>
+            </div>
+
+            <div class="single-xapp-inline">
+              <label class="single-xapp-field">
+                <span>Xapp id</span>
+                <input id="xappId" name="xappId" type="text" value="01KKYA9CQKNTG3N9PWM0Z31Z09" />
+              </label>
+            </div>
+
+            <div class="actions">
+              <button id="launch-btn" type="submit">Launch Hosted Workspace</button>
+            </div>
+            <div id="status" class="status"></div>
+            <div id="identity" class="identity" hidden>
+              <strong>Last resolved subject</strong>
+              <div id="identity-copy"></div>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/host/proof-entry.js"></script>
+  </body>
+</html>

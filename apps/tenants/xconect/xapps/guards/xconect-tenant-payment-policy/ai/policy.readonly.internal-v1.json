@@ -1,0 +1,14 @@
+{
+  "schema_version": "xapps.ai.policy.v1",
+  "require_read_only": true,
+  "max_actions": 12,
+  "allow_action_kinds": [
+    "manifest.patch",
+    "schema.patch",
+    "ui_schema.patch",
+    "guard.config.patch",
+    "docs.patch",
+    "test.patch",
+    "config.patch"
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "name": "Xconect • Tenant Payment Policy (Tenant-Managed)",
+  "slug": "xconect-tenant-payment-policy",
+  "description": "Tenant-owned tenant-managed payment guard xapp for xconect pay-per-request policy orchestration.",
+  "version": "1.1.213",
+  "visibility": "private",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "metadata": {
+    "xconect": {
+      "owner": "tenant",
+      "workspace": "xconect"
+    },
+    "catalog": {
+      "hidden": true
+    }
+  },
+  "tags": [
+    "xconect",
+    "tenant",
+    "guards",
+    "payment",
+    "policy"
+  ],
+  "tools": [
+    {
+      "tool_name": "evaluate_tenant_payment_policy",
+      "title": "Evaluate Tenant Payment Policy",
+      "description": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "payment_status": {
+            "type": "string"
+          },
+          "guard": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "trigger": {
+                "type": "string"
+              },
+              "config": {
+                "type": "object"
+              }
+            }
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "toolName": {
+                "type": "string"
+              },
+              "orchestration": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "allowed"
+        ]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xconect_tenant_payment_policy_guard",
+      "title": "Xconect Tenant Payment Policy (Tenant-Managed)",
+      "type": "read",
+      "renderer": "platform",
+      "bind_tool_name": "evaluate_tenant_payment_policy",
+      "entry": {
+        "kind": "platform_template",
+        "template": "read_only_result"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "inline"
+        }
+      }
+    }
+  ],
+  "payment_guard_definitions": [
+    {
+      "name": "xconect_tenant_pay_by_request",
+      "payment_type": "pay_by_request",
+      "payment_issuer_mode": "owner_managed",
+      "payment_scheme": "mock_manual",
+      "payment_allowed_issuers": [
+        "tenant"
+      ],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_secret_refs": {
+        "tenant": "__TENANT_PAYMENT_RETURN_SECRET_REF__"
+      },
+      "owner_override_allowlist": [
+        "tool_name",
+        "tools",
+        "ui_mode",
+        "allow_orchestration_approval",
+        "pricing.default_amount",
+        "pricing.tool_overrides.*",
+        "policy",
+        "action"
+      ],
+      "owner_pricing_floor": {
+        "default_amount": 3
+      },
+      "receipt_field": "paymentReceipt",
+      "payment_url": "__XCONECT_TENANT_PAYMENT_BASE_URL__/tenant-payment.html",
+      "pricing": {
+        "currency": "USD",
+        "default_amount": 3,
+        "description": "Xconect tenant-managed pay-per-request fee"
+      },
+      "policy": {
+        "kind": "payment",
+        "reason": "payment_required",
+        "message": "Tenant-managed payment is required before continuing."
+      },
+      "action": {
+        "kind": "complete_payment",
+        "label": "Open Payment",
+        "title": "Complete Payment",
+        "target": "external"
+      }
+    }
+  ],
+  "guards": [],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XCONECT_TENANT_GUARD_BASE_URL__",
+      "timeout_ms": 5000,
+      "region": "tenant",
+      "labels": {
+        "profile": "xconect-tenant-guards",
+        "env": "dev"
+      }
+    }
+  },
+  "connectivity": {
+    "executor_mode": "PRIVATE_EXECUTOR",
+    "auth_mode": "USER_DELEGATED",
+    "signing_policy": "none",
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  }
+}

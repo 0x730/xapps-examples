@@ -1,0 +1,16 @@
+{
+  "name": "@xplace-example/publisher-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "xplace-example public publisher reference backend",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "fastify": "^5.7.4",
+    "pg": "^8.18.0"
+  }
+}

@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Xconect Reference Host</title>
+    <link rel="stylesheet" href="/host/xconect-host-base.css?v=20260319-host-layout-31" />
+    <link rel="stylesheet" href="/host/xconect-host-entry.css?v=20260319-host-layout-31" />
+  </head>
+  <body>
+    <script>
+      (function () {
+        const aliases = { slate: "harbor", graphite: "atlas" };
+        try {
+          const rawTheme = String(
+            window.localStorage.getItem("xconect_reference_host_theme_v1") || "",
+          ).trim();
+          const theme = aliases[rawTheme] || rawTheme;
+          if (["harbor", "atlas", "copper", "emerald", "iris"].includes(theme)) {
+            document.body.dataset.theme = theme;
+          }
+        } catch {
+          // ignore localStorage failures
+        }
+      })();
+    </script>
+    <main>
+      <section class="hero">
+        <article class="panel intro">
+          <div class="intro-head">
+            <div class="eyebrow">Xconect Reference Host</div>
+            <label class="theme-picker">
+              <span>Palette</span>
+              <select id="host-theme-select" class="theme-select" aria-label="Choose host theme">
+                <option value="harbor">Harbor</option>
+                <option value="atlas">Atlas</option>
+                <option value="copper">Copper</option>
+                <option value="emerald">Emerald</option>
+                <option value="iris">Iris</option>
+              </select>
+            </label>
+          </div>
+          <h1>Start with one calm question, then enter the marketplace.</h1>
+          <p>
+            This page stays intentionally stateless, but the experience should still feel like a
+            real tenant entry flow. Name and email stay browser-local here; the stable subject
+            identity comes from the gateway resolve flow, so the same email returns to the same
+            subject.
+          </p>
+          <div class="journey">
+            <div class="journey-step is-active">
+              <span>1</span>
+              <div>
+                <strong>Identify the tenant subject</strong>
+                <small>Use name + email only, without a login system yet.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>2</span>
+              <div>
+                <strong>Choose the launch surface</strong>
+                <small>Marketplace or single xapp, depending on the demo you want to show.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>3</span>
+              <div>
+                <strong>Open the tenant runtime</strong>
+                <small>Install/update/payment resume stays in the shared SDK flow.</small>
+              </div>
+            </div>
+          </div>
+          <div class="notes">
+            <div class="note">
+              <strong>What this shows</strong>
+              <span>
+                Tenant-side marketplace publish/embed wiring, install/update/uninstall mutations,
+                and payment return resume behavior, all through the shared embed SDK.
+              </span>
+            </div>
+            <div class="note">
+              <strong>What this intentionally avoids</strong>
+              <span>
+                No local auth, no tenant database, and no extra identity framework. This stays a
+                reference seam, not an application shell.
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <section class="panel launcher">
+          <div class="launcher-shell">
+            <div class="launcher-head">
+              <div>
+                <div class="launcher-kicker">Tenant intake</div>
+                <h2>Who is entering this tenant experience?</h2>
+              </div>
+              <div class="hint">Stateless bootstrap, stable subject</div>
+            </div>
+            <form id="entry-form">
+              <div class="question-block">
+                <div class="question-index">Question 1 of 2</div>
+                <p class="question-copy">
+                  Use the person who should own the marketplace state. The same email resolves to
+                  the same subject again.
+                </p>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Full name
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value="Xconect Demo User"
+                    autocomplete="name"
+                    required
+                  />
+                </label>
+                <label>
+                  Email
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="user@xconect-demo.test"
+                    autocomplete="email"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div class="question-block compact">
+                <div class="question-index">Question 2 of 2</div>
+                <p class="question-copy">
+                  Choose how much framing the tenant host should keep around the marketplace or a
+                  single xapp.
+                </p>
+              </div>
+
+              <div class="modes">
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-panel" checked />
+                  <span class="mode-card">
+                    <strong>Single panel</strong>
+                    <span>
+                      Catalog and widgets stay in one embedded flow. Best first reference for a lean
+                      tenant host.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="split-panel" />
+                  <span class="mode-card">
+                    <strong>Split panel</strong>
+                    <span>
+                      Catalog stays on the left and widgets open in a dedicated panel. Useful when
+                      the integrator wants stronger host framing around widget execution.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-xapp" />
+                  <span class="mode-card">
+                    <strong>Single xapp</strong>
+                    <span>
+                      Open one deployed xapp directly for demo purposes, without the full
+                      marketplace shell.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="single-xapp-inline single-xapp-only">
+                <label class="single-xapp-field">
+                  <span class="single-xapp-label">Demo xapp id</span>
+                  <input
+                    id="xappId"
+                    name="xappId"
+                    type="text"
+                    value="01KKYA9CQKNTG3N9PWM0Z31Z09"
+                    spellcheck="false"
+                  />
+                </label>
+                <div class="single-xapp-note">
+                  Direct-open one deployed xapp without the marketplace shell.
+                </div>
+              </div>
+
+              <div class="actions">
+                <button id="launch-btn" type="submit">Launch Tenant Surface</button>
+                <a class="secondary-link" href="/api/reference" target="_blank" rel="noreferrer">
+                  Open backend reference
+                </a>
+              </div>
+              <div id="status" class="status"></div>
+              <div id="identity" class="identity" hidden>
+                <strong>Last resolved subject</strong>
+                <div id="identity-copy"></div>
+              </div>
+            </form>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const storageKey = "xconect_reference_host_identity_v1";
+        const form = document.getElementById("entry-form");
+        const statusEl = document.getElementById("status");
+        const launchBtn = document.getElementById("launch-btn");
+        const identityCard = document.getElementById("identity");
+        const identityCopy = document.getElementById("identity-copy");
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const xappIdInput = document.getElementById("xappId");
+        const themeSelect = document.getElementById("host-theme-select");
+        const currentUrl = new URL(window.location.href);
+        const themeAliases = { slate: "harbor", graphite: "atlas" };
+        const validThemes = new Set(["harbor", "atlas", "copper", "emerald", "iris"]);
+
+        function syncSelectedModeUi() {
+          const modeInput = form.querySelector('input[name="mode"]:checked');
+          const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
+          document.body.dataset.entryMode = mode;
+        }
+
+        function readTheme() {
+          try {
+            const raw = String(
+              window.localStorage.getItem("xconect_reference_host_theme_v1") || "",
+            ).trim();
+            const resolved = themeAliases[raw] || raw;
+            return validThemes.has(resolved) ? resolved : "harbor";
+          } catch {
+            return "harbor";
+          }
+        }
+
+        function applyTheme(theme, options = {}) {
+          const raw = String(theme || "").trim();
+          const resolved = validThemes.has(themeAliases[raw] || raw)
+            ? themeAliases[raw] || raw
+            : "harbor";
+          document.body.dataset.theme = resolved;
+          if (themeSelect) themeSelect.value = resolved;
+          if (options.persist === false) return resolved;
+          try {
+            window.localStorage.setItem("xconect_reference_host_theme_v1", resolved);
+          } catch {
+            // ignore localStorage failures
+          }
+          return resolved;
+        }
+
+        function readStoredIdentity() {
+          try {
+            const raw = window.localStorage.getItem(storageKey) || "";
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === "object" ? parsed : null;
+          } catch {
+            return null;
+          }
+        }
+
+        function renderStoredIdentity() {
+          const identity = readStoredIdentity();
+          if (!identity || !identity.subjectId || !identity.email) {
+            identityCard.hidden = true;
+            identityCopy.textContent = "";
+            return;
+          }
+          identityCard.hidden = false;
+          identityCopy.innerHTML =
+            `${String(identity.name || identity.email)} · ${String(identity.email)}` +
+            `<br><code>${String(identity.subjectId)}</code>`;
+        }
+
+        function restoreFormFromStorage() {
+          const identity = readStoredIdentity();
+          if (!identity) return;
+          if (typeof identity.name === "string" && identity.name.trim()) {
+            nameInput.value = identity.name.trim();
+          }
+          if (typeof identity.email === "string" && identity.email.trim()) {
+            emailInput.value = identity.email.trim();
+          }
+          if (typeof identity.mode === "string" && identity.mode.trim()) {
+            const input = form.querySelector(`input[name="mode"][value="${identity.mode.trim()}"]`);
+            if (input) input.checked = true;
+          }
+          if (xappIdInput && typeof identity.xappId === "string" && identity.xappId.trim()) {
+            xappIdInput.value = identity.xappId.trim();
+          }
+        }
+
+        async function resolveSubject(email, name) {
+          const response = await fetch("/api/resolve-subject", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, name }),
+          });
+          const raw = await response.text();
+          const data = (() => {
+            try {
+              return raw ? JSON.parse(raw) : {};
+            } catch {
+              return {};
+            }
+          })();
+          if (!response.ok) {
+            throw new Error(String(data && data.message ? data.message : "resolve-subject failed"));
+          }
+          const subjectId = String(
+            data?.subjectId ||
+              data?.subject_id ||
+              data?.result?.subjectId ||
+              data?.result?.subject_id ||
+              "",
+          ).trim();
+          if (!subjectId) {
+            const preview = String(raw || "")
+              .trim()
+              .replace(/\s+/g, " ")
+              .slice(0, 220);
+            throw new Error(
+              `resolve-subject response missing subjectId${preview ? `: ${preview}` : ""}`,
+            );
+          }
+          return subjectId;
+        }
+
+        function renderEntryErrorFromQuery() {
+          const errorKey = String(currentUrl.searchParams.get("hostError") || "").trim();
+          if (errorKey !== "missing_identity") return;
+          statusEl.className = "status error";
+          statusEl.textContent =
+            "The tenant host could not continue because the browser identity was incomplete. Resolve the subject again from this entry page.";
+        }
+
+        restoreFormFromStorage();
+        applyTheme(readTheme(), { persist: false });
+        renderEntryErrorFromQuery();
+        renderStoredIdentity();
+        syncSelectedModeUi();
+
+        themeSelect?.addEventListener("change", (event) => {
+          applyTheme(event.target.value);
+        });
+
+        form.querySelectorAll('input[name="mode"]').forEach((node) => {
+          node.addEventListener("change", syncSelectedModeUi);
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const name = String(nameInput.value || "").trim();
+          const email = String(emailInput.value || "")
+            .trim()
+            .toLowerCase();
+          const modeInput = form.querySelector('input[name="mode"]:checked');
+          const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
+          const xappId = String(xappIdInput?.value || "").trim();
+          if (!name || !email) return;
+          if (mode === "single-xapp" && !xappId) {
+            statusEl.className = "status error";
+            statusEl.textContent = "A demo xapp id is required for single xapp mode.";
+            return;
+          }
+
+          launchBtn.disabled = true;
+          statusEl.className = "status";
+          statusEl.textContent = "Resolving tenant subject and preparing the host...";
+
+          try {
+            const subjectId = await resolveSubject(email, name);
+            const identity = {
+              name,
+              email,
+              mode,
+              xappId,
+              subjectId,
+              resolvedAt: new Date().toISOString(),
+            };
+            window.localStorage.setItem(storageKey, JSON.stringify(identity));
+            renderStoredIdentity();
+            if (mode === "single-xapp") {
+              window.location.href = `/single-xapp.html?xappId=${encodeURIComponent(xappId)}`;
+              return;
+            }
+            window.location.href = `/marketplace.html?mode=${encodeURIComponent(mode)}`;
+          } catch (error) {
+            statusEl.className = "status error";
+            statusEl.textContent =
+              error && error.message
+                ? String(error.message)
+                : "The reference host could not resolve the subject.";
+            launchBtn.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

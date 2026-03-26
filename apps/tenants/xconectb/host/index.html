@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>XconectB Reference Host</title>
+    <link rel="stylesheet" href="/host/xconectb-host-base.css?v=20260319-host-layout-34" />
+    <link rel="stylesheet" href="/host/xconectb-host-entry.css?v=20260319-host-layout-34" />
+  </head>
+  <body>
+    <script>
+      (function () {
+        const aliases = { slate: "harbor", graphite: "atlas" };
+        try {
+          const rawTheme = String(
+            window.localStorage.getItem("xconectb_reference_host_theme_v1") || "",
+          ).trim();
+          const theme = aliases[rawTheme] || rawTheme;
+          if (["harbor", "atlas", "copper", "emerald", "iris"].includes(theme)) {
+            document.body.dataset.theme = theme;
+          }
+        } catch {
+          // ignore localStorage failures
+        }
+      })();
+    </script>
+    <main>
+      <section class="hero">
+        <article class="panel intro">
+          <div class="intro-head">
+            <div class="eyebrow">XconectB Reference Host</div>
+            <label class="theme-picker">
+              <span>Palette</span>
+              <select id="host-theme-select" class="theme-select" aria-label="Choose host theme">
+                <option value="harbor">Harbor</option>
+                <option value="atlas">Atlas</option>
+                <option value="copper">Copper</option>
+                <option value="emerald">Emerald</option>
+                <option value="iris">Iris</option>
+              </select>
+            </label>
+          </div>
+          <h1>Start with one calm question, then enter the marketplace.</h1>
+          <p>
+            This is the PHP reference tenant entry for the same marketplace contract as xconect.
+            Name and email stay browser-local here; the stable subject identity still comes from the
+            gateway resolve flow, so the same email returns to the same subject.
+          </p>
+          <div class="journey">
+            <div class="journey-step is-active">
+              <span>1</span>
+              <div>
+                <strong>Identify the tenant subject</strong>
+                <small>Use name + email only, without a login system yet.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>2</span>
+              <div>
+                <strong>Choose the launch surface</strong>
+                <small>Marketplace or single xapp, depending on the validation flow.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>3</span>
+              <div>
+                <strong>Open the tenant runtime</strong>
+                <small
+                  >The browser host stays shared while the backend contract is plain PHP.</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="notes">
+            <div class="note">
+              <strong>What this shows</strong>
+              <span>
+                Tenant-side marketplace publish/embed wiring, install/update/uninstall mutations,
+                and payment return resume behavior against a second backend stack.
+              </span>
+            </div>
+            <div class="note">
+              <strong>What this intentionally avoids</strong>
+              <span>
+                No local auth, no tenant database, and no extra identity framework. This stays a
+                contract-validation seam, not an application shell.
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <section class="panel launcher">
+          <div class="launcher-shell">
+            <div class="launcher-head">
+              <div>
+                <div class="launcher-kicker">Tenant intake</div>
+                <h2>Who is entering this tenant experience?</h2>
+              </div>
+              <div class="hint">Plain-PHP backend, shared browser host</div>
+            </div>
+            <form id="entry-form">
+              <div class="question-block">
+                <div class="question-index">Question 1 of 2</div>
+                <p class="question-copy">
+                  Use the person who should own the marketplace state. The same email resolves to
+                  the same subject again.
+                </p>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Full name
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value="XconectB Demo User"
+                    autocomplete="name"
+                    required
+                  />
+                </label>
+                <label>
+                  Email
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="user@xconectb-demo.test"
+                    autocomplete="email"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div class="question-block compact">
+                <div class="question-index">Question 2 of 2</div>
+                <p class="question-copy">
+                  Choose how much framing the tenant host should keep around the marketplace or a
+                  single xapp.
+                </p>
+              </div>
+
+              <div class="modes">
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-panel" checked />
+                  <span class="mode-card">
+                    <strong>Single panel</strong>
+                    <span>
+                      Catalog and widgets stay in one embedded flow. Best first reference for a lean
+                      tenant host.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="split-panel" />
+                  <span class="mode-card">
+                    <strong>Split panel</strong>
+                    <span>
+                      Catalog stays on the left and widgets open in a dedicated panel. Useful when
+                      the integrator wants stronger host framing around widget execution.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-xapp" />
+                  <span class="mode-card">
+                    <strong>Single xapp</strong>
+                    <span>
+                      Open one deployed xapp directly for demo purposes, without the full
+                      marketplace shell.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="single-xapp-inline single-xapp-only">
+                <label class="single-xapp-field">
+                  <span class="single-xapp-label">Demo xapp id</span>
+                  <input
+                    id="xappId"
+                    name="xappId"
+                    type="text"
+                    value="01KKYA9CQKNTG3N9PWM0Z31Z09"
+                    spellcheck="false"
+                  />
+                </label>
+                <div class="single-xapp-note">
+                  Direct-open one deployed xapp without the marketplace shell.
+                </div>
+              </div>
+
+              <div class="actions">
+                <button id="launch-btn" type="submit">Launch Tenant Surface</button>
+                <a class="secondary-link" href="/api/reference" target="_blank" rel="noreferrer">
+                  Open backend reference
+                </a>
+              </div>
+              <div id="status" class="status"></div>
+              <div id="identity" class="identity" hidden>
+                <strong>Last resolved subject</strong>
+                <div id="identity-copy"></div>
+              </div>
+            </form>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const storageKey = "xconectb_reference_host_identity_v1";
+        const form = document.getElementById("entry-form");
+        const statusEl = document.getElementById("status");
+        const launchBtn = document.getElementById("launch-btn");
+        const identityCard = document.getElementById("identity");
+        const identityCopy = document.getElementById("identity-copy");
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const xappIdInput = document.getElementById("xappId");
+        const themeSelect = document.getElementById("host-theme-select");
+        const themeAliases = { slate: "harbor", graphite: "atlas" };
+        const validThemes = new Set(["harbor", "atlas", "copper", "emerald", "iris"]);
+        const currentUrl = new URL(window.location.href);
+
+        function syncSelectedModeUi() {
+          const modeInput = form.querySelector('input[name="mode"]:checked');
+          const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
+          document.body.dataset.entryMode = mode;
+        }
+
+        function readTheme() {
+          try {
+            const raw = String(
+              window.localStorage.getItem("xconectb_reference_host_theme_v1") || "",
+            ).trim();
+            const resolved = themeAliases[raw] || raw;
+            return validThemes.has(resolved) ? resolved : "harbor";
+          } catch {
+            return "harbor";
+          }
+        }
+
+        function applyTheme(theme, options = {}) {
+          const raw = String(theme || "").trim();
+          const resolved = validThemes.has(themeAliases[raw] || raw)
+            ? themeAliases[raw] || raw
+            : "harbor";
+          document.body.dataset.theme = resolved;
+          if (themeSelect) themeSelect.value = resolved;
+          if (options.persist === false) return resolved;
+          try {
+            window.localStorage.setItem("xconectb_reference_host_theme_v1", resolved);
+          } catch {
+            // ignore localStorage failures
+          }
+          return resolved;
+        }
+
+        function readStoredIdentity() {
+          try {
+            const raw = window.localStorage.getItem(storageKey) || "";
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === "object" ? parsed : null;
+          } catch {
+            return null;
+          }
+        }
+
+        function renderStoredIdentity(identity) {
+          if (!identity || !identity.subjectId) {
+            identityCard.hidden = true;
+            return;
+          }
+          identityCard.hidden = false;
+          identityCopy.textContent = `${identity.name || "Unknown"} · ${identity.email || "-"} · subject ${identity.subjectId}`;
+        }
+
+        function setBusy(busy, message) {
+          launchBtn.disabled = busy;
+          statusEl.textContent = message || "";
+          statusEl.className = message ? "status error" : "status";
+        }
+
+        function extractSubjectId(payload) {
+          const candidates = [
+            payload?.subjectId,
+            payload?.subject_id,
+            payload?.result?.subjectId,
+            payload?.result?.subject_id,
+          ];
+          for (const value of candidates) {
+            const normalized = String(value || "").trim();
+            if (normalized) return normalized;
+          }
+          return "";
+        }
+
+        async function resolveSubject(email, name) {
+          const response = await fetch("/api/resolve-subject", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, name }),
+          });
+          const raw = await response.text();
+          const payload = (() => {
+            try {
+              return raw ? JSON.parse(raw) : {};
+            } catch {
+              return {};
+            }
+          })();
+          if (!response.ok) {
+            throw new Error(String(payload?.message || "Failed to resolve subject"));
+          }
+          const subjectId = extractSubjectId(payload);
+          if (!subjectId) {
+            const preview = String(raw || "")
+              .trim()
+              .replace(/\s+/g, " ")
+              .slice(0, 220);
+            throw new Error(
+              `resolve-subject response missing subjectId${preview ? `: ${preview}` : ""}`,
+            );
+          }
+          return payload;
+        }
+
+        function launchSurface(mode, identity) {
+          const params = new URLSearchParams();
+          if (mode === "single-xapp") {
+            const xappId = String(xappIdInput.value || "").trim();
+            if (xappId) params.set("xappId", xappId);
+            window.location.href = `/single-xapp.html${params.toString() ? `?${params}` : ""}`;
+            return;
+          }
+          params.set("mode", mode === "split-panel" ? "split-panel" : "single-panel");
+          if (identity && identity.subjectId) params.set("subjectId", String(identity.subjectId));
+          window.location.href = `/marketplace.html?${params.toString()}`;
+        }
+
+        function renderEntryErrorFromQuery() {
+          const errorKey = String(currentUrl.searchParams.get("hostError") || "").trim();
+          if (errorKey !== "missing_identity") return;
+          statusEl.className = "status error";
+          statusEl.textContent =
+            "The tenant host could not continue because the browser identity was incomplete. Resolve the subject again from this entry page.";
+        }
+
+        form.addEventListener("change", (event) => {
+          if (event.target === themeSelect) {
+            applyTheme(themeSelect.value);
+            return;
+          }
+          if (event.target && event.target.name === "mode") {
+            syncSelectedModeUi();
+          }
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const mode = String(
+            form.querySelector('input[name="mode"]:checked')?.value || "single-panel",
+          );
+          const name = String(nameInput.value || "").trim();
+          const email = String(emailInput.value || "").trim();
+          if (!name || !email) {
+            setBusy(false, "Name and email are required.");
+            return;
+          }
+          try {
+            setBusy(true, "Resolving subject...");
+            const resolved = await resolveSubject(email, name);
+            const subjectId = extractSubjectId(resolved);
+            const identity = {
+              name,
+              email,
+              subjectId,
+            };
+            window.localStorage.setItem(storageKey, JSON.stringify(identity));
+            renderStoredIdentity(identity);
+            statusEl.className = "status";
+            statusEl.textContent = "";
+            launchBtn.disabled = false;
+            launchSurface(mode, identity);
+          } catch (error) {
+            launchBtn.disabled = false;
+            statusEl.className = "status error";
+            statusEl.textContent = String(error?.message || "Subject resolution failed");
+          }
+        });
+
+        applyTheme(readTheme(), { persist: false });
+        syncSelectedModeUi();
+        renderEntryErrorFromQuery();
+        renderStoredIdentity(readStoredIdentity());
+      })();
+    </script>
+  </body>
+</html>

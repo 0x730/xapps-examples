@@ -1,0 +1,17 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "xconectb/backend",
+  "type": "project",
+  "description": "Plain PHP public reference tenant backend for the Xapps tenant contract.",
+  "require": {
+    "php": "^8.2",
+    "xapps-platform/xapps-backend-kit": "^0.1.1",
+    "xapps-platform/xapps-php": "^0.1.1"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

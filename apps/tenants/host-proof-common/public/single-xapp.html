@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Hosted Single Xapp Workspace</title>
+    <link rel="stylesheet" href="/host/proof-host.css" />
+  </head>
+  <body data-mode="single-panel">
+    <div class="page">
+      <header class="topbar">
+        <div class="brand-copy">
+          <strong id="host-proof-name">Hosted Tenant Workspace</strong>
+          <span class="brand-subtitle">
+            <span id="host-proof-workspace">workspace</span> ·
+            <span id="host-proof-stack">stack</span>
+          </span>
+        </div>
+        <button id="host-header-toggle" class="topbar-toggle" type="button" aria-expanded="true">
+          Hide header
+        </button>
+        <div class="topbar-actions">
+          <div class="pill"><strong id="identity-name">-</strong></div>
+          <div class="pill" id="identity-email">-</div>
+          <div class="pill">subject <strong id="identity-subject">-</strong></div>
+          <select id="host-theme-select" aria-label="Choose host theme">
+            <option value="harbor">Harbor</option>
+            <option value="atlas">Atlas</option>
+            <option value="copper">Copper</option>
+            <option value="emerald">Emerald</option>
+            <option value="iris">Iris</option>
+          </select>
+          <div class="mode-switch">
+            <a class="mode-link" href="/marketplace.html?mode=single-panel">Single panel</a>
+            <a class="mode-link" href="/marketplace.html?mode=split-panel">Split panel</a>
+            <button class="mode-btn is-active" type="button">Single xapp</button>
+          </div>
+          <label>
+            <span>Xapp id</span>
+            <input id="xappId" type="text" value="01KKYA9CQKNTG3N9PWM0Z31Z09" />
+          </label>
+          <button id="loadXapp" type="button">Open xapp</button>
+          <a class="ghost-link" href="/">Back to launcher</a>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="intro">
+          <h1>Single-xapp workspace</h1>
+          <p>Open one deployed xapp directly while still using the remote tenant workspace.</p>
+        </div>
+        <div id="mode-shell"></div>
+      </section>
+    </div>
+
+    <div id="host-modal" class="host-modal-backdrop" aria-hidden="true">
+      <div
+        class="host-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="host-modal-title"
+      >
+        <h3 id="host-modal-title">Notice</h3>
+        <div id="host-modal-message"></div>
+        <div class="actions">
+          <button id="host-modal-close" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="toast-root" class="toasts"></div>
+    <script type="module" src="/host/proof-single-xapp-host.js"></script>
+  </body>
+</html>
