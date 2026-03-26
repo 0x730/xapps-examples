@@ -107,14 +107,7 @@ services:
       args:
         NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
     profiles: ["tenant-c"]
-    command:
-      [
-        "php",
-        "artisan",
-        "serve",
-        "--host=0.0.0.0",
-        "--port=${XCONECTC_PORT:-8001}",
-      ]
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${XCONECTC_PORT:-8001}"]
     environment:
       APP_ENV: ${XCONECTC_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_APP_DEBUG:-false}
@@ -147,14 +140,7 @@ services:
       args:
         NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
     profiles: ["tenant-c-host-proof"]
-    command:
-      [
-        "php",
-        "artisan",
-        "serve",
-        "--host=0.0.0.0",
-        "--port=${XCONECTC_HOST_PORT:-8002}",
-      ]
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${XCONECTC_HOST_PORT:-8002}"]
     environment:
       APP_ENV: ${XCONECTC_HOST_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_HOST_APP_DEBUG:-false}

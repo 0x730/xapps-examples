@@ -290,7 +290,9 @@ export function createPublisherWorkspaceApp({
       return reply.code(404).send({ ok: false, error: { message: "request not found" } });
     }
     if (!row.callback_token) {
-      return reply.code(400).send({ ok: false, error: { message: "request has no callback token" } });
+      return reply
+        .code(400)
+        .send({ ok: false, error: { message: "request has no callback token" } });
     }
     if (String(row.mode || XPLACE_REQUEST_MODES.MANUAL) !== XPLACE_REQUEST_MODES.MANUAL) {
       return reply
@@ -345,7 +347,12 @@ export function createPublisherWorkspaceApp({
     await repo.updateManualResponse({
       requestId,
       nextStatus,
-      resultRecordJson: { status, result, gateway_status: gatewayStatus, gateway_body: gatewayBody },
+      resultRecordJson: {
+        status,
+        result,
+        gateway_status: gatewayStatus,
+        gateway_body: gatewayBody,
+      },
       completedAt,
     });
 

@@ -37,14 +37,17 @@ export async function sendGatewayProgress({
 }) {
   if (!callbackToken) return;
   try {
-    const res = await fetch(`${gatewayBaseUrl}/v1/requests/${encodeURIComponent(requestId)}/events`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${callbackToken}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${gatewayBaseUrl}/v1/requests/${encodeURIComponent(requestId)}/events`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${callbackToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventBody),
       },
-      body: JSON.stringify(eventBody),
-    });
+    );
     const responseJson = await res.json().catch(() => null);
     await repo.insertCallbackAttempt({
       id: randomUUID(),
@@ -71,7 +74,13 @@ export async function sendGatewayProgress({
   }
 }
 
-export async function sendGatewayComplete({ gatewayBaseUrl, repo, requestId, callbackToken, body }) {
+export async function sendGatewayComplete({
+  gatewayBaseUrl,
+  repo,
+  requestId,
+  callbackToken,
+  body,
+}) {
   const res = await fetch(
     `${gatewayBaseUrl}/v1/requests/${encodeURIComponent(requestId)}/complete`,
     {

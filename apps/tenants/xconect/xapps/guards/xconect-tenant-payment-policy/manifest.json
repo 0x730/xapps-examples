@@ -14,13 +14,7 @@
       "hidden": true
     }
   },
-  "tags": [
-    "xconect",
-    "tenant",
-    "guards",
-    "payment",
-    "policy"
-  ],
+  "tags": ["xconect", "tenant", "guards", "payment", "policy"],
   "tools": [
     {
       "tool_name": "evaluate_tenant_payment_policy",
@@ -75,9 +69,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "allowed"
-        ]
+        "required": ["allowed"]
       }
     }
   ],
@@ -105,9 +97,7 @@
       "payment_type": "pay_by_request",
       "payment_issuer_mode": "owner_managed",
       "payment_scheme": "mock_manual",
-      "payment_allowed_issuers": [
-        "tenant"
-      ],
+      "payment_allowed_issuers": ["tenant"],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,

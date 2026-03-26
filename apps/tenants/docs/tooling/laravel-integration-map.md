@@ -19,9 +19,9 @@ full details:
 
 Today we have three relevant PHP/Laravel-adjacent reference shapes:
 
-| Shape                     | When to use it                                                                      | Reference                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Thin PHP tenant backend   | You want the tenant backend contract on PHP with minimal local app concerns         | [xconectb](../../xconectb/backend/README.md)      |
+| Shape                     | When to use it                                                                      | Reference                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Thin PHP tenant backend   | You want the tenant backend contract on PHP with minimal local app concerns         | [xconectb](../../xconectb/backend/README.md)   |
 | Laravel full tenant       | The tenant app itself owns auth, dashboard, business APIs, and marketplace surfaces | [xconectc](../../xconectc/README.md)           |
 | Laravel hosted integrator | The integrator shell is separate and bootstraps into the tenant backend             | [xconectc-host](../../xconectc-host/README.md) |
 

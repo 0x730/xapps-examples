@@ -1,11 +1,13 @@
 import { asObject, readString } from "./runtime.js";
 
 function slugToIdPrefix(workspaceName) {
-  return String(workspaceName || "xplace")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "") || "xplace";
+  return (
+    String(workspaceName || "xplace")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "") || "xplace"
+  );
 }
 
 export function createDemoPublisherSubjectProfiles({ workspaceName, displayPrefix = "Demo" }) {

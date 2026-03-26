@@ -25,6 +25,8 @@ COPY samples/package.json ./samples/package.json
 
 ARG NPM_INSTALL_MODE=ci
 
+RUN node -e "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json','utf8')); pkg.workspaces=['packages/*']; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\\n');"
+
 RUN --mount=type=cache,target=/root/.npm \
   export NODE_ENV=development \
   && export NPM_CONFIG_FETCH_RETRIES=5 \
@@ -40,7 +42,7 @@ RUN export NODE_ENV=development \
   && node scripts/build-server-sdk.mjs \
   && node scripts/build-browser-host.mjs \
   && node scripts/build-backend-kit.mjs \
-  && node deploy/scripts/assemble-runtime-tree.mjs partners-examples /runtime/app
+  && ASSEMBLE_RUNTIME_SKIP_NODE_MODULES=1 node deploy/scripts/assemble-runtime-tree.mjs partners-examples .runtime-image/partners-examples/app
 
 FROM composer:2 AS composer-bin
 
@@ -49,7 +51,7 @@ FROM php:8.5-cli AS runtime
 WORKDIR /app
 
 COPY --from=composer-bin /usr/bin/composer /usr/local/bin/composer
-COPY --from=builder /runtime/app/ ./
+COPY --from=builder /app/.runtime-image/partners-examples/app/ ./
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends git unzip \
