@@ -2,7 +2,7 @@
   "name": "Xconect • Tenant Subject Profile Policy",
   "slug": "xconect-tenant-subject-profile-policy",
   "description": "Tenant-owned subject-profile guard defaults for billing/customer profile selection and remediation.",
-  "version": "1.0.162",
+  "version": "1.0.171",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {

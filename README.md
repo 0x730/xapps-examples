@@ -19,3 +19,13 @@ Dependency rule:
 - prefer the latest published stable versions by default
 - keep canonical app names in this repo/export surface
 - use `-example` only for deploy hostnames/domains, not for app folder names
+
+Install rule:
+
+- run `npm install` at the repo root to hydrate shared browser/runtime dependencies and the small Node tooling used by the host starter surfaces
+- run Composer installs inside the PHP/Laravel starter apps as needed
+
+Root helper commands:
+
+- `npm run dev:xconect-host`
+- `npm run dev:xconectb-host`
