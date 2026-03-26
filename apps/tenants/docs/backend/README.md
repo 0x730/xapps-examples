@@ -30,9 +30,9 @@ Use the backend kit first:
 Use primitive SDKs only when you need a deeper override seam:
 
 - Node:
-  - [docs/packages/server-sdk.md](../../../../docs/packages/server-sdk.md)
+  - <https://github.com/0x730/xapps-sdk-js/tree/main/packages/server-sdk#readme>
 - PHP:
-  - [docs/packages/xapps-php.md](../../../../docs/packages/xapps-php.md)
+  - <https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php#readme>
 
 Package `src/...` links below are source anchors for maintainers and reviewers,
 not the preferred consumer surface.

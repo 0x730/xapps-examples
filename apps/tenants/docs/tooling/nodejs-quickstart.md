@@ -37,7 +37,7 @@ The tenant provides:
 
 Use:
 
-- [docs/packages/backend-kit.md](../../../../docs/packages/backend-kit.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/backend-kit#readme>
 - [../backend/README.md](../backend/README.md)
 
 Recommended path:
@@ -80,8 +80,8 @@ Important boundary:
 
 Use:
 
-- [docs/packages/browser-host.md](../../../../docs/packages/browser-host.md)
-- [docs/packages/xapps-embed-sdk.md](../../../../docs/packages/xapps-embed-sdk.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/browser-host#readme>
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/xapps-embed-sdk#readme>
 
 Recommended browser contract:
 

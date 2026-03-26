@@ -31,7 +31,7 @@ Drop to the primitive SDKs only when needed:
 
 Use the backend kit first:
 
-- [docs/packages/backend-kit.md](../../../../docs/packages/backend-kit.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/backend-kit#readme>
 
 Why:
 
@@ -42,15 +42,15 @@ Why:
 
 Use the primitive SDKs only when the tenant needs a deeper custom seam:
 
-- [docs/packages/server-sdk.md](../../../../docs/packages/server-sdk.md)
-- [docs/packages/xapps-php.md](../../../../docs/packages/xapps-php.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/server-sdk#readme>
+- <https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php#readme>
 
 ### Browser Host
 
 Use:
 
-- [docs/packages/browser-host.md](../../../../docs/packages/browser-host.md)
-- [docs/packages/xapps-embed-sdk.md](../../../../docs/packages/xapps-embed-sdk.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/browser-host#readme>
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/xapps-embed-sdk#readme>
 
 Why:
 
@@ -72,7 +72,7 @@ Hosted-integrator references:
 
 Use:
 
-- [docs/packages/xapps-cli.md](../../../../docs/packages/xapps-cli.md)
+- `xapps` CLI
 
 Why:
 

@@ -48,7 +48,7 @@ The tenant provides:
 
 Use:
 
-- [docs/packages/backend-kit.md](../../../../docs/packages/backend-kit.md)
+- <https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-backend-kit-php#readme>
 - [../backend/README.md](../backend/README.md)
 
 Recommended path:
@@ -114,8 +114,8 @@ The browser path stays the same even if the backend is PHP.
 
 Use:
 
-- [docs/packages/browser-host.md](../../../../docs/packages/browser-host.md)
-- [docs/packages/xapps-embed-sdk.md](../../../../docs/packages/xapps-embed-sdk.md)
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/browser-host#readme>
+- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/xapps-embed-sdk#readme>
 
 Recommended browser contract:
 

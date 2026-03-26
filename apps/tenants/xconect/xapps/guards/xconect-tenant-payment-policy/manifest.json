@@ -2,7 +2,7 @@
   "name": "Xconect • Tenant Payment Policy (Tenant-Managed)",
   "slug": "xconect-tenant-payment-policy",
   "description": "Tenant-owned tenant-managed payment guard xapp for xconect pay-per-request policy orchestration.",
-  "version": "1.1.222",
+  "version": "1.1.225",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
