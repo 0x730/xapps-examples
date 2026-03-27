@@ -28,13 +28,24 @@ Current deployment rule:
 - `xplace-example` is the broader public/example publisher fleet
 - it should carry the full current four-xapp set from `xplace`
 - it is the intended publisher side for:
-  - `xconect` when you are exercising the public example/reference lane
+  - `xconecta` when you are exercising the public example/reference lane
   - `xconectb`
   - `xconectc`
-  - `xconect-host`
+  - `xconecta-host`
   - `xconectb-host`
   - `xconectc-host`
 - private production `xconect` + `xconect-host` remain paired with private `xplace`
+
+Current public-release note:
+
+- the public starter/reference export is now released as `xapps-examples@v0.1.6`
+- deploy-time example naming uses:
+  - `xconecta-example`
+  - `xconecta-example-host`
+  - `xconectb-example`
+  - `xconectb-example-host`
+  - `xconectc-example`
+  - `xconectc-example-host`
 
 Current workspace pieces:
 

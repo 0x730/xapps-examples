@@ -141,8 +141,10 @@ Current deployment split:
 Current tenant mapping:
 
 - `xconect` stays on the private production `xplace` lane
+- `xconecta`
 - `xconectb`
 - `xconectc`
+- `xconecta-host`
 - `xconectb-host`
 - `xconectc-host`
   use the broader `xplace-example` fleet
@@ -168,7 +170,12 @@ Current implication:
 - keep production deploy language centered on private `xplace`
 - carry `xplace-example` explicitly on the broader example/reference lane
 - keep `xconect` tied to the narrow production lane
-- use the example lane for `xconectb` / `xconectc` and their host variants
+- use the example lane for `xconecta` / `xconectb` / `xconectc` and their host variants
+
+Current acceptance note:
+
+- `deploy/modes/partners-examples/` is now the active second-server public reference lane
+- the public GitHub-only examples export is released as `xapps-examples@v0.1.6`
 
 ## Non-goals
 

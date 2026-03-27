@@ -55,10 +55,10 @@ class AuthController extends Controller
             Auth::login($user);
         }
 
-        $code = base64_encode(json_encode(array(
+        $code = $this->encodeAuthorizationCode(array(
             'userId' => $userRecord->id,
             'exp' => time() + 600
-        )));
+        ));
 
         if (!$redirectUri) {
             return redirect('/dashboard');
@@ -135,7 +135,7 @@ class AuthController extends Controller
         }
 
         try {
-            $payload = json_decode(base64_decode($request->input('code')), true);
+            $payload = $this->decodeAuthorizationCode((string) $request->input('code'));
             if ($payload['exp'] < time()) {
                 return response()->json(array('error' => 'invalid_grant', 'message' => 'Code expired'), 400);
             }
@@ -167,6 +167,34 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json(array('error' => 'invalid_grant', 'message' => 'Invalid code'), 400);
         }
+    }
+
+    private function encodeAuthorizationCode(array $payload): string
+    {
+        return rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=');
+    }
+
+    private function decodeAuthorizationCode(string $encoded): array
+    {
+        $normalized = trim($encoded);
+        $normalized = str_replace(' ', '+', $normalized);
+        $normalized = strtr($normalized, '-_', '+/');
+        $padding = strlen($normalized) % 4;
+        if ($padding > 0) {
+            $normalized .= str_repeat('=', 4 - $padding);
+        }
+
+        $decoded = base64_decode($normalized, true);
+        if ($decoded === false) {
+            throw new \InvalidArgumentException('Code is not valid base64');
+        }
+
+        $payload = json_decode($decoded, true);
+        if (!is_array($payload) || !isset($payload['userId'], $payload['exp'])) {
+            throw new \InvalidArgumentException('Code payload is invalid');
+        }
+
+        return $payload;
     }
 
     public function openidConfiguration()
