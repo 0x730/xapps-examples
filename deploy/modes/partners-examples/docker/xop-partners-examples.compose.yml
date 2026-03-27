@@ -14,15 +14,15 @@ services:
       XCONECT_PORT: ${XCONECT_PORT:-3312}
       XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
       GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
-      XCONECT_GATEWAY_API_KEY: ${XCONECT_GATEWAY_API_KEY:-}
-      XCONECT_GUARD_INGEST_API_KEY: ${XCONECT_GUARD_INGEST_API_KEY:-}
-      XCONECT_ALLOWED_ORIGINS: ${XCONECT_ALLOWED_ORIGINS:-}
-      XCONECT_HOST_BOOTSTRAP_API_KEYS: ${XCONECT_HOST_BOOTSTRAP_API_KEYS:-}
-      XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET: ${XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET:-}
-      XCONECT_TENANT_PAYMENT_URL: ${XCONECT_TENANT_PAYMENT_URL:-}
-      XCONECT_TENANT_PAYMENT_RETURN_SECRET: ${XCONECT_TENANT_PAYMENT_RETURN_SECRET:-}
-      XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF: ${XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF:-}
-      XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST: ${XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST:-}
+      XCONECT_GATEWAY_API_KEY: ${XCONECTA_GATEWAY_API_KEY:-${XCONECTA_TENANT_API_KEY:-}}
+      XCONECT_GUARD_INGEST_API_KEY: ${XCONECTA_GUARD_INGEST_API_KEY:-}
+      XCONECT_ALLOWED_ORIGINS: ${XCONECTA_ALLOWED_ORIGINS:-}
+      XCONECT_HOST_BOOTSTRAP_API_KEYS: ${XCONECTA_HOST_BOOTSTRAP_API_KEYS:-}
+      XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET: ${XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET:-}
+      XCONECT_TENANT_PAYMENT_URL: ${XCONECTA_TENANT_PAYMENT_URL:-}
+      XCONECT_TENANT_PAYMENT_RETURN_SECRET: ${XCONECTA_TENANT_PAYMENT_RETURN_SECRET:-}
+      XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF: ${XCONECTA_TENANT_PAYMENT_RETURN_SECRET_REF:-}
+      XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST: ${XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST:-}
     ports:
       - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECT_PORT:-3312}:3312"
 
@@ -34,10 +34,10 @@ services:
     command: ["node", "--import", "tsx", "apps/tenants/xconect-host/server.ts"]
     environment:
       XCONECT_HOST_PORT: ${XCONECT_HOST_PORT:-3412}
-      XCONECT_HOST_BACKEND_BASE_URL: ${XCONECT_HOST_BACKEND_BASE_URL:-${XCONECT_PUBLIC_BASE_URL:-https://xconect-example.0x730.com}}
+      XCONECT_HOST_BACKEND_BASE_URL: ${XCONECTA_HOST_BACKEND_BASE_URL:-${XCONECTA_PUBLIC_BASE_URL:-https://xconecta-example.0x730.com}}
       XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL: ${XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL:-http://xconect:${XCONECT_PORT:-3312}}
-      XCONECT_HOST_PUBLIC_BASE_URL: ${XCONECT_HOST_PUBLIC_BASE_URL:-https://xconect-example-host.0x730.com}
-      XCONECT_HOST_BOOTSTRAP_API_KEY: ${XCONECT_HOST_BOOTSTRAP_API_KEY:-${XCONECT_HOST_BOOTSTRAP_API_KEYS:-}}
+      XCONECT_HOST_PUBLIC_BASE_URL: ${XCONECTA_HOST_PUBLIC_BASE_URL:-https://xconecta-example-host.0x730.com}
+      XCONECT_HOST_BOOTSTRAP_API_KEY: ${XCONECTA_HOST_BOOTSTRAP_API_KEY:-${XCONECTA_HOST_BOOTSTRAP_API_KEYS:-}}
     ports:
       - "${XOP_PARTNERS_BIND_IP:-127.0.0.1}:${XCONECT_HOST_PORT:-3412}:3412"
     depends_on:
@@ -107,13 +107,22 @@ services:
       args:
         NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
     profiles: ["tenant-c"]
-    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${XCONECTC_PORT:-8001}"]
+    command:
+      [
+        "sh",
+        "-lc",
+        "mkdir -p /app/apps/tenants/xconectc/database && touch /app/apps/tenants/xconectc/database/database.sqlite && php /app/apps/tenants/xconectc/artisan migrate --force && php /app/apps/tenants/xconectc/artisan db:seed --force && php /app/apps/tenants/xconectc/artisan serve --host=0.0.0.0 --port=${XCONECTC_PORT:-8001}",
+      ]
     environment:
       APP_ENV: ${XCONECTC_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_APP_DEBUG:-false}
+      APP_KEY: ${XCONECTC_APP_KEY:-base64:4aQNHs2PAAv8bEzkE0dS+DR23B8DQdnMfh4hGZhqJbQ=}
       APP_URL: ${XCONECTC_PUBLIC_BASE_URL:-https://xconectc-example.0x730.com}
       DB_CONNECTION: sqlite
-      DB_DATABASE: database/database.sqlite
+      DB_DATABASE: /app/apps/tenants/xconectc/database/database.sqlite
+      SESSION_DRIVER: ${XCONECTC_SESSION_DRIVER:-file}
+      CACHE_STORE: ${XCONECTC_CACHE_STORE:-file}
+      QUEUE_CONNECTION: ${XCONECTC_QUEUE_CONNECTION:-sync}
       XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
       GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
       XAPPS_API_KEY: ${XCONECTC_TENANT_API_KEY:-}
@@ -140,13 +149,22 @@ services:
       args:
         NPM_INSTALL_MODE: ${NPM_INSTALL_MODE:-ci}
     profiles: ["tenant-c-host-proof"]
-    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${XCONECTC_HOST_PORT:-8002}"]
+    command:
+      [
+        "sh",
+        "-lc",
+        "mkdir -p /app/apps/tenants/xconectc-host/database && touch /app/apps/tenants/xconectc-host/database/database.sqlite && php /app/apps/tenants/xconectc-host/artisan migrate --force && php /app/apps/tenants/xconectc-host/artisan db:seed --force && php /app/apps/tenants/xconectc-host/artisan serve --host=0.0.0.0 --port=${XCONECTC_HOST_PORT:-8002}",
+      ]
     environment:
       APP_ENV: ${XCONECTC_HOST_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_HOST_APP_DEBUG:-false}
+      APP_KEY: ${XCONECTC_HOST_APP_KEY:-base64:4aQNHs2PAAv8bEzkE0dS+DR23B8DQdnMfh4hGZhqJbQ=}
       APP_URL: ${XCONECTC_HOST_PUBLIC_BASE_URL:-https://xconectc-example-host.0x730.com}
       DB_CONNECTION: sqlite
-      DB_DATABASE: database/database.sqlite
+      DB_DATABASE: /app/apps/tenants/xconectc-host/database/database.sqlite
+      SESSION_DRIVER: ${XCONECTC_HOST_SESSION_DRIVER:-file}
+      CACHE_STORE: ${XCONECTC_HOST_CACHE_STORE:-file}
+      QUEUE_CONNECTION: ${XCONECTC_HOST_QUEUE_CONNECTION:-sync}
       XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
       XAPPS_API_KEY: ${XCONECTC_HOST_BOOTSTRAP_API_KEY:-}
       PUBLISHER_API_URL: ${XCONECTC_HOST_PUBLISHER_API_URL:-http://xplace-example:${XPLACE_EXAMPLE_PORT:-3016}}

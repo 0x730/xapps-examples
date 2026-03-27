@@ -21,7 +21,7 @@ source <(sed -e 's/\r$//' "${ENV_FILE}")
 set +a
 
 if [[ "${SKIP_PREFLIGHT:-0}" != "1" ]]; then
-  ENV_FILE="${ENV_FILE}" "${SCRIPT_DIR}/xop-partners-examples-preflight.sh"
+  ENV_FILE="${ENV_FILE}" bash "${SCRIPT_DIR}/xop-partners-examples-preflight.sh"
 fi
 
 compose_up() {

@@ -1,3 +1,3 @@
 import { runRootScript } from "./_runRootScript.mjs";
 
-runRootScript("scripts/provision-xconect-policy-publisher.ts");
+runRootScript("scripts/provision/provision-xconect-policy-publisher.ts");

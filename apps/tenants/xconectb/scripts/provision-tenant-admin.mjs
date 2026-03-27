@@ -1,3 +1,3 @@
 import { runRootScript } from "./_runRootScript.mjs";
 
-runRootScript("scripts/provision-xconectb-tenant-admin.ts");
+runRootScript("scripts/provision/provision-xconectb-tenant-admin.ts");

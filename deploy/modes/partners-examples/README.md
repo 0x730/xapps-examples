@@ -36,8 +36,8 @@ cp deploy/modes/partners-examples/env/xop-partners-examples.env.example \
 Practical rule:
 
 - this folder is the public reference lane only
-- keep `xconect` / `xconect-host` on example-specific public domains here
-  rather than reusing production hostnames
+- keep the `xconect` example runtime wired to the gateway tenant/profile `xconecta`
+- keep example public domains here rather than reusing production hostnames
 
 ## What To Edit
 
@@ -59,8 +59,8 @@ Then:
 
 ## Nginx Templates
 
-- [xconect-example.0x730.com.conf](nginx/xconect-example.0x730.com.conf)
-- [xconect-example-host.0x730.com.conf](nginx/xconect-example-host.0x730.com.conf)
+- [xconecta-example.0x730.com.conf](nginx/xconecta-example.0x730.com.conf)
+- [xconecta-example-host.0x730.com.conf](nginx/xconecta-example-host.0x730.com.conf)
 - [xconectb-example.0x730.com.conf](nginx/xconectb-example.0x730.com.conf)
 - [xconectb-example-host.0x730.com.conf](nginx/xconectb-example-host.0x730.com.conf)
 - [xconectc-example.0x730.com.conf](nginx/xconectc-example.0x730.com.conf)

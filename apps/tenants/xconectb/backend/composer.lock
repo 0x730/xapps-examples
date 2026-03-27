@@ -1,0 +1,107 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "dbabfe6823f3c1a08915530ed6f04edd",
+    "packages": [
+        {
+            "name": "xapps-platform/xapps-backend-kit",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/0x730/xapps-backend-kit-php.git",
+                "reference": "254ea5cc8ac48d6de30fd99d538ae90ee82f5aec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/254ea5cc8ac48d6de30fd99d538ae90ee82f5aec",
+                "reference": "254ea5cc8ac48d6de30fd99d538ae90ee82f5aec",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "xapps-platform/xapps-php": "^0.1.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Xapps\\BackendKit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Vladescu",
+                    "email": "daniel.vladescu@gmail.com"
+                }
+            ],
+            "description": "Modular PHP backend kit for the current Xapps backend contract (tenant surface today, shared actor-adapter direction later)",
+            "homepage": "https://gateway.0x730.com",
+            "support": {
+                "issues": "https://github.com/0x730/xapps-sdk-php/issues",
+                "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-backend-kit-php"
+            },
+            "time": "2026-03-26T23:36:15+00:00"
+        },
+        {
+            "name": "xapps-platform/xapps-php",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/0x730/xapps-php.git",
+                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
+                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Xapps\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Vladescu",
+                    "email": "daniel.vladescu@gmail.com"
+                }
+            ],
+            "description": "PHP SDK for Xapps publisher/tenant backend integrations",
+            "homepage": "https://gateway.0x730.com",
+            "support": {
+                "issues": "https://github.com/0x730/xapps-sdk-php/issues",
+                "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
+            },
+            "time": "2026-03-26T23:34:29+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^8.2"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}

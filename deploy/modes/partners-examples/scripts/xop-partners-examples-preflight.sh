@@ -90,23 +90,23 @@ require_csv_contains() {
 }
 
 require_http_url "INTERNAL_GATEWAY_BASE_URL"
-require_http_url "XCONECT_PUBLIC_BASE_URL"
-require_non_empty "XCONECT_GATEWAY_API_KEY"
-require_non_empty "XCONECT_GUARD_INGEST_API_KEY"
-if [[ -z "${XCONECT_TENANT_PAYMENT_RETURN_SECRET:-}" && -z "${XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF:-}" ]]; then
-  echo "[xop-partners-examples-preflight] Missing required xconect signing config: set XCONECT_TENANT_PAYMENT_RETURN_SECRET or XCONECT_TENANT_PAYMENT_RETURN_SECRET_REF"
+require_http_url "XCONECTA_PUBLIC_BASE_URL"
+require_non_empty "XCONECTA_TENANT_API_KEY"
+require_non_empty "XCONECTA_GUARD_INGEST_API_KEY"
+if [[ -z "${XCONECTA_TENANT_PAYMENT_RETURN_SECRET:-}" && -z "${XCONECTA_TENANT_PAYMENT_RETURN_SECRET_REF:-}" ]]; then
+  echo "[xop-partners-examples-preflight] Missing required xconecta signing config: set XCONECTA_TENANT_PAYMENT_RETURN_SECRET or XCONECTA_TENANT_PAYMENT_RETURN_SECRET_REF"
   errors=$((errors + 1))
 fi
-require_csv_contains "XCONECT_ALLOWED_ORIGINS" "${XCONECT_PUBLIC_BASE_URL:-}" "xconect allowed origins"
-require_csv_contains "XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECT_PUBLIC_BASE_URL:-}" "xconect payment return allowlist"
-require_pair_if_any "XCONECT_HOST_BOOTSTRAP_API_KEYS" "XCONECT_HOST_BOOTSTRAP_SIGNING_SECRET" "xconect host bootstrap"
+require_csv_contains "XCONECTA_ALLOWED_ORIGINS" "${XCONECTA_PUBLIC_BASE_URL:-}" "xconecta allowed origins"
+require_csv_contains "XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTA_PUBLIC_BASE_URL:-}" "xconecta payment return allowlist"
+require_pair_if_any "XCONECTA_HOST_BOOTSTRAP_API_KEYS" "XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET" "xconecta host bootstrap"
 if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
-  require_http_url "XCONECT_HOST_PUBLIC_BASE_URL"
-  require_http_url "XCONECT_HOST_BACKEND_BASE_URL"
+  require_http_url "XCONECTA_HOST_PUBLIC_BASE_URL"
+  require_http_url "XCONECTA_HOST_BACKEND_BASE_URL"
   require_http_url "XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL"
-  require_non_empty "XCONECT_HOST_BOOTSTRAP_API_KEY"
-  require_csv_contains "XCONECT_ALLOWED_ORIGINS" "${XCONECT_HOST_PUBLIC_BASE_URL:-}" "xconect allowed origins"
-  require_csv_contains "XCONECT_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECT_HOST_PUBLIC_BASE_URL:-}" "xconect payment return allowlist"
+  require_non_empty "XCONECTA_HOST_BOOTSTRAP_API_KEY"
+  require_csv_contains "XCONECTA_ALLOWED_ORIGINS" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta allowed origins"
+  require_csv_contains "XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta payment return allowlist"
 fi
 if [[ "${ENABLE_XCONECTB:-0}" == "1" ]]; then
   require_http_url "XCONECTB_PUBLIC_BASE_URL"

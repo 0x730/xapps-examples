@@ -2,7 +2,7 @@
   "name": "Xconect • Tenant Payment Policy (Tenant-Delegated Stripe)",
   "slug": "xconect-tenant-payment-policy-stripe-delegated",
   "description": "Tenant-owned tenant-delegated Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout with tenant-scoped credentials).",
-  "version": "1.0.126",
+  "version": "1.0.135",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {

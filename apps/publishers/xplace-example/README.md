@@ -47,9 +47,9 @@ Current workspace pieces:
   - [scripts/provision-publisher-admin.mjs](./scripts/provision-publisher-admin.mjs)
   - [scripts/prepare-republish-manifests.mjs](./scripts/prepare-republish-manifests.mjs)
 - root entrypoints:
-  - [scripts/provision-xplace-example-publisher.mjs](../../../scripts/provision-xplace-example-publisher.mjs)
-  - [scripts/provision-xplace-example-publisher-admin.mjs](../../../scripts/provision-xplace-example-publisher-admin.mjs)
-  - [scripts/prepare-xplace-example-republish-manifests.mjs](../../../scripts/prepare-xplace-example-republish-manifests.mjs)
+  - [scripts/provision/provision-xplace-example-publisher.mjs](../../../scripts/provision/provision-xplace-example-publisher.mjs)
+  - [scripts/provision/provision-xplace-example-publisher-admin.mjs](../../../scripts/provision/provision-xplace-example-publisher-admin.mjs)
+  - [scripts/prepare/prepare-xplace-example-republish-manifests.mjs](../../../scripts/prepare/prepare-xplace-example-republish-manifests.mjs)
 - docs:
   - [docs/README.md](./docs/README.md)
   - [docs/IMPLEMENTATION_MAP.md](./docs/IMPLEMENTATION_MAP.md)

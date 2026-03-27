@@ -80,7 +80,9 @@ wait_for_health_ok() {
 const fs = require("node:fs");
 const raw = fs.readFileSync(0, "utf8");
 const data = JSON.parse(raw);
-if (data.ok !== true) process.exit(1);
+if (data.ok === true) process.exit(0);
+if (String(data.status || "").trim().toLowerCase() === "ok") process.exit(0);
+process.exit(1);
 ' >/dev/null 2>&1; then
       return 0
     fi
@@ -99,9 +101,13 @@ if (data.ok !== true) process.exit(1);
 print_service_debug() {
   local service="$1"
   echo "[xop-partners-examples-verify] --- ${service} status ---"
-  docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps "${service}" || true
+  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps "${service}"; then
+    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps || true
+  fi
   echo "[xop-partners-examples-verify] --- ${service} logs (last 120) ---"
-  docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" logs --tail 120 "${service}" || true
+  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" logs --tail 120 "${service}"; then
+    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" logs --tail 120 || true
+  fi
 }
 
 XCONECT_URL="${VERIFY_XCONECT_URL:-http://localhost:${XCONECT_PORT:-3312}}"
@@ -111,6 +117,8 @@ XCONECTC_URL="${VERIFY_XCONECTC_URL:-http://localhost:${XCONECTC_PORT:-8001}}"
 XCONECTC_HOST_URL="${VERIFY_XCONECTC_HOST_URL:-http://localhost:${XCONECTC_HOST_PORT:-8002}}"
 XCONECT_HOST_URL="${VERIFY_XCONECT_HOST_URL:-http://localhost:${XCONECT_HOST_PORT:-3412}}"
 XCONECTB_HOST_URL="${VERIFY_XCONECTB_HOST_URL:-http://localhost:${XCONECTB_HOST_PORT:-3413}}"
+XCONECTC_HEALTH_URL="${VERIFY_XCONECTC_HEALTH_URL:-${XCONECTC_URL}/api/health}"
+XCONECTC_HOST_HEALTH_URL="${VERIFY_XCONECTC_HOST_HEALTH_URL:-${XCONECTC_HOST_URL}/api/health}"
 
 if ! wait_for_health_ok "${XCONECT_URL}/health" "xconect health"; then
   print_service_debug "xconect"
@@ -165,12 +173,12 @@ if [[ "${ENABLE_XCONECTB_HOST:-0}" == "1" ]]; then
   fi
 fi
 if [[ "${ENABLE_XCONECTC:-0}" == "1" ]]; then
-  if ! wait_for_health_ok "${XCONECTC_URL}/health" "xconectc health"; then
+  if ! wait_for_health_ok "${XCONECTC_HEALTH_URL}" "xconectc health"; then
     print_service_debug "xconectc"
     exit 1
   fi
   if [[ "${ENABLE_XCONECTC_HOST:-0}" == "1" ]]; then
-    if ! wait_for_health_ok "${XCONECTC_HOST_URL}/health" "xconectc-host health"; then
+    if ! wait_for_health_ok "${XCONECTC_HOST_HEALTH_URL}" "xconectc-host health"; then
       print_service_debug "xconectc-host"
       exit 1
     fi

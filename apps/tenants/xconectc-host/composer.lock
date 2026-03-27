@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab0c7b9ae666926d1afbaa9e12a3f485",
+    "content-hash": "774eccf190f1d139a6c71c202d0ffacc",
     "packages": [
         {
             "name": "brick/math",
@@ -6069,16 +6069,16 @@
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "v0.1.1",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/0x730/xapps-php.git",
-                "reference": "729bb38febbcb16536e04429d57d6c7bdfe4d1f6"
+                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/729bb38febbcb16536e04429d57d6c7bdfe4d1f6",
-                "reference": "729bb38febbcb16536e04429d57d6c7bdfe4d1f6",
+                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
+                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
                 "shasum": ""
             },
             "require": {
@@ -6106,7 +6106,7 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
             },
-            "time": "2026-03-25T07:22:16+00:00"
+            "time": "2026-03-26T23:34:29+00:00"
         }
     ],
     "packages-dev": [

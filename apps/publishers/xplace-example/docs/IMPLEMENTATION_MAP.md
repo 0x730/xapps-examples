@@ -117,9 +117,9 @@ When the next technical step begins, start in this order:
 Current note on provisioning wrappers:
 
 - `xplace-example` now has its own root registration and republish entrypoints:
-  - `scripts/provision-xplace-example-publisher.mjs`
-  - `scripts/provision-xplace-example-publisher-admin.mjs`
-  - `scripts/prepare-xplace-example-republish-manifests.mjs`
+  - `scripts/provision/provision-xplace-example-publisher.mjs`
+  - `scripts/provision/provision-xplace-example-publisher-admin.mjs`
+  - `scripts/prepare/prepare-xplace-example-republish-manifests.mjs`
 - those entrypoints still reuse the same current xapp source tree while the publisher shells are splitting
 - the next change should be manifest/source ownership only when `xplace-example` needs its own version cadence
 

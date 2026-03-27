@@ -1,3 +1,3 @@
 import { runRootScript } from "./_runRootScript.mjs";
 
-runRootScript("scripts/provision-xplace-example-publisher.mjs", { useTsx: false });
+runRootScript("scripts/provision/provision-xplace-example-publisher.mjs", { useTsx: false });

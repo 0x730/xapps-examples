@@ -38,10 +38,10 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 
 RUN export NODE_ENV=development \
-  && node scripts/build-embed-sdk.mjs \
-  && node scripts/build-server-sdk.mjs \
-  && node scripts/build-browser-host.mjs \
-  && node scripts/build-backend-kit.mjs \
+  && node scripts/build/build-embed-sdk.mjs \
+  && node scripts/build/build-server-sdk.mjs \
+  && node scripts/build/build-browser-host.mjs \
+  && node scripts/build/build-backend-kit.mjs \
   && ASSEMBLE_RUNTIME_SKIP_NODE_MODULES=1 node deploy/scripts/assemble-runtime-tree.mjs partners-examples .runtime-image/partners-examples/app
 
 FROM composer:2 AS composer-bin
