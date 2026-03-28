@@ -1,8 +1,15 @@
 {
   "name": "Xconect • Tenant Payment Policy (Tenant-Managed)",
+  "title": {
+    "en": "Xconect • Tenant Payment Policy (Tenant-Managed)",
+    "ro": "Xconect • Politică de plată tenant (gestionată de tenant)"
+  },
   "slug": "xconect-tenant-payment-policy",
-  "description": "Tenant-owned tenant-managed payment guard xapp for xconect pay-per-request policy orchestration.",
-  "version": "1.1.269",
+  "description": {
+    "en": "Tenant-owned tenant-managed payment guard xapp for xconect pay-per-request policy orchestration.",
+    "ro": "Xapp de gardă de plată deținut de tenant pentru orchestrarea politicii xconect pay-per-request în regim gestionat de tenant."
+  },
+  "version": "1.1.276",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
@@ -18,8 +25,14 @@
   "tools": [
     {
       "tool_name": "evaluate_tenant_payment_policy",
-      "title": "Evaluate Tenant Payment Policy",
-      "description": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+      "title": {
+        "en": "Evaluate Tenant Payment Policy",
+        "ro": "Evaluează politica de plată a tenantului"
+      },
+      "description": {
+        "en": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+        "ro": "Întoarce decizia gărzii de plată cu metadate opționale de orchestrare UI pentru fluxurile redirect-and-resume."
+      },
       "input_schema": {
         "type": "object",
         "properties": {
@@ -76,7 +89,10 @@
   "widgets": [
     {
       "widget_name": "xconect_tenant_payment_policy_guard",
-      "title": "Xconect Tenant Payment Policy (Tenant-Managed)",
+      "title": {
+        "en": "Xconect Tenant Payment Policy (Tenant-Managed)",
+        "ro": "Politică de plată Xconect tenant (gestionată de tenant)"
+      },
       "type": "read",
       "renderer": "platform",
       "bind_tool_name": "evaluate_tenant_payment_policy",

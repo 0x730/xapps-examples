@@ -1,8 +1,15 @@
 {
   "name": "Xconect • Tenant Payment Policy (Tenant-Delegated Stripe)",
+  "title": {
+    "en": "Xconect • Tenant Payment Policy (Tenant-Delegated Stripe)",
+    "ro": "Xconect • Politică de plată tenant (Stripe delegat tenantului)"
+  },
   "slug": "xconect-tenant-payment-policy-stripe-delegated",
-  "description": "Tenant-owned tenant-delegated Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout with tenant-scoped credentials).",
-  "version": "1.0.170",
+  "description": {
+    "en": "Tenant-owned tenant-delegated Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout with tenant-scoped credentials).",
+    "ro": "Xapp de gardă de plată Stripe delegat tenantului, deținut de tenant, pentru xconect (checkout Stripe găzduit de gateway cu credențiale specifice tenantului)."
+  },
+  "version": "1.0.177",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
@@ -18,8 +25,14 @@
   "tools": [
     {
       "tool_name": "evaluate_tenant_payment_policy",
-      "title": "Evaluate Tenant Payment Policy",
-      "description": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+      "title": {
+        "en": "Evaluate Tenant Payment Policy",
+        "ro": "Evaluează politica de plată a tenantului"
+      },
+      "description": {
+        "en": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+        "ro": "Întoarce decizia gărzii de plată cu metadate opționale de orchestrare UI pentru fluxurile redirect-and-resume."
+      },
       "input_schema": {
         "type": "object",
         "properties": {
@@ -76,7 +89,10 @@
   "widgets": [
     {
       "widget_name": "xconect_tenant_payment_policy_stripe_delegated_guard",
-      "title": "Xconect Tenant Payment Policy (Tenant-Delegated Stripe)",
+      "title": {
+        "en": "Xconect Tenant Payment Policy (Tenant-Delegated Stripe)",
+        "ro": "Politică de plată Xconect tenant (Stripe delegat tenantului)"
+      },
       "type": "read",
       "renderer": "platform",
       "bind_tool_name": "evaluate_tenant_payment_policy",
@@ -113,30 +129,69 @@
       },
       "payment_ui": {
         "brand": {
-          "name": "Xconect Tenant",
+          "name": {
+            "en": "Xconect Tenant",
+            "ro": "Tenant Xconect"
+          },
           "accent": "#635bff"
         },
         "copy": {
-          "title": "Xconect Tenant",
-          "subtitle": "Tenant-delegated Stripe checkout"
+          "title": {
+            "en": "Xconect Tenant",
+            "ro": "Tenant Xconect"
+          },
+          "subtitle": {
+            "en": "Tenant-delegated Stripe checkout",
+            "ro": "Checkout Stripe delegat tenantului"
+          }
         },
         "schemes": [
           {
             "scheme": "stripe",
-            "badge": "Stripe",
-            "title": "Pay with Stripe",
-            "subtitle": "Secure card checkout hosted by Stripe with tenant-scoped delegated credentials.",
-            "cta_label": "Continue to Stripe",
-            "help_text": "Secure card checkout hosted by Stripe on the tenant delegated lane.",
+            "badge": {
+              "en": "Stripe",
+              "ro": "Stripe"
+            },
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe with tenant-scoped delegated credentials.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, cu credențiale delegate specifice tenantului."
+            },
+            "cta_label": {
+              "en": "Continue to Stripe",
+              "ro": "Continuă către Stripe"
+            },
+            "help_text": {
+              "en": "Secure card checkout hosted by Stripe on the tenant delegated lane.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, pe fluxul delegat tenantului."
+            },
             "accent": "#635bff"
           },
           {
             "scheme": "mock_manual",
-            "badge": "Hosted Redirect",
-            "title": "Hosted Checkout Test",
-            "subtitle": "Provider-style redirect and signed return flow.",
-            "cta_label": "Continue to Checkout",
-            "help_text": "Hosted redirect flow for end-to-end payment return testing.",
+            "badge": {
+              "en": "Hosted Redirect",
+              "ro": "Redirect găzduit"
+            },
+            "title": {
+              "en": "Hosted Checkout Test",
+              "ro": "Test checkout găzduit"
+            },
+            "subtitle": {
+              "en": "Provider-style redirect and signed return flow.",
+              "ro": "Flux de redirect și retur semnat, în stil provider."
+            },
+            "cta_label": {
+              "en": "Continue to Checkout",
+              "ro": "Continuă către checkout"
+            },
+            "help_text": {
+              "en": "Hosted redirect flow for end-to-end payment return testing.",
+              "ro": "Flux de redirect găzduit pentru testarea end-to-end a revenirii din plată."
+            },
             "accent": "#0f766e"
           }
         ]
