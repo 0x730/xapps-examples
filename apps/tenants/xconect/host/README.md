@@ -22,8 +22,11 @@ Current state:
 - current reference launch path:
   - `GET /`
   - enter name + email
+  - choose language
   - choose `single-panel`, `split-panel`, or `single-xapp`
   - launch the selected host surface with a gateway-resolved stable subject id
+- the launcher and host headers now expose language selection for embed/runtime testing
+- direct host testing can also use `?locale=en` or `?locale=ro`
 - the payment page remains the owner-managed payment reference for the current production lane
 
 ## How to read the host split

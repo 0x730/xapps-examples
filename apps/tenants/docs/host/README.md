@@ -124,6 +124,72 @@ In that mode:
 - the backend can stay same-origin, so `host.allowedOrigins` can remain empty
   unless another frontend origin is introduced later
 
+## Session Lifecycle
+
+The host layer should treat widget renewal and bootstrap renewal as separate concerns.
+
+### Widget session
+
+- the widget runs on a short-lived widget token
+- the shared host/runtime renews that token through bridge v2
+- terminal failure should surface as host-owned expiry UX, not as a raw iframe `401`
+
+### Bootstrap session
+
+- the browser host runs on a short-lived bootstrap token
+- current starter/reference hosts attempt silent re-bootstrap first
+- if renewal fails, the host should return the operator to the launcher/entry page
+
+Practical rule:
+
+- keep widget renewal in the shared packages
+- keep bootstrap renewal in the local launcher/bootstrap seam
+- do not try to make the host page itself own raw API keys or long-lived browser credentials
+
+## Locale Ownership Rule
+
+For the upcoming i18n lane, the host should be treated as the locale owner, not as the place where a second translation system appears.
+
+Practical rule:
+
+- host/app shell chooses the active locale
+- shared browser-host/embed/widget packages propagate and consume that locale
+- widgets should react to host locale changes through the shared bridge contract
+- integrator hosts do not need full translated shells to validate the contract
+
+That keeps locale behavior aligned with the current session/theme ownership model:
+
+- top-level shell owns the choice
+- shared packages own propagation and shared UX copy
+
+## Locale Testing Seam
+
+Current starter/reference hosts now expose the same practical locale seam for embed testing:
+
+- a launcher language selector
+- a host-header language selector on marketplace and single-xapp pages
+- browser-local persistence of the last chosen locale
+- direct URL override with `?locale=en` or `?locale=ro`
+
+That applies to:
+
+- `xconect`
+- `xconectb`
+- `host-proof-common`
+- launcher-backed `xconectc`
+
+Practical rule:
+
+- the host chooses locale
+- `@xapps-platform/browser-host` passes it into the marketplace/widget runtime
+- open widgets receive later changes through `XAPPS_LOCALE_CHANGED`
+
+So integrators can test multilingual embed behavior without building a separate locale bridge around the widget or catalog runtime.
+
+Reference planning note:
+
+- [I18N_SYSTEM_AUDIT.md](../../../../dev/engineering/audits/systems/I18N_SYSTEM_AUDIT.md)
+
 ## Read These In Order
 
 - local host overview: [../xconect/host/README.md](../../xconect/host/README.md)

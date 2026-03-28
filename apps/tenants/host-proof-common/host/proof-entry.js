@@ -10,6 +10,8 @@ import {
 } from "/host/proof-config.js";
 import { readProofIdentity } from "./proof-identity.js";
 
+const LOCALE_STORAGE_KEY = `${WORKSPACE_KEY}_host_proof_locale_v1`;
+
 function $(id) {
   return document.getElementById(id);
 }
@@ -21,6 +23,49 @@ function setText(id, value) {
 
 function readStoredIdentity() {
   return readProofIdentity(IDENTITY_STORAGE_KEY);
+}
+
+function normalizeLocale(value) {
+  const raw = String(value || "")
+    .trim()
+    .replace(/_/g, "-")
+    .toLowerCase();
+  if (raw === "ro" || raw.startsWith("ro-")) return "ro";
+  if (raw === "en" || raw.startsWith("en-")) return "en";
+  return "en";
+}
+
+function readLocalePreference() {
+  const currentUrl = new URL(window.location.href);
+  const queryLocale = String(currentUrl.searchParams.get("locale") || "").trim();
+  if (queryLocale) return normalizeLocale(queryLocale);
+  try {
+    const stored = String(window.localStorage.getItem(LOCALE_STORAGE_KEY) || "").trim();
+    if (stored) return normalizeLocale(stored);
+  } catch {
+    // ignore localStorage failures
+  }
+  return normalizeLocale(
+    typeof navigator !== "undefined"
+      ? String((navigator.languages && navigator.languages[0]) || navigator.language || "")
+      : "",
+  );
+}
+
+function applyLocalePreference(locale, options = {}) {
+  const resolved = normalizeLocale(locale);
+  document.documentElement.lang = resolved;
+  const select = $("host-locale-select");
+  if (select instanceof HTMLSelectElement) {
+    select.value = resolved;
+  }
+  if (options.persist === false) return resolved;
+  try {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, resolved);
+  } catch {
+    // ignore localStorage failures
+  }
+  return resolved;
 }
 
 function renderStoredIdentity() {
@@ -100,12 +145,14 @@ function main() {
   const nameInput = $("name");
   const emailInput = $("email");
   const xappIdInput = $("xappId");
+  const localeSelect = $("host-locale-select");
   const dashboardLink = $("dashboard-link");
   if (dashboardLink instanceof HTMLAnchorElement) {
     const dashboardHref = String(DASHBOARD_HREF || "").trim();
     if (dashboardHref) {
       dashboardLink.href = dashboardHref;
-      dashboardLink.textContent = String(DASHBOARD_LABEL || "Back to dashboard").trim() || "Back to dashboard";
+      dashboardLink.textContent =
+        String(DASHBOARD_LABEL || "Back to dashboard").trim() || "Back to dashboard";
       dashboardLink.hidden = false;
     } else {
       dashboardLink.hidden = true;
@@ -113,6 +160,11 @@ function main() {
   }
   renderStoredIdentity();
   renderEntryErrorFromQuery();
+  applyLocalePreference(readLocalePreference(), { persist: false });
+
+  localeSelect?.addEventListener("change", () => {
+    applyLocalePreference(localeSelect.value);
+  });
 
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -151,10 +203,16 @@ function main() {
       );
       renderStoredIdentity();
       if (mode === "single-xapp") {
-        window.location.href = `/single-xapp.html?xappId=${encodeURIComponent(xappId)}`;
+        const target = new URL("/single-xapp.html", window.location.href);
+        target.searchParams.set("locale", readLocalePreference());
+        target.searchParams.set("xappId", xappId);
+        window.location.href = target.toString();
         return;
       }
-      window.location.href = `/marketplace.html?mode=${encodeURIComponent(mode)}`;
+      const target = new URL("/marketplace.html", window.location.href);
+      target.searchParams.set("locale", readLocalePreference());
+      target.searchParams.set("mode", mode);
+      window.location.href = target.toString();
     } catch (error) {
       statusEl.className = "status error";
       statusEl.textContent = String(error?.message || "Subject resolution failed");

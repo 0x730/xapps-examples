@@ -1,8 +1,10 @@
 import { bootMarketplaceHost } from "/host/marketplace-host.js";
 import { renderHostStatus } from "/host/host-status.js";
 import {
+  applyLocalePreference,
   applyThemePreference,
   readHeaderCollapsedPreference,
+  readLocalePreference,
   readModeFromUrl,
   readStoredJson,
   readThemePreference,
@@ -10,6 +12,7 @@ import {
   renderMode,
   renderModeShell,
   setHeaderCollapsed,
+  setLocaleInUrl,
   setModeInUrl,
   toggleHeaderCollapsed,
 } from "./xconect-host-shell.js";
@@ -22,8 +25,10 @@ async function main() {
     entryHref: "/",
     identityStorageKey: IDENTITY_STORAGE_KEY,
     sdkVersionQuery: "?v=20260319-xconect-host-focus-3",
+    applyLocalePreference,
     applyThemePreference,
     readHeaderCollapsedPreference,
+    readLocalePreference,
     readModeFromUrl,
     readStoredJson,
     readThemePreference,
@@ -31,6 +36,7 @@ async function main() {
     renderMode,
     renderModeShell,
     setHeaderCollapsed,
+    setLocaleInUrl,
     setModeInUrl,
     toggleHeaderCollapsed,
     createMarketplaceRuntime: createXconectMarketplaceRuntime,

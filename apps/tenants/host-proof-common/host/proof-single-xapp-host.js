@@ -8,13 +8,16 @@ import {
   WORKSPACE_KEY,
 } from "/host/proof-config.js";
 import {
+  applyLocalePreference,
   applyThemePreference,
   readHeaderCollapsedPreference,
+  readLocalePreference,
   readThemePreference,
   renderIdentity,
   renderSessionExpiredShell,
   renderSingleXappShell,
   setHeaderCollapsed,
+  setLocaleInUrl,
   toggleHeaderCollapsed,
 } from "./proof-shell.js";
 import { readProofIdentity, refreshProofIdentity } from "./proof-identity.js";
@@ -34,8 +37,10 @@ async function main() {
     entryHref: "/",
     identityStorageKey: IDENTITY_STORAGE_KEY,
     sdkPath: SDK_PATH,
+    applyLocalePreference,
     applyThemePreference,
     readHeaderCollapsedPreference,
+    readLocalePreference,
     renderSingleXappShell,
     readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
     refreshStoredJson: () => refreshProofIdentity(IDENTITY_STORAGE_KEY),
@@ -43,6 +48,7 @@ async function main() {
     renderIdentity,
     renderSessionExpiredShell,
     setHeaderCollapsed,
+    setLocaleInUrl,
     toggleHeaderCollapsed,
     resolveTheme: resolveProofTheme,
   });

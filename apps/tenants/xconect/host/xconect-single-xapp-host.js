@@ -1,13 +1,16 @@
 import { bootSingleXappHost } from "/host/single-xapp-host.js";
 import { renderHostStatus } from "/host/host-status.js";
 import {
+  applyLocalePreference,
   applyThemePreference,
   readHeaderCollapsedPreference,
+  readLocalePreference,
   renderSingleXappShell,
   readStoredJson,
   readThemePreference,
   renderIdentity,
   setHeaderCollapsed,
+  setLocaleInUrl,
   toggleHeaderCollapsed,
 } from "./xconect-host-shell.js";
 import { resolveXconectTheme } from "./xconect-host-runtime.js";
@@ -19,13 +22,16 @@ async function main() {
     entryHref: "/",
     identityStorageKey: IDENTITY_STORAGE_KEY,
     sdkVersionQuery: "?v=20260319-xconect-host-focus-3",
+    applyLocalePreference,
     applyThemePreference,
     readHeaderCollapsedPreference,
+    readLocalePreference,
     renderSingleXappShell,
     readStoredJson,
     readThemePreference,
     renderIdentity,
     setHeaderCollapsed,
+    setLocaleInUrl,
     toggleHeaderCollapsed,
     resolveTheme: resolveXconectTheme,
     renderHostStatus: (state) =>

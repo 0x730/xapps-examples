@@ -177,6 +177,29 @@ Code anchor:
 
 - [hostApiBridge.js](../../../../packages/backend-kit/src/backend/routes/gateway/hostApiBridge.ts)
 
+## Session Responsibilities
+
+The backend contract owns two different session layers:
+
+- browser bootstrap session
+  - `POST /api/host-bootstrap`
+  - signs the short-lived browser bootstrap token
+  - used by browser-host calls to `/api/host-config`, catalog/widget session minting, lifecycle routes, and bridge routes
+- widget session
+  - minted through `POST /api/create-widget-session`
+  - renewed through `POST /api/bridge/token-refresh`
+
+Current starter/reference expectation:
+
+- widget-session renewal belongs to the shared runtime/bridge path
+- bootstrap renewal belongs to the launcher/bootstrap seam
+- browser code must never receive raw tenant/gateway API keys
+
+Practical rule:
+
+- backend kit already gives you the default session routes
+- local tenant code should only supply config, local launcher/bootstrap surface, and any explicit override
+
 ## Other Default Tenant Seams
 
 The default tenant kit also includes:

@@ -14,6 +14,8 @@ Current surface family stays the same as `xconect`:
 - `single-panel`
 - `split-panel`
 - `single-xapp`
+- launcher and host headers now expose language selection for embed/runtime testing
+- direct host testing can also use `?locale=en` or `?locale=ro`
 
 Read first:
 

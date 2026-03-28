@@ -153,3 +153,47 @@ The first-release recommendation remains:
 - invoicing: platform-managed
 - notifications: platform-managed
 - subject profiles: optional unless the tenant already has real data to supply
+
+## Session Rule Of Thumb
+
+For integrators, the current session model should be read in two layers:
+
+- widget session:
+  - short-lived widget token minted by the tenant/backend contract
+  - renewed in place through the shared host/session bridge
+- bootstrap session:
+  - short-lived browser bootstrap token used for host/session routes
+  - renewed through silent re-bootstrap on the current starter/reference host paths
+
+Practical meaning:
+
+- do not treat `subjectId` alone as durable browser proof
+- keep raw API keys and signing secrets server-side
+- let the shared host/runtime handle widget renewal
+- let the local launcher/bootstrap seam handle bootstrap renewal
+
+Use these pages next when session behavior matters:
+
+- [docs/host/README.md](./host/README.md)
+- [docs/backend/README.md](./backend/README.md)
+
+## Locale Rule Of Thumb
+
+The first platform i18n wave is aimed at the shipped shared surfaces:
+
+- portal
+- marketplace/embed UI
+- widget-facing platform copy
+- shared guard/remediation copy
+
+Integrator hosts do not need a fully translated shell in that first wave.
+
+They do need:
+
+- one clear locale input into the shared browser-host/runtime path
+- a way to test widget/embed behavior in another locale
+- the ability to let shared packages own locale propagation instead of building a custom translation bridge
+
+Reference planning note:
+
+- [I18N_SYSTEM_AUDIT.md](../../../dev/engineering/audits/systems/I18N_SYSTEM_AUDIT.md)

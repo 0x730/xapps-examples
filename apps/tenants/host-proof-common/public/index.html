@@ -47,6 +47,16 @@
               </label>
             </div>
 
+            <div class="single-xapp-inline">
+              <label class="single-xapp-field">
+                <span>Language</span>
+                <select id="host-locale-select" aria-label="Choose workspace language">
+                  <option value="en">English</option>
+                  <option value="ro">Română</option>
+                </select>
+              </label>
+            </div>
+
             <div class="modes">
               <label class="mode-option">
                 <input type="radio" name="mode" value="single-panel" checked />
@@ -88,7 +98,9 @@
 
             <div class="actions">
               <button id="launch-btn" type="submit">Launch Hosted Workspace</button>
-              <a id="dashboard-link" class="secondary-link" href="/dashboard" hidden>Back to dashboard</a>
+              <a id="dashboard-link" class="secondary-link" href="/dashboard" hidden
+                >Back to dashboard</a
+              >
             </div>
             <div id="status" class="status"></div>
             <div id="identity" class="identity" hidden>

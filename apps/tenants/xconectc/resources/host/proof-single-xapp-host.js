@@ -8,12 +8,15 @@ import {
     WORKSPACE_KEY,
 } from "/host/proof-config.js";
 import {
+    applyLocalePreference,
     applyThemePreference,
     readHeaderCollapsedPreference,
+    readLocalePreference,
     readThemePreference,
     renderIdentity,
     renderSingleXappShell,
     setHeaderCollapsed,
+    setLocaleInUrl,
     toggleHeaderCollapsed,
 } from "/host/proof-shell.js";
 import { readProofIdentity } from "/host/proof-identity.js";
@@ -33,13 +36,16 @@ async function main() {
         entryHref: "/catalog",
         identityStorageKey: IDENTITY_STORAGE_KEY,
         sdkPath: SDK_PATH,
+        applyLocalePreference,
         applyThemePreference,
         readHeaderCollapsedPreference,
+        readLocalePreference,
         renderSingleXappShell,
         readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
         readThemePreference,
         renderIdentity,
         setHeaderCollapsed,
+        setLocaleInUrl,
         toggleHeaderCollapsed,
         resolveTheme: resolveProofTheme,
     });
