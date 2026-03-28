@@ -9,7 +9,7 @@ It is the Laravel counterpart to:
 - [`xconectc-host`](../xconectc-host/README.md) for the Laravel hosted-integrator path
 - [`publisher-api`](../../../samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
 
-It keeps OIDC, local tenant business APIs, and the full PHP backend-kit host surface in one Laravel starter/reference app.
+It keeps OIDC, the launcher/browser-host surfaces, and the full PHP backend-kit tenant surface in one Laravel starter/reference app.
 
 For xapps provisioning, `xconectc` belongs to the public example/reference lane:
 
@@ -29,18 +29,12 @@ It provides:
     - `GET /api/.well-known/jwks.json`
     - `GET|POST /api/auth/login`
     - `POST /api/auth/token`
-- Tenant APIs under `/api`:
-    - `GET|POST /api/projects`
-    - `GET|PATCH /api/projects/:id`
-    - `GET|POST /api/issues`
-    - `GET|PATCH /api/issues/:id`
-    - `GET|POST /api/issues/:id/comments`
-    - `GET|POST /api/inventory`, `GET /api/inventory/:id`
-    - `GET /api/profile`, `GET /api/billing`
 - A simple HTML dashboard:
     - `GET /dashboard`
-- Xapps host embed demo:
+- Xapps launcher/browser-host demo:
     - `GET /catalog`
+    - `GET /marketplace.html`
+    - `GET /single-xapp.html`
 - Xapps tenant surface via the PHP backend kit:
     - `GET /api/host-config`
     - `POST /api/host-bootstrap`
@@ -70,9 +64,12 @@ composer install
 # Generate app key
 php artisan key:generate
 
-# SQLite db (path matches .env)
-mkdir -p storage
-touch storage/database.sqlite
+# SQLite db (path matches .env / deploy compose)
+mkdir -p database
+touch database/database.sqlite
+
+# OIDC signing key for JWKS + token issuance
+openssl genrsa -out storage/idp_private.pem 2048
 
 # Migrate + seed demo data
 php artisan migrate:fresh --seed
@@ -89,11 +86,24 @@ Then open:
 
 #### Notes
 
-- The RSA signing key is expected at `storage/idp_private.pem` (ignored by git). Generate one for dev:
+- The RSA signing key is expected at `storage/idp_private.pem` (ignored by git). Generate one for local dev:
 
 ```bash
 openssl genrsa -out storage/idp_private.pem 2048
 ```
+
+- In the `partners-examples` deploy lane, the container startup now creates:
+    - `database/database.sqlite`
+    - the initial Laravel schema + seed data
+    - `storage/idp_private.pem` on first boot
+
+- `IDP_BASE_URL` should point at the `/api` surface, not the web root. Example:
+
+```bash
+IDP_BASE_URL=https://xconectc-example.0x730.com/api
+```
+
+- `npm run seed:xconectc-tenant` seeds tenant-owned invoice/payment defaults into `clients.details_jsonb`, matching the `xconect` / `xconectb` tenant settings shape.
 
 - Required env for the kit-backed tenant surface:
     - `XAPPS_GATEWAY_URL` (default `http://localhost:3000`)
@@ -107,7 +117,7 @@ openssl genrsa -out storage/idp_private.pem 2048
     - `XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST`
 
 - Current package status:
-    - `xconectc` is the Laravel starter/reference app showing the PHP backend-kit full-tenant path.
+    - `xconectc` is the Laravel starter/reference app showing the PHP backend-kit full-tenant path plus the shared browser-host launcher flow.
     - `xconectc-host` is the paired Laravel hosted-integrator starter/reference app.
     - inside the canonical monorepo it may keep Composer `path` repositories for local development.
     - in the public starter/reference export, prefer Packagist packages `xapps-platform/xapps-php` and `xapps-platform/xapps-backend-kit` instead of local path repos.

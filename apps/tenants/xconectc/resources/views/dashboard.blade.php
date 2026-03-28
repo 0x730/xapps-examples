@@ -469,24 +469,25 @@
             <div class="eyebrow">Workspace Snapshot</div>
             <h2>Keep the tenant view clean, fast, and directly usable.</h2>
             <p>
-              This sample tenant now acts like a real client lane: the dashboard highlights
-              workload signals, API surfaces, and the catalog workspace without the old heavy
-              dark-shell treatment.
+              This Laravel tenant reference focuses on OIDC, the catalog/browser-host
+              surfaces, and the backend-kit tenant contract without carrying the older
+              CRUD demo surface.
             </p>
             <div class="hero-actions">
-              <a href="/catalog" class="btn btn-primary">Open Catalog Workspace</a>
+              <a href="/catalog" class="btn btn-primary">Open Workspace Launcher</a>
+              <a href="/marketplace.html" class="btn btn-secondary">Open Marketplace Host</a>
               <a href="/api/.well-known/openid-configuration" target="_blank" class="btn btn-secondary">Inspect OIDC Metadata</a>
             </div>
           </div>
 
           <aside class="hero-aside">
             <div class="signal-card">
-              <p class="signal-label">Workspace Load</p>
+              <p class="signal-label">Reference Surface</p>
               <div class="signal-value">
-                <strong>{{ $projectsCount + $issuesCount + $inventoryCount }}</strong>
-                <span>tracked records</span>
+                <strong>OIDC + Xapps</strong>
+                <span>tenant contract</span>
               </div>
-              <div class="signal-footnote">Projects, issues, and inventory are live from the tenant dataset.</div>
+              <div class="signal-footnote">This tenant keeps the Laravel identity flow and the xapps tenant/browser-host surfaces, without the old sample data APIs.</div>
             </div>
 
             <div class="session-card">
@@ -501,22 +502,22 @@
             <div class="panel-header">
               <div>
                 <h3 class="panel-title">Operational Overview</h3>
-                <p class="panel-subtitle">A lighter summary of the tenant’s current surface area.</p>
+                <p class="panel-subtitle">A concise view of the tenant’s actual reference surface.</p>
               </div>
             </div>
 
             <div class="stats-grid">
               <div class="stat-card">
-                <span>Projects</span>
-                <strong>{{ $projectsCount }}</strong>
+                <span>OIDC</span>
+                <strong>Active</strong>
               </div>
               <div class="stat-card">
-                <span>Issues</span>
-                <strong>{{ $issuesCount }}</strong>
+                <span>Backend Kit</span>
+                <strong>Active</strong>
               </div>
               <div class="stat-card">
-                <span>Inventory</span>
-                <strong>{{ $inventoryCount }}</strong>
+                <span>Catalog Host</span>
+                <strong>Active</strong>
               </div>
             </div>
           </div>
@@ -532,24 +533,24 @@
             <div class="link-list">
               <a href="/catalog" class="link-card">
                 <div class="link-copy">
-                  <strong>Catalog Workspace</strong>
-                  <span>Tenant-scoped marketplace view for installed and published xapps.</span>
+                  <strong>Workspace Launcher</strong>
+                  <span>Launcher for the shared marketplace and single-xapp browser-host surfaces.</span>
                 </div>
                 <div class="link-arrow">→</div>
               </a>
 
-              <a href="/api/profile" target="_blank" class="link-card">
+              <a href="/marketplace.html" class="link-card">
                 <div class="link-copy">
-                  <strong>Profile API</strong>
-                  <span>Inspect the signed-in subject profile returned by the sample backend.</span>
+                  <strong>Marketplace Host</strong>
+                  <span>Shared browser-host surface for the hosted marketplace experience.</span>
                 </div>
                 <div class="link-arrow">→</div>
               </a>
 
-              <a href="/api/inventory" target="_blank" class="link-card">
+              <a href="/single-xapp.html" class="link-card">
                 <div class="link-copy">
-                  <strong>Inventory API</strong>
-                  <span>Raw inventory items served by the tenant lane.</span>
+                  <strong>Single Xapp Host</strong>
+                  <span>Launch the focused browser-host flow for a single installed xapp.</span>
                 </div>
                 <div class="link-arrow">→</div>
               </a>
@@ -569,13 +570,13 @@
           <div class="eyebrow">Welcome</div>
           <h2>Sign in to enter the XconectC tenant workspace.</h2>
           <p>
-            Use the local OIDC flow to reach the dashboard, tenant APIs, and the embedded
-            catalog surfaces from the same lighter workspace shell.
+            Use the local OIDC flow to reach the dashboard, tenant APIs, and the shared
+            browser-host surfaces from the same lighter workspace shell.
           </p>
           <div class="auth-actions">
             <a href="/auth/login" class="btn btn-primary">Sign In</a>
             <a href="/auth/register" class="btn btn-secondary">Register</a>
-            <a href="/catalog" class="btn btn-secondary">Browse Catalog Workspace</a>
+            <a href="/catalog" class="btn btn-secondary">Open Workspace Launcher</a>
           </div>
         </section>
       @endif

@@ -194,6 +194,18 @@ class HostProofController extends Controller
         ]));
     }
 
+    public function entry(): Response
+    {
+        return $this->sendHtmlFile($this->commonPublicDir() . '/index.html', [
+            'Hosted Tenant Workspace' => 'XconectC Workspace Launcher',
+            'Hosted Workspace' => 'XconectC Workspace',
+            'Hosted Integrator Demo User' => 'Daniel Paul',
+            'user@hosted-integrator.test' => 'daniel.vladescu@gmail.com',
+            'href="/"' => 'href="/catalog"',
+            'Launch Hosted Workspace' => 'Launch XconectC Workspace',
+        ]);
+    }
+
     public function marketplace(): Response
     {
         return $this->sendHtmlFile($this->commonPublicDir() . '/marketplace.html', [
@@ -222,6 +234,9 @@ class HostProofController extends Controller
         $body = implode("\n", [
             'export const BACKEND_BASE_URL = ' . json_encode($this->backendBaseUrl()) . ';',
             'export const PUBLIC_BASE_URL = ' . json_encode($this->publicBaseUrl()) . ';',
+            'export const HOST_BOOTSTRAP_URL = "/catalog/api/host-bootstrap";',
+            'export const DASHBOARD_HREF = "/dashboard";',
+            'export const DASHBOARD_LABEL = "Back to dashboard";',
             'export const PROOF_NAME = "XconectC";',
             'export const WORKSPACE_KEY = "xconectc";',
             'export const STACK_LABEL = "laravel-12";',

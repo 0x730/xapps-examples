@@ -152,6 +152,9 @@ class HostProofController extends Controller
         $body = implode("\n", [
             'export const BACKEND_BASE_URL = ' . json_encode($this->backendBaseUrl()) . ';',
             'export const PUBLIC_BASE_URL = ' . json_encode($this->publicBaseUrl()) . ';',
+            'export const HOST_BOOTSTRAP_URL = "/api/host-bootstrap";',
+            'export const DASHBOARD_HREF = "/dashboard";',
+            'export const DASHBOARD_LABEL = "Back to dashboard";',
             'export const PROOF_NAME = "XconectC Host";',
             'export const WORKSPACE_KEY = "xconectc-host";',
             'export const STACK_LABEL = "laravel-12";',

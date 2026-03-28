@@ -30,6 +30,7 @@ export const readThemePreference = shellApi.readThemePreference;
 export const renderIdentity = shellApi.renderIdentity;
 export const renderMode = shellApi.renderMode;
 export const renderModeShell = shellApi.renderModeShell;
+export const renderSessionExpiredShell = shellApi.renderSessionExpiredShell;
 export const renderSingleXappShell = shellApi.renderSingleXappShell;
 export const setHeaderCollapsed = shellApi.setHeaderCollapsed;
 export const setModeInUrl = shellApi.setModeInUrl;

@@ -12,11 +12,12 @@ import {
   readHeaderCollapsedPreference,
   readThemePreference,
   renderIdentity,
+  renderSessionExpiredShell,
   renderSingleXappShell,
   setHeaderCollapsed,
   toggleHeaderCollapsed,
 } from "./proof-shell.js";
-import { readProofIdentity } from "./proof-identity.js";
+import { readProofIdentity, refreshProofIdentity } from "./proof-identity.js";
 import { resolveProofTheme } from "./proof-runtime.js";
 
 function setText(id, value) {
@@ -37,8 +38,10 @@ async function main() {
     readHeaderCollapsedPreference,
     renderSingleXappShell,
     readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
+    refreshStoredJson: () => refreshProofIdentity(IDENTITY_STORAGE_KEY),
     readThemePreference,
     renderIdentity,
+    renderSessionExpiredShell,
     setHeaderCollapsed,
     toggleHeaderCollapsed,
     resolveTheme: resolveProofTheme,

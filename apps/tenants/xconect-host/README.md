@@ -15,7 +15,7 @@ Important:
 - this app is a proof/reference host, not a production integrator backend
 - its local `/api/host-bootstrap` route is only the minimal dev bridge to the tenant backend
 - real integrator deployments should authenticate their own user first, then call the tenant backend server-to-server
-- bootstrap tokens are short-lived and the browser must re-bootstrap after expiry
+- bootstrap tokens are short-lived; the proof host now attempts silent re-bootstrap first and falls back to the launcher if renewal fails
 
 Dependency rule:
 

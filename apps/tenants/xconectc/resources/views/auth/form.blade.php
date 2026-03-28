@@ -301,7 +301,7 @@
         <div class="intro-points">
           <div class="intro-point">
             <strong>Tenant workspace</strong>
-            <span>Dashboard, APIs, and embedded catalog stay in the same lane.</span>
+            <span>Dashboard, APIs, and browser-host launcher stay in the same lane.</span>
           </div>
           <div class="intro-point">
             <strong>Local OIDC flow</strong>
@@ -309,7 +309,7 @@
           </div>
           <div class="intro-point">
             <strong>Cleaner sample UX</strong>
-            <span>Aligned visual language across dashboard, catalog, and auth entry points.</span>
+            <span>Aligned visual language across dashboard, launcher, and auth entry points.</span>
           </div>
         </div>
       </section>

@@ -38,7 +38,7 @@ Current deployment rule:
 
 Current public-release note:
 
-- the public starter/reference export is now released as `xapps-examples@v0.1.6`
+- the public starter/reference export is now released as `xapps-examples@v0.1.7`
 - deploy-time example naming uses:
   - `xconecta-example`
   - `xconecta-example-host`

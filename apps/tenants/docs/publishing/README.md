@@ -9,6 +9,16 @@ This is the place to answer:
 - which secrets/refs belong to which payment mode
 - where endpoint credentials fit
 
+CLI operator baseline:
+
+- use the supported tenant/publisher subset in [xapps-cli.md](../../../../docs/packages/xapps-cli.md)
+- for tenant-owned guards, the practical operator path is:
+  - `xapps validate`
+  - `xapps publish`
+  - `xapps logs`
+  - `xapps publisher endpoint credential ensure`
+- treat repo-only CLI helpers as internal engineering tools, not as the tenant publishing contract
+
 ## Start here
 
 Read these first:

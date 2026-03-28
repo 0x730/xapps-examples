@@ -103,7 +103,7 @@ require_pair_if_any "XCONECTA_HOST_BOOTSTRAP_API_KEYS" "XCONECTA_HOST_BOOTSTRAP_
 if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
   require_http_url "XCONECTA_HOST_PUBLIC_BASE_URL"
   require_http_url "XCONECTA_HOST_BACKEND_BASE_URL"
-  require_http_url "XCONECT_HOST_BOOTSTRAP_BACKEND_BASE_URL"
+  require_http_url "XCONECTA_HOST_BOOTSTRAP_BACKEND_BASE_URL"
   require_non_empty "XCONECTA_HOST_BOOTSTRAP_API_KEY"
   require_csv_contains "XCONECTA_ALLOWED_ORIGINS" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta allowed origins"
   require_csv_contains "XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta payment return allowlist"

@@ -30,9 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth/*',
             'api/auth/*',
             'api/*',
+            'catalog/api/host-bootstrap',
             'guard/*',
-            // The embedded catalog page (`/catalog`) calls these endpoints via `fetch()` from
-            // browser JS (not a Blade form post), so CSRF would otherwise return 419.
+            // The launcher/browser-host pages call these endpoints via `fetch()` from browser JS
+            // (not a Blade form post), so CSRF would otherwise return 419.
             'xapps/*',
         ));
     })

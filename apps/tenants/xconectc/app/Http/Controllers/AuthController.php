@@ -32,7 +32,7 @@ class AuthController extends Controller
             return view('auth.form', array(
                 'mode' => 'login',
                 'title' => 'Sign in to XconectC',
-                'subtitle' => 'Access the tenant workspace, embedded catalog, and OIDC sample lane from a lighter auth surface.',
+                'subtitle' => 'Access the tenant workspace, browser-host launcher, and OIDC sample lane from a lighter auth surface.',
                 'messageType' => $registered ? 'success' : null,
                 'messageText' => $registered ? 'Registration successful. You can sign in now.' : null,
                 'redirectUri' => $redirectUri,
@@ -90,7 +90,7 @@ class AuthController extends Controller
             return view('auth.form', array(
                 'mode' => 'register',
                 'title' => 'Create your XconectC account',
-                'subtitle' => 'Join the sample tenant lane and continue into the same workspace used by the embedded catalog and tenant APIs.',
+                'subtitle' => 'Join the sample tenant lane and continue into the same workspace used by the launcher/browser-host surfaces and tenant APIs.',
                 'messageType' => $messageText ? 'error' : null,
                 'messageText' => $messageText,
                 'redirectUri' => $redirectUri,

@@ -355,6 +355,36 @@ body[data-mode] .main-content .panel {
   flex: 1;
 }
 
+.session-expired-panel {
+  display: grid;
+  place-items: center;
+}
+
+.session-expired-card {
+  width: min(560px, 100%);
+  display: grid;
+  gap: 14px;
+  text-align: left;
+}
+
+.session-expired-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(199, 86, 46, 0.12);
+  color: var(--proof-accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.session-expired-card h2,
+.session-expired-card p {
+  margin: 0;
+}
+
 body[data-mode] .sidebar-scroll {
   flex: 1;
   min-height: 0;

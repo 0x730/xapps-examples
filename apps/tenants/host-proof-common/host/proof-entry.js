@@ -1,5 +1,8 @@
 import {
   BACKEND_BASE_URL,
+  DASHBOARD_HREF,
+  DASHBOARD_LABEL,
+  HOST_BOOTSTRAP_URL,
   IDENTITY_STORAGE_KEY,
   PROOF_NAME,
   STACK_LABEL,
@@ -54,7 +57,7 @@ function renderEntryErrorFromQuery() {
 }
 
 async function resolveSubject(email, name) {
-  const response = await fetch("/api/host-bootstrap", {
+  const response = await fetch(HOST_BOOTSTRAP_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, name }),
@@ -97,6 +100,17 @@ function main() {
   const nameInput = $("name");
   const emailInput = $("email");
   const xappIdInput = $("xappId");
+  const dashboardLink = $("dashboard-link");
+  if (dashboardLink instanceof HTMLAnchorElement) {
+    const dashboardHref = String(DASHBOARD_HREF || "").trim();
+    if (dashboardHref) {
+      dashboardLink.href = dashboardHref;
+      dashboardLink.textContent = String(DASHBOARD_LABEL || "Back to dashboard").trim() || "Back to dashboard";
+      dashboardLink.hidden = false;
+    } else {
+      dashboardLink.hidden = true;
+    }
+  }
   renderStoredIdentity();
   renderEntryErrorFromQuery();
 

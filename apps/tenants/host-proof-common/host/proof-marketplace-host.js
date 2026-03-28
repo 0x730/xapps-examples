@@ -15,11 +15,12 @@ import {
   renderIdentity,
   renderMode,
   renderModeShell,
+  renderSessionExpiredShell,
   setHeaderCollapsed,
   setModeInUrl,
   toggleHeaderCollapsed,
 } from "./proof-shell.js";
-import { readProofIdentity } from "./proof-identity.js";
+import { readProofIdentity, refreshProofIdentity } from "./proof-identity.js";
 import { createProofMarketplaceRuntime } from "./proof-runtime.js";
 
 function setText(id, value) {
@@ -40,10 +41,12 @@ async function main() {
     readHeaderCollapsedPreference,
     readModeFromUrl,
     readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
+    refreshStoredJson: () => refreshProofIdentity(IDENTITY_STORAGE_KEY),
     readThemePreference,
     renderIdentity,
     renderMode,
     renderModeShell,
+    renderSessionExpiredShell,
     setHeaderCollapsed,
     setModeInUrl,
     toggleHeaderCollapsed,

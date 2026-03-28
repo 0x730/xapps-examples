@@ -175,7 +175,7 @@ Current implication:
 Current acceptance note:
 
 - `deploy/modes/partners-examples/` is now the active second-server public reference lane
-- the public GitHub-only examples export is released as `xapps-examples@v0.1.6`
+- the public GitHub-only examples export is released as `xapps-examples@v0.1.7`
 
 ## Non-goals
 

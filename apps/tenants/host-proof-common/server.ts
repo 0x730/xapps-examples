@@ -158,6 +158,9 @@ export async function startHostProofServer(config: HostProofServerConfig) {
     const body = [
       `export const BACKEND_BASE_URL = ${JSON.stringify(backendBaseUrl)};`,
       `export const PUBLIC_BASE_URL = ${JSON.stringify(publicBaseUrl)};`,
+      `export const HOST_BOOTSTRAP_URL = "/api/host-bootstrap";`,
+      `export const DASHBOARD_HREF = "";`,
+      `export const DASHBOARD_LABEL = "Back to dashboard";`,
       `export const PROOF_NAME = ${JSON.stringify(config.proofName)};`,
       `export const WORKSPACE_KEY = ${JSON.stringify(config.workspaceKey)};`,
       `export const STACK_LABEL = ${JSON.stringify(config.stackLabel)};`,

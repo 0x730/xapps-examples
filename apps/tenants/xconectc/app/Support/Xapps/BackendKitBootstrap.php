@@ -50,6 +50,11 @@ final class BackendKitBootstrap
         return rtrim((string) env('APP_URL', 'http://localhost:8001'), '/');
     }
 
+    private static function hostPublicUrl(): string
+    {
+        return rtrim((string) env('XCONECTC_HOST_PUBLIC_BASE_URL', 'http://localhost:8002'), '/');
+    }
+
     private static function envString(string $key, string $fallback = ''): string
     {
         $value = trim((string) env($key, ''));
@@ -122,14 +127,20 @@ final class BackendKitBootstrap
             'tenantPaymentReturnSecretRef' => self::envString('XCONECTC_TENANT_PAYMENT_RETURN_SECRET_REF', ''),
             'tenantPaymentReturnUrlAllowlist' => self::addLoopbackOriginVariants(
                 self::appendOrigin(
-                    self::envString('XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST', self::appUrl()),
-                    self::appUrl(),
+                    self::appendOrigin(
+                        self::envString('XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST', self::appUrl()),
+                        self::appUrl(),
+                    ),
+                    self::hostPublicUrl(),
                 ),
             ),
             'allowedOrigins' => self::addLoopbackOriginVariants(
                 self::appendOrigin(
-                    self::envString('XCONECTC_ALLOWED_ORIGINS', self::appUrl()),
-                    self::appUrl(),
+                    self::appendOrigin(
+                        self::envString('XCONECTC_ALLOWED_ORIGINS', self::appUrl()),
+                        self::appUrl(),
+                    ),
+                    self::hostPublicUrl(),
                 ),
             ),
             'hostBootstrapApiKeys' => self::envString(

@@ -2,6 +2,11 @@
 
 `xconectc-host` is the active Laravel hosted-integrator starter/reference app.
 
+It is intentionally minimal. It demonstrates the hosted-integrator/session contract, not a
+required product shell. Real integrators can keep their own authenticated Laravel app and
+mount the same launcher, marketplace, single-xapp, bootstrap proxy, and bridge/session
+routes inside that fuller application.
+
 It is the Laravel counterpart to:
 
 - [`integration-host`](../../../samples/tenants/integration-host/README.md) for the Node host path
@@ -9,28 +14,14 @@ It is the Laravel counterpart to:
 - [`x-api`](../../../samples/tenants/x-api/README.md) for the Node tenant/backend path
 - [`publisher-api`](../../../samples/publishers/publisher-api/README.md) for the sample publisher/executor lane
 
-It keeps the host/integrator shell local, while the actual tenant-side host APIs stay on `xconectc`.
+It keeps the host/integrator shell local, while the actual tenant-side xapps host APIs stay on `xconectc`.
 
 It provides:
 
-- OIDC-like endpoints under `/api`:
-    - `GET /api/.well-known/openid-configuration`
-    - `GET /api/.well-known/jwks.json`
-    - `GET|POST /api/auth/login`
-    - `POST /api/auth/token`
-- Tenant APIs under `/api`:
-    - `GET|POST /api/projects`
-    - `GET|PATCH /api/projects/:id`
-    - `GET|POST /api/issues`
-    - `GET|PATCH /api/issues/:id`
-    - `GET|POST /api/issues/:id/comments`
-    - `GET|POST /api/inventory`, `GET /api/inventory/:id`
-    - `GET /api/profile`, `GET /api/billing`
 - A simple HTML dashboard:
     - `GET /dashboard`
 - Hosted-integrator proof pages:
     - `GET /`
-    - `GET /catalog`
     - `GET /marketplace.html`
     - `GET /single-xapp.html`
 - Local bootstrap proxy:
@@ -39,6 +30,14 @@ It provides:
     - `GET /host/proof-config.js`
     - `GET /host/*`
     - `GET /embed/sdk/xapps-embed-sdk.esm.js`
+- Health:
+    - `GET /health`
+
+It intentionally does not provide:
+
+- tenant/member auth flows
+- a full operator domain model
+- integrator-specific navigation, RBAC, or business pages
 
 #### Local run
 
@@ -51,9 +50,9 @@ composer install
 # Generate app key
 php artisan key:generate
 
-# SQLite db (path matches .env)
-mkdir -p storage
-touch storage/database.sqlite
+# SQLite db (path matches .env / deploy compose)
+mkdir -p database
+touch database/database.sqlite
 
 # Migrate + seed demo data
 php artisan migrate:fresh --seed
@@ -65,16 +64,14 @@ php artisan serve --host=127.0.0.1 --port=8002
 Then open:
 
 - `http://127.0.0.1:8002/dashboard`
-- `http://127.0.0.1:8002/api/.well-known/openid-configuration`
-- `http://127.0.0.1:8002/catalog`
+- `http://127.0.0.1:8002/`
+- `http://127.0.0.1:8002/marketplace.html`
 
 #### Notes
 
-- The RSA signing key is expected at `storage/idp_private.pem` (ignored by git). Generate one for dev:
-
-```bash
-openssl genrsa -out storage/idp_private.pem 2048
-```
+- In the `partners-examples` deploy lane, the container startup now creates:
+    - `database/database.sqlite`
+    - the initial Laravel schema + seed data
 
 - Required env for the host proof:
     - `XAPPS_API_KEY` should match the paired `xconectc` tenant key
