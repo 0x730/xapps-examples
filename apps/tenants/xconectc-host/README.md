@@ -16,6 +16,44 @@ It is the Laravel counterpart to:
 
 It keeps the host/integrator shell local, while the actual tenant-side xapps host APIs stay on `xconectc`.
 
+## What This Shape Looks Like
+
+```mermaid
+flowchart LR
+  U[User browser] --> H[Laravel host app<br/>xconectc-host]
+  H -->|launcher, branding, local auth shell| P[marketplace.html or single-xapp.html]
+  H -->|POST /api/host-bootstrap| T[Laravel tenant backend<br/>xconectc]
+  P -->|bootstrap token + host API calls| T
+  T --> G[Gateway and runtime authority]
+```
+
+Read it as:
+
+- the Laravel host app owns the visible shell and local bootstrap proxy
+- the paired tenant backend still owns subject resolution, catalog/widget
+  sessions, bridge routes, and payment/runtime authority
+- the browser only carries a short-lived bootstrap token, not raw backend
+  credentials
+
+Use this when:
+
+- the integrator already has a Laravel platform/app shell
+- fast delivery matters more than full tenant-backend ownership
+- the tenant backend should stay platform-hosted while the browser shell stays local
+
+Do not treat this README as the only contract source. Read these first as the shared docs:
+
+- [apps/tenants/docs/README.md](../docs/README.md)
+- [apps/tenants/docs/host/README.md](../docs/host/README.md)
+- [apps/tenants/docs/tooling/laravel-integration-map.md](../docs/tooling/laravel-integration-map.md)
+
+## First Reading Order
+
+1. [apps/tenants/docs/README.md](../docs/README.md)
+2. [apps/tenants/docs/host/README.md](../docs/host/README.md)
+3. [apps/tenants/docs/tooling/laravel-integration-map.md](../docs/tooling/laravel-integration-map.md)
+4. this README for the concrete Laravel proof lane
+
 It provides:
 
 - A simple HTML dashboard:

@@ -6,6 +6,12 @@ Use this page when the tenant team needs a short answer to:
 - what is recommended for the first release
 - what is tenant-owned versus platform-managed
 
+This is a shared/common decision page. Choose the adoption mode first:
+
+- [host-mode](../host-mode/README.md)
+- [full-mode](../full-mode/README.md)
+- [common](../common/README.md)
+
 ## First-Release Recommendation
 
 Use this unless the tenant already knows it needs more ownership:

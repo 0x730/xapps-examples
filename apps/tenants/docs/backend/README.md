@@ -3,6 +3,15 @@
 This page explains the tenant backend surface an integrator should expose for
 the current marketplace lane.
 
+Choose the adoption mode first:
+
+- [host-mode](../host-mode/README.md)
+- [full-mode](../full-mode/README.md)
+- [common](../common/README.md)
+
+Use this page as the backend contract reference after that choice, not as a
+second landing page.
+
 If you only read one backend page first, read
 [../xconect/backend/routes/README.md](../../xconect/backend/routes/README.md).
 
@@ -17,6 +26,12 @@ Laravel full-tenant reference:
 Hosted-integrator Laravel reference:
 
 - [../../../apps/tenants/xconectc-host/README.md](../../xconectc-host/README.md)
+
+Practical mode rule:
+
+- in `host-mode`, the tenant backend may stay platform-hosted while still
+  exposing this contract
+- in `full-mode`, the integrator owns this contract directly
 
 ## Start With The Backend Kit
 

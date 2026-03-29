@@ -4,6 +4,30 @@
 
 It is also the current tenant base used in the first `xconect + xplace` production lane.
 
+Use this as the second option when an integrator wants to own the tenant backend itself.
+
+## What This Shape Looks Like
+
+```mermaid
+flowchart LR
+  U[User browser] --> A[Local tenant app<br/>xconect]
+  A -->|dashboard, launcher, host pages| H[Shared browser host pages]
+  H -->|same-origin host API| A
+  A --> G[Gateway and runtime authority]
+```
+
+Read it as:
+
+- the tenant app owns both the visible shell and the tenant backend contract
+- shared host pages and widget runtime still stay shared
+- use this when backend ownership is intentional, not just because a host shell
+  needs to go live quickly
+
+Do not start here if the first delivery only needs a Laravel host shell with the tenant backend still platform-hosted. In that case, start from:
+
+- [apps/tenants/xconectc-host/README.md](../xconectc-host/README.md)
+- [apps/tenants/docs/README.md](../docs/README.md)
+
 ## Read this first
 
 - tenant implementation guide:

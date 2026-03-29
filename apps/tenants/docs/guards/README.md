@@ -3,6 +3,12 @@
 Use this page when the tenant team needs to understand which policy decisions
 stay tenant-owned even when the default backend comes from the backend kit.
 
+This is a shared/common concern across both tenant adoption modes:
+
+- [host-mode](../host-mode/README.md)
+- [full-mode](../full-mode/README.md)
+- [common](../common/README.md)
+
 ## Start Here
 
 1. Guard manifests:

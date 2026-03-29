@@ -3,6 +3,11 @@
 Use this page when the tenant team needs to know which packages and tools to
 start from for integration.
 
+Choose the adoption mode first, then come here for package/tool selection:
+
+- [host-mode](../host-mode/README.md)
+- [full-mode](../full-mode/README.md)
+
 ## Quick Answer
 
 If the tenant asks "what do we actually use?", the answer is:

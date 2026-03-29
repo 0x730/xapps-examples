@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@xapps-platform/browser-host": "^0.1.5",
-    "@xapps-platform/embed-sdk": "^0.1.4"
+    "@xapps-platform/embed-sdk": "^0.1.5"
   },
   "devDependencies": {
     "tsx": "^4.21.0"

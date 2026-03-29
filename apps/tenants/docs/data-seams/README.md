@@ -3,6 +3,12 @@
 Use this page when the tenant team needs to understand where tenant-owned data
 enters the backend and what stays platform-managed.
 
+This is a shared/common concern after choosing the adoption mode:
+
+- [host-mode](../host-mode/README.md)
+- [full-mode](../full-mode/README.md)
+- [common](../common/README.md)
+
 ## Start Here
 
 - [guard.js](../../../../packages/backend-kit/src/backend/routes/gateway/guard.ts)

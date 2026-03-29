@@ -5,6 +5,21 @@
 Use this workspace to stage the public-facing publisher example while keeping real production
 publisher evolution inside private `xplace`.
 
+## Public Reference Role
+
+```mermaid
+flowchart LR
+  T[Public tenant and host starters] --> G[Gateway]
+  G --> P[xplace-example]
+  P --> X[Public example xapp families]
+```
+
+Read it as:
+
+- `xplace-example` is the public/reference publisher side
+- it is meant to pair with the public tenant and host starter family
+- private production `xplace` remains separate
+
 Current rule:
 
 - `xplace` remains the private production publisher surface
@@ -38,7 +53,7 @@ Current deployment rule:
 
 Current public-release note:
 
-- the public starter/reference export is now released as `xapps-examples@v0.1.7`
+- the public starter/reference export is now released as `xapps-examples@v0.1.10`
 - deploy-time example naming uses:
   - `xconecta-example`
   - `xconecta-example-host`
@@ -67,6 +82,8 @@ Current workspace pieces:
 
 Related references:
 
+- [apps/tenants/docs/README.md](../../tenants/docs/README.md)
+- [docs/guides/xconect-xplace/README.md](../../../docs/guides/xconect-xplace/README.md)
 - [Public Example Reference Layer Audit](../../../dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
 - [TASK-041](../../../dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
 - [xplace workspace](../xplace/README.md)

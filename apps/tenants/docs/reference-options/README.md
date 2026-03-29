@@ -3,6 +3,12 @@
 Use this page when deciding how much ownership the tenant wants beyond the
 recommended first-release path.
 
+Mode-oriented reading order:
+
+- first choose [host-mode](../host-mode/README.md)
+  or [full-mode](../full-mode/README.md)
+- then return here only if you are deciding how much more ownership to take on
+
 Do not start here if you are still learning the base contract. Start with:
 
 - [../README.md](../README.md)

@@ -7,37 +7,99 @@ This is the shared tenant-facing implementation guide. Use this page for what
 the tenant backend and host must actually do, independently of whether the
 tenant chooses Node, PHP, or the hosted-integrator browser path.
 
-## Start Here
+## Pick Your Starting Shape
 
-If you only read three pages first, read these:
+For almost every first delivery, choose one of these two paths:
 
-1. [backend/README.md](./backend/README.md)
-2. [tooling/README.md](./tooling/README.md)
-3. [modules/README.md](./modules/README.md)
+```mermaid
+flowchart LR
+  A[Integrator chooses a tenant path]
+  A --> B[Hosted-integrator first<br/>Recommended]
+  A --> C[Full tenant backend second]
+
+  B --> B1[Local Laravel shell]
+  B --> B2[Platform-hosted tenant backend]
+  B --> B3[Shared browser host and widget runtime]
+
+  C --> C1[Local tenant backend]
+  C --> C2[Local host pages]
+  C --> C3[Same shared browser host/runtime contract]
+```
+
+### Path A: Hosted-integrator first
+
+Use this first when the integrator already has a Laravel app and wants the
+shortest path to a working marketplace and widget experience.
+
+```mermaid
+flowchart LR
+  U[User browser] --> H[Integrator Laravel app]
+  H -->|launcher and shell| P[marketplace.html / single-xapp.html]
+  H -->|POST /api/host-bootstrap| T[Platform-hosted tenant backend]
+  P -->|bootstrap token + host API| T
+  T --> G[Gateway and runtime authority]
+```
+
+Read these first:
+
+1. [tooling/laravel-integration-map.md](./tooling/laravel-integration-map.md)
+2. [../xconectc-host/README.md](../xconectc-host/README.md)
+3. [host/README.md](./host/README.md)
+
+Ownership split:
+
+| Area | Integrator app owns | Platform-owned tenant backend owns |
+| --- | --- | --- |
+| Shell | launcher, branding, local auth/session, app chrome | none |
+| Host contract | local bootstrap proxy only | subject resolution, catalog/widget sessions, bridge routes |
+| Runtime authority | none in browser | gateway/session/payment/runtime authority |
+
+### Path B: Full tenant backend second
+
+Use this when the integrator needs to own the tenant backend contract as well.
+
+```mermaid
+flowchart LR
+  U[User browser] --> A[Local tenant app]
+  A -->|dashboard, launcher, host pages| H[Shared browser host pages]
+  H -->|same-origin host API| A
+  A --> G[Gateway and runtime authority]
+```
+
+Read these first:
+
+1. [../xconect/README.md](../xconect/README.md)
+2. [backend/README.md](./backend/README.md)
+3. [host/README.md](./host/README.md)
+
+Practical rule:
+
+- start with Path A unless you already know you must own the tenant backend
+- both paths keep the same shared browser host/runtime contract
+- do not rebuild the browser runtime from scratch for either path
+
+## What To Read First
+
+If you only open four pages first, open these:
+
+1. [host-mode/README.md](./host-mode/README.md)
+2. [full-mode/README.md](./full-mode/README.md)
+3. [common/README.md](./common/README.md)
+4. [tooling/laravel-integration-map.md](./tooling/laravel-integration-map.md)
 
 That gives you:
 
-- the backend contract and backend-kit entry surface
-- the Node/PHP quickstart path
-- the supported mode and provider matrix
-- the Laravel integration shape map:
-  - [tooling/laravel-integration-map.md](./tooling/laravel-integration-map.md)
+- the host-first adoption path
+- the full-backend adoption path
+- the shared/common material
+- the Laravel shape choice
 
-## Integrator Model
-
-The current recommended tenant path is:
-
-1. use the backend kit for the default tenant backend
-2. use the shared browser host runtime
-3. keep local code only for tenant-specific seams
-4. override or extend only where the tenant really needs custom behavior
-
-There are now two supported host shapes:
+## Supported Reference Shapes
 
 - same-origin tenant host:
   - [xconect host](../xconect/host/README.md)
   - [xconectb host](../xconectb/host/README.md)
-- same-origin tenant launcher + shared host pages on the same app origin:
+- same-origin launcher-backed tenant app:
   - [xconectc](../xconectc/README.md)
 - hosted-integrator frontend with tenant backend still hosted on our side:
   - [host-proof-common](../host-proof-common/README.md)
@@ -45,29 +107,14 @@ There are now two supported host shapes:
   - [xconectb-host](../xconectb-host/README.md)
   - [xconectc-host](../xconectc-host/README.md)
 
-## Laravel Reference Shapes
+## Recommended Integrator Model
 
-The Laravel samples now cover both supported PHP integration shapes:
+The intended adoption order is still:
 
-- full tenant app with backend-kit routes plus local business/OIDC pages:
-  - [xconectc](../xconectc/README.md)
-- hosted-integrator shell that bootstraps into the tenant from another app:
-  - [xconectc-host](../xconectc-host/README.md)
-
-Practical rule:
-
-- use `xconectc` when the tenant app itself owns the dashboard/auth/business UX
-  and wants to host the marketplace surfaces locally
-- use `xconectc-host` when the integrator shell is separate and should bootstrap
-  into the tenant backend over the standard host contract
-- both still use the same backend-kit/browser-host contract underneath
-
-Practical rule:
-
-- do not port all of `xconect`
-- do not rebuild the default host/payment/lifecycle routes from scratch
-- start from the backend kit and the shipped mode tree
-- drop down to the primitive SDKs only when the tenant needs a deeper custom seam
+1. use the shared browser host/runtime
+2. keep local code focused on shell, auth, branding, and bootstrap
+3. keep the tenant backend on the platform until there is a real need to own it
+4. only move to a full tenant backend when the product needs local backend ownership
 
 ## What Stays Local
 
@@ -87,26 +134,43 @@ The tenant should not need to reimplement:
 - default mode tree
 - reference discovery surface
 
+## Folder Map
+
+Use the folder docs by question, not by stack:
+
+- pick the adoption mode first:
+  - [host-mode/README.md](./host-mode/README.md)
+  - [full-mode/README.md](./full-mode/README.md)
+  - [common/README.md](./common/README.md)
+
+- backend contract:
+  - [backend/README.md](./backend/README.md)
+- host/embed/browser runtime:
+  - [host/README.md](./host/README.md)
+- publishing and secrets:
+  - [publishing/README.md](./publishing/README.md)
+- modes/provider boundaries:
+  - [modules/README.md](./modules/README.md)
+- stack/tooling quickstarts:
+  - [tooling/README.md](./tooling/README.md)
+- guards and policy ownership:
+  - [guards/README.md](./guards/README.md)
+- local data seams and subject-profile inputs:
+  - [data-seams/README.md](./data-seams/README.md)
+- deeper reference-shape comparison:
+  - [reference-options/README.md](./reference-options/README.md)
+
 ## Recommended Reading Order
 
-1. Backend contract and what the kit already gives you:
-   [backend/README.md](./backend/README.md)
-2. Tooling and stack choice:
+1. Choose the adoption mode:
+   [host-mode/README.md](./host-mode/README.md)
+   or [full-mode/README.md](./full-mode/README.md)
+2. Read the shared/common material:
+   [common/README.md](./common/README.md)
+3. Pick the stack/tooling path:
    [tooling/README.md](./tooling/README.md)
-3. Supported capabilities and first-release recommendation:
-   [modules/README.md](./modules/README.md)
-4. Browser host details:
-   [host/README.md](./host/README.md)
-5. Integration consequences by area:
-   [integrations/README.md](./integrations/README.md)
-6. Guard ownership and publishing:
-   [guards/README.md](./guards/README.md)
-   and [publishing/README.md](./publishing/README.md)
-7. Request and data seams:
-   [data-seams/README.md](./data-seams/README.md)
-
-Use [reference-options/README.md](./reference-options/README.md)
-only when deciding how much more ownership the tenant wants later.
+4. Only if you need deeper ownership tradeoffs:
+   [reference-options/README.md](./reference-options/README.md)
 
 ## Reference Grouping
 

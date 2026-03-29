@@ -19,13 +19,34 @@ CLI operator baseline:
   - `xapps publisher endpoint credential ensure`
 - treat repo-only CLI helpers as internal engineering tools, not as the tenant publishing contract
 
+## Publishing Flow At A Glance
+
+```mermaid
+flowchart LR
+  A[Source manifest in tenant workspace] --> B[Render placeholders for environment]
+  B --> C[Validate rendered manifest]
+  C --> D[Publish through linked publisher]
+  D --> E[Gateway stores published xapp]
+  E --> F[Endpoint dispatch reaches tenant backend]
+  F --> G[Verify with logs and runtime checks]
+```
+
+Read it as:
+
+- source manifests stay templated in the repo
+- rendered manifests are deployment artifacts
+- the linked publisher publishes the tenant-owned guard
+- publish is not enough on its own; endpoint dispatch and runtime verification
+  must also succeed
+
 ## Start here
 
 Read these first:
 
-1. [../guards/README.md](../guards/README.md)
-2. [../integrations/README.md](../integrations/README.md)
-3. [../../xapps/README.md](../../xconect/xapps/README.md)
+1. [../common/README.md](../common/README.md)
+2. [../guards/README.md](../guards/README.md)
+3. [../integrations/README.md](../integrations/README.md)
+4. [../../xapps/README.md](../../xconect/xapps/README.md)
 
 ## 1. How publishing works today
 
@@ -54,6 +75,17 @@ Code/document anchors:
 Keep source manifests here:
 
 - [../../xapps/guards](../../xconect/xapps/guards)
+
+Useful sample manifests in the current repo:
+
+- gateway-managed / baseline tenant payment guard:
+  - [xconect-tenant-payment-policy/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json)
+- tenant-delegated Stripe guard:
+  - [xconect-tenant-payment-policy-stripe-delegated/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-delegated/manifest.json)
+- gateway-executed Stripe guard:
+  - [xconect-tenant-payment-policy-stripe-gateway/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-gateway/manifest.json)
+- subject-profile guard:
+  - [xconect-tenant-subject-profile-policy/manifest.json](../../xconect/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
 
 Practical rule:
 
@@ -116,6 +148,31 @@ npm run xapps -- publish \
   --api-key <linked-publisher-api-key>
 ```
 
+Recommended operator flow:
+
+```bash
+npm run -s xapps -- validate --from <rendered-manifest.json>
+npm run -s xapps -- publish --yes --from <rendered-manifest.json> --publisher-gateway-url <gateway-url> --api-key <linked-publisher-api-key>
+npm run -s xapps -- logs --xapp <xapp-id-or-slug> --publisher-gateway-url <gateway-url> --api-key <linked-publisher-api-key>
+```
+
+Concrete validate example against a source manifest:
+
+```bash
+npm run -s xapps -- validate \
+  --from apps/tenants/xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json
+```
+
+Concrete local publish example after rendering placeholders:
+
+```bash
+npm run -s xapps -- publish \
+  --yes \
+  --from tmp/rendered/xconect-tenant-payment-policy.manifest.json \
+  --publisher-gateway-url http://localhost:3000 \
+  --api-key xconect-policies-dev-api-key
+```
+
 Current local example:
 
 ```bash
@@ -125,6 +182,40 @@ npm run xapps -- publish \
   --publisher-gateway-url http://localhost:3000 \
   --api-key xconect-policies-dev-api-key
 ```
+
+## 4A. Concrete Operator Example
+
+For a practical local tenant-guard publish, the operator path is:
+
+```bash
+# 1. Validate the source manifest kept in the tenant workspace
+npm run -s xapps -- validate \
+  --from apps/tenants/xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json
+
+# 2. Render placeholders into a temporary output file
+# Example output path:
+# tmp/rendered/xconect-tenant-payment-policy.manifest.json
+
+# 3. Publish the rendered manifest through the linked policy publisher
+npm run -s xapps -- publish \
+  --yes \
+  --from tmp/rendered/xconect-tenant-payment-policy.manifest.json \
+  --publisher-gateway-url http://localhost:3000 \
+  --api-key xconect-policies-dev-api-key
+
+# 4. Confirm publish/runtime linkage
+npm run -s xapps -- logs \
+  --xapp xconect-tenant-payment-policy \
+  --publisher-gateway-url http://localhost:3000 \
+  --api-key xconect-policies-dev-api-key
+```
+
+Then verify, outside the CLI:
+
+- the xapp is visible under the linked publisher
+- the target tenant installation can see the guard where expected
+- the endpoint base URL resolves to the tenant backend
+- the secured dispatch path reaches the tenant backend successfully
 
 Production/shared-ops shape:
 
@@ -140,6 +231,13 @@ Where:
 
 - `<real-gateway-url>` is the actual tenant/publisher gateway environment
 - `<linked-publisher-api-key>` is the approved key for the linked publisher that publishes tenant-owned guards
+- `<rendered-manifest.json>` is the environment-rendered output, not the source manifest with placeholders still present
+
+Practical rule:
+
+- validate source manifests often
+- publish rendered manifests only
+- keep the rendered output outside the source tree when possible
 
 ## 5. Placeholders to replace before publish
 

@@ -7,6 +7,27 @@ the `xconectc` launcher-backed variant.
 If you only read one host file first, read
 [../xconect/host/xconect-host-runtime.js](../../xconect/host/xconect-host-runtime.js).
 
+## Host Modes At A Glance
+
+```mermaid
+flowchart LR
+  A[Choose host mode] --> B[Same-origin tenant host]
+  A --> C[Launcher-backed same-origin host]
+  A --> D[Hosted-integrator host]
+
+  B --> B1[xconect or xconectb host pages]
+  C --> C1[xconectc launcher -> shared host pages]
+  D --> D1[xconect-host / xconectb-host / xconectc-host]
+```
+
+Read it as:
+
+- same-origin host: tenant app owns both shell and backend origin
+- launcher-backed host: tenant app resolves identity first, then hands off to
+  shared host pages on the same origin
+- hosted-integrator host: local app owns the shell, but the tenant backend
+  stays on another origin and remains the runtime authority
+
 ## What The Host Owns
 
 For the current lane, the host page owns:
@@ -105,6 +126,31 @@ In that mode:
 - tenant backend still owns subject resolution, catalog/widget session minting,
   bridge routes, and payment/runtime behavior
 
+### Hosted Bootstrap Flow
+
+```mermaid
+sequenceDiagram
+  participant U as User Browser
+  participant H as Integrator Host App
+  participant T as Tenant Backend
+  participant G as Gateway
+
+  U->>H: open launcher or marketplace page
+  H->>T: POST /api/host-bootstrap
+  T-->>H: short-lived bootstrap token + host config
+  H-->>U: host page + bootstrap payload
+  U->>T: host API calls with bootstrap token
+  T->>G: session, guard, payment, widget authority
+  G-->>T: runtime results
+  T-->>U: catalog/widget responses
+```
+
+Practical meaning:
+
+- the browser never gets raw tenant or gateway credentials
+- the bootstrap token is short-lived and browser-safe
+- the tenant backend still remains the only runtime authority
+
 ## Same-Origin Launcher Variant
 
 The same browser-host package also supports a same-origin tenant launcher that
@@ -123,6 +169,24 @@ In that mode:
 - `entryHref` should point back to the launcher instead of `/`
 - the backend can stay same-origin, so `host.allowedOrigins` can remain empty
   unless another frontend origin is introduced later
+
+### Launcher-Backed Flow
+
+```mermaid
+sequenceDiagram
+  participant U as User Browser
+  participant A as Tenant App
+  participant H as Shared Host Pages
+  participant G as Gateway
+
+  U->>A: open /catalog launcher
+  A-->>U: resolve identity and launcher state
+  U->>H: hand off to marketplace.html or single-xapp.html
+  H->>A: same-origin host API calls
+  A->>G: session, guard, payment, widget authority
+  G-->>A: runtime results
+  A-->>H: catalog/widget responses
+```
 
 ## Session Lifecycle
 
