@@ -1,0 +1,262 @@
+{
+  "name": "xplace-example • Certificates Request (Gateway-Managed Stripe / Publisher-Rendered)",
+  "title": {
+    "en": "xplace-example • Certificates Request (Gateway-Managed Stripe / Publisher-Rendered)",
+    "ro": "xplace-example • Cerere certificate (Stripe gestionat de gateway / randare publisher)"
+  },
+  "slug": "xplace-certs-gateway-stripe-publisher-rendered",
+  "description": {
+    "en": "Publisher-rendered certificate request app in xplace-example using the request-owned after:request_created payment lifecycle.",
+    "ro": "Aplicație publisher-rendered pentru cereri de certificate în xplace-example, folosind ciclul de plată deținut de cerere pe after:request_created."
+  },
+  "version": "1.0.6",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "visibility": "public",
+  "tags": [
+    "xplace-example",
+    "publisher-rendered",
+    "certificates",
+    "pay-per-request",
+    "manual-review",
+    "gateway-managed",
+    "stripe"
+  ],
+  "tools": [
+    {
+      "tool_name": "submit_certificate_request_async",
+      "title": {
+        "en": "Submit Certificate Request",
+        "ro": "Trimite cererea de certificat"
+      },
+      "description": {
+        "en": "Stores certificate request in xplace-example for manual review and publisher completion.",
+        "ro": "Stochează cererea de certificat în xplace-example pentru revizuire manuală și finalizare de către publisher."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "companyCui": {
+            "type": "string",
+            "title": "CUI Firmă",
+            "description": "Introduceți CUI-ul firmei pentru verificare automată ANAF (ex: RO12345678).",
+            "pattern": "^(RO)?[0-9]{2,13}$"
+          },
+          "requestPurpose": {
+            "type": "string",
+            "title": "Motiv solicitare",
+            "oneOf": [
+              {
+                "const": "licitatie",
+                "title": "Licitatie"
+              },
+              {
+                "const": "dosar",
+                "title": "Dosar"
+              },
+              {
+                "const": "contractare",
+                "title": "Contractare"
+              },
+              {
+                "const": "conformitate",
+                "title": "Conformitate"
+              },
+              {
+                "const": "altul",
+                "title": "Altul"
+              }
+            ]
+          },
+          "requestDetails": {
+            "type": "string",
+            "title": "Detalii solicitare",
+            "description": "Opțional: detalii suplimentare despre utilizarea certificatului."
+          }
+        },
+        "required": ["companyCui", "requestPurpose"]
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "certificateId": {
+            "type": "string"
+          },
+          "requestRef": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "required": ["status", "requestRef"]
+      },
+      "output_ui_schema": {
+        "xapps": {
+          "manual_response": true,
+          "renderer": "json-forms",
+          "render": {
+            "kind": "kv",
+            "title": "Certificate Request Result",
+            "fields": [
+              {
+                "label": "Status",
+                "path": "status"
+              },
+              {
+                "label": "Request Ref",
+                "path": "requestRef"
+              },
+              {
+                "label": "Certificate ID",
+                "path": "certificateId"
+              },
+              {
+                "label": "Summary",
+                "path": "summary"
+              }
+            ]
+          }
+        },
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/status"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/requestRef"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/certificateId"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/summary",
+            "options": {
+              "multi": true
+            }
+          }
+        ]
+      },
+      "async": true
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "certs_request_widget_stripe_publisher_rendered",
+      "title": {
+        "en": "Certificate Request (Gateway-Managed Stripe / Publisher-Rendered)",
+        "ro": "Cerere certificat (Stripe gestionat de gateway / randare publisher)"
+      },
+      "type": "write",
+      "renderer": "publisher",
+      "bind_tool_name": "submit_certificate_request_async",
+      "entry": {
+        "kind": "iframe_url",
+        "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-certs-gateway-stripe-publisher-rendered.html"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "runtime_default"
+        }
+      },
+      "capabilities": ["requests:create", "requests:read", "ui:notification"]
+    }
+  ],
+  "guards": [
+    {
+      "slug": "xconect-tenant-subject-profile-policy",
+      "trigger": "before:tool_run",
+      "headless": false,
+      "config": {
+        "subject_profile_guard_ref": "xconect_tenant_billing_business",
+        "tools": ["submit_certificate_request_async"],
+        "subject_profile_sources": {
+          "publisher": {
+            "provider_kind": "endpoint",
+            "endpoint_base_url": "__XPLACE_BACKEND_BASE_URL__/guard/subject-profiles/publisher-candidates",
+            "tool_payload": {
+              "xapp_slug": "xplace-certs-gateway-stripe-publisher-rendered",
+              "tool_name": "submit_certificate_request_async"
+            }
+          }
+        }
+      }
+    },
+    {
+      "slug": "xconect-tenant-payment-policy-stripe-gateway",
+      "trigger": "after:request_created",
+      "headless": true,
+      "config": {
+        "effect_kind": "policy",
+        "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
+        "tool_name": "evaluate_tenant_payment_policy",
+        "tools": ["submit_certificate_request_async"],
+        "allow_orchestration_approval": true
+      }
+    },
+    {
+      "slug": "platform-internal-invoice-handler",
+      "trigger": "after:payment_completed",
+      "headless": true,
+      "config": {
+        "invoice_ref": "gateway_payment_invoice"
+      }
+    },
+    {
+      "slug": "platform-internal-notification-handler",
+      "trigger": "after:request_created",
+      "headless": true,
+      "config": {
+        "notification_ref": "publisher_request_created_email"
+      }
+    }
+  ],
+  "guards_policy": {
+    "before:tool_run": "all",
+    "after:payment_completed": "all",
+    "after:request_created": "all"
+  },
+  "connectivity": {
+    "executor_mode": "PUBLIC_EXECUTOR",
+    "auth_mode": "PUBLISHER_APP",
+    "signing_policy": "none",
+    "webhooks": {
+      "enabled": true
+    },
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  },
+  "event_subscriptions": [
+    {
+      "event_type": "xapps.request.completed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.request.failed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    }
+  ],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XPLACE_BACKEND_BASE_URL__/xapps/requests",
+      "timeout_ms": 12000,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff": "exponential"
+      },
+      "labels": {
+        "profile": "xplace-certs-gateway-stripe-publisher-rendered",
+        "env": "dev"
+      }
+    }
+  }
+}

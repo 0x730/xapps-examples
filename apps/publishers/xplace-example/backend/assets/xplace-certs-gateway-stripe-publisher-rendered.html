@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>xplace-certs-gateway-stripe-publisher-rendered</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f1e8;
+        --card: rgba(255, 252, 245, 0.94);
+        --line: rgba(72, 58, 37, 0.16);
+        --ink: #24190d;
+        --muted: #6b5a45;
+        --accent: #c76422;
+        --accent-dark: #9c4312;
+        --ok: #166534;
+        --warn: #92400e;
+        --shadow: 0 24px 48px rgba(36, 25, 13, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font:
+          16px/1.5 "IBM Plex Sans",
+          "Segoe UI",
+          sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(199, 100, 34, 0.2), transparent 34%),
+          linear-gradient(180deg, #fbf7f1 0%, var(--bg) 100%);
+        color: var(--ink);
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+      }
+
+      .shell {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .hero {
+        padding: 28px 28px 22px;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(199, 100, 34, 0.12), transparent 55%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 252, 245, 0.95));
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 14px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(199, 100, 34, 0.1);
+        color: var(--accent-dark);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font:
+          700 2rem/1.1 "IBM Plex Serif",
+          Georgia,
+          serif;
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 62ch;
+        color: var(--muted);
+      }
+
+      .content {
+        display: grid;
+        gap: 24px;
+        padding: 28px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid rgba(72, 58, 37, 0.22);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--ink);
+      }
+
+      textarea {
+        min-height: 116px;
+        resize: vertical;
+      }
+
+      .hint,
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+      }
+
+      .status[data-tone="ok"] {
+        border-color: rgba(22, 101, 52, 0.2);
+        color: var(--ok);
+        background: rgba(240, 253, 244, 0.9);
+      }
+
+      .status[data-tone="warn"] {
+        border-color: rgba(146, 64, 14, 0.2);
+        color: var(--warn);
+        background: rgba(255, 247, 237, 0.95);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 13px 18px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: linear-gradient(135deg, var(--accent), #df8b3a);
+        color: #fffdf8;
+      }
+
+      .secondary {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      button[disabled] {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      .flow {
+        display: grid;
+        gap: 10px;
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px dashed rgba(72, 58, 37, 0.24);
+        background: rgba(255, 255, 255, 0.54);
+      }
+
+      .flow strong {
+        font-size: 14px;
+      }
+
+      @media (max-width: 640px) {
+        main {
+          padding-inline: 12px;
+        }
+
+        .hero,
+        .content {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="shell">
+        <header class="hero">
+          <p class="eyebrow">xplace-example / TASK-044</p>
+          <h1>Cerere certificat</h1>
+          <p class="lead">
+            Formular publisher-rendered pentru fluxul nou în care cererea devine autoritară la
+            creare, iar plata este continuată din suprafața de request a platformei.
+          </p>
+        </header>
+
+        <div class="content">
+          <div class="flow">
+            <strong>Fluxul actual</strong>
+            <div class="meta">
+              Completezi cererea aici, platforma creează request-ul, iar dacă plata este obligatorie
+              te ducem direct la pagina request-ului din platformă. Plata și reluarea request-ului
+              rămân gestionate de platformă, nu de iframe-ul publisherului.
+            </div>
+          </div>
+
+          <form id="cert-form">
+            <div class="grid">
+              <label>
+                CUI firmă
+                <input id="company-cui" name="companyCui" placeholder="RO12345678" required />
+                <span class="hint">Format acceptat: `RO` opțional urmat de 2-13 cifre.</span>
+              </label>
+
+              <label>
+                Motiv solicitare
+                <select id="request-purpose" name="requestPurpose" required>
+                  <option value="">Selectează</option>
+                  <option value="licitatie">Licitatie</option>
+                  <option value="dosar">Dosar</option>
+                  <option value="contractare">Contractare</option>
+                  <option value="conformitate">Conformitate</option>
+                  <option value="altul">Altul</option>
+                </select>
+              </label>
+            </div>
+
+            <label style="margin-top: 18px">
+              Detalii solicitare
+              <textarea
+                id="request-details"
+                name="requestDetails"
+                placeholder="Descrie pe scurt contextul sau utilizarea certificatului."
+              ></textarea>
+            </label>
+
+            <div class="actions" style="margin-top: 22px">
+              <button id="submit-button" class="primary" type="submit">Trimite cererea</button>
+            </div>
+          </form>
+
+          <div id="status" class="status" data-tone="neutral">
+            Se inițializează sesiunea widget...
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { createBridge, XappsBridgeError } from "/widgets/widget-sdk.js";
+
+      const bridge = createBridge();
+      const form = document.getElementById("cert-form");
+      const statusEl = document.getElementById("status");
+      const submitButton = document.getElementById("submit-button");
+      const companyCuiInput = document.getElementById("company-cui");
+      const requestPurposeInput = document.getElementById("request-purpose");
+      const requestDetailsInput = document.getElementById("request-details");
+      const storageKey = "xplace-example:publisher-rendered-certs:draft";
+
+      let context = null;
+      let lastRequestId = "";
+      let bootstrapVerified = false;
+
+      function setStatus(message, tone = "neutral") {
+        statusEl.textContent = message;
+        statusEl.dataset.tone = tone;
+      }
+
+      function setFormLocked(locked) {
+        submitButton.disabled = locked;
+        companyCuiInput.disabled = locked;
+        requestPurposeInput.disabled = locked;
+        requestDetailsInput.disabled = locked;
+        form.style.opacity = locked ? "0.66" : "1";
+        form.style.pointerEvents = locked ? "none" : "auto";
+      }
+
+      async function verifyPublisherRuntime(widgetContext) {
+        const response = await fetch(
+          "/widgets/xplace-certs-gateway-stripe-publisher-rendered/bootstrap-verify",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              token: widgetContext.token,
+              installationId: widgetContext.installationId,
+              clientId: widgetContext.clientId,
+              xappId: widgetContext.xappId,
+              subjectId: widgetContext.subjectId,
+              bindToolName: widgetContext.bindToolName,
+              hostOrigin: widgetContext.hostOrigin || null,
+            }),
+          },
+        );
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.ok) {
+          throw new Error(
+            payload &&
+              payload.error &&
+              typeof payload.error.message === "string" &&
+              payload.error.message.trim()
+              ? payload.error.message
+              : "Publisher runtime verification failed.",
+          );
+        }
+        return payload;
+      }
+
+      function readDraft() {
+        try {
+          const raw = window.localStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function writeDraft() {
+        window.localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            companyCui: companyCuiInput.value.trim(),
+            requestPurpose: requestPurposeInput.value,
+            requestDetails: requestDetailsInput.value.trim(),
+            lastRequestId,
+          }),
+        );
+      }
+
+      function hydrateDraft() {
+        const draft = readDraft();
+        if (typeof draft.companyCui === "string") companyCuiInput.value = draft.companyCui;
+        if (typeof draft.requestPurpose === "string")
+          requestPurposeInput.value = draft.requestPurpose;
+        if (typeof draft.requestDetails === "string")
+          requestDetailsInput.value = draft.requestDetails;
+        if (typeof draft.lastRequestId === "string") lastRequestId = draft.lastRequestId;
+      }
+
+      function openRequest(requestId) {
+        if (!requestId || !context) return;
+        lastRequestId = requestId;
+        writeDraft();
+        bridge.openOperationalSurface({
+          surface: "requests",
+          placement: "full_page",
+          requestId,
+          installationId: context.installationId,
+          xappId: context.xappId,
+        });
+      }
+
+      for (const element of [companyCuiInput, requestPurposeInput, requestDetailsInput]) {
+        element.addEventListener("input", writeDraft);
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!context || !bootstrapVerified) {
+          setStatus("Contextul publisher nu este verificat încă.", "warn");
+          return;
+        }
+
+        submitButton.disabled = true;
+        setStatus("Creăm request-ul și verificăm obligația de plată...", "neutral");
+
+        try {
+          const result = await bridge.createRequest({
+            installationId: context.installationId,
+            subjectId: context.subjectId,
+            toolName: context.bindToolName || "submit_certificate_request_async",
+            payload: {
+              companyCui: companyCuiInput.value.trim(),
+              requestPurpose: requestPurposeInput.value,
+              requestDetails: requestDetailsInput.value.trim(),
+            },
+          });
+          const request = result && typeof result === "object" ? result.request || result : null;
+          const requestId = request && typeof request === "object" ? String(request.id || "") : "";
+          const requestStatus =
+            request && typeof request === "object" ? String(request.status || "").trim() : "";
+
+          if (!requestId) {
+            throw new Error("Request created response did not include request.id");
+          }
+
+          if (requestStatus.toUpperCase() === "PAYMENT_PENDING") {
+            setStatus(
+              "Cererea a fost creată și așteaptă plata. Deschidem pagina request-ului din platformă.",
+              "warn",
+            );
+          } else {
+            setStatus("Cererea a fost creată. Deschidem pagina request-ului din platformă.", "ok");
+          }
+          openRequest(requestId);
+        } catch (error) {
+          if (
+            error instanceof XappsBridgeError &&
+            String(error.code || "")
+              .trim()
+              .toUpperCase() === "PAYMENT_PENDING_REQUEST_EXISTS"
+          ) {
+            const payload = error.data && typeof error.data === "object" ? error.data : {};
+            const pendingRequestId = String(payload.requestId || "").trim();
+            if (pendingRequestId) {
+              setStatus(
+                "Există deja o cerere cu plată în așteptare. Deschidem request-ul existent.",
+                "warn",
+              );
+              openRequest(pendingRequestId);
+            } else {
+              setStatus(error.message || "Există deja o cerere cu plată în așteptare.", "warn");
+            }
+          } else {
+            setStatus(error instanceof Error ? error.message : "Nu am putut crea cererea.", "warn");
+          }
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      hydrateDraft();
+      setFormLocked(true);
+      setStatus("Așteptăm contextul widget și verificarea publisher runtime...", "neutral");
+
+      try {
+        context = await bridge.getContext();
+        await verifyPublisherRuntime(context);
+        bootstrapVerified = true;
+        setFormLocked(false);
+        setStatus(
+          "Context verificat. Poți crea cererea și continua din pagina request-ului.",
+          "ok",
+        );
+      } catch (error) {
+        bootstrapVerified = false;
+        setFormLocked(true);
+        setStatus(
+          error instanceof Error
+            ? error.message
+            : "Nu am putut verifica contextul widget pentru publisher runtime.",
+          "warn",
+        );
+      }
+    </script>
+  </body>
+</html>

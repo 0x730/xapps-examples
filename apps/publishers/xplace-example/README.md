@@ -53,7 +53,7 @@ Current deployment rule:
 
 Current public-release note:
 
-- the public starter/reference export is now released as `xapps-examples@v0.1.10`
+- the public starter/reference export is now released as `xapps-examples@v0.1.11`
 - deploy-time example naming uses:
   - `xconecta-example`
   - `xconecta-example-host`
@@ -68,6 +68,9 @@ Current workspace pieces:
   - [backend/server.js](./backend/server.js)
   - [backend/package.json](./backend/package.json)
   - [backend/.env.example](./backend/.env.example)
+- isolated `TASK-044` publisher-rendered certs reference lane:
+  - [xapps/xplace-certs-gateway-stripe-publisher-rendered/manifest.json](./xapps/xplace-certs-gateway-stripe-publisher-rendered/manifest.json)
+  - [xapps/xplace-certs-gateway-stripe-publisher-rendered/README.md](./xapps/xplace-certs-gateway-stripe-publisher-rendered/README.md)
 - workspace scripts:
   - [scripts/provision-publisher.mjs](./scripts/provision-publisher.mjs)
   - [scripts/provision-publisher-admin.mjs](./scripts/provision-publisher-admin.mjs)
@@ -96,6 +99,12 @@ npm run seed:xplace-example-publisher
 npm run seed:xplace-example-publisher-admin
 npm run xplace-example:prepare-republish -- --json
 ```
+
+Current `TASK-044` lane:
+
+- kept in `xplace-example` as the isolated publisher-rendered certs reference implementation
+- uses the real `after:request_created` request-held lifecycle
+- current intended example tenant lane: `xconecta`
 
 Local dev note:
 

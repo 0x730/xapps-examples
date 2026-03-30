@@ -10,6 +10,53 @@ It is the concrete implementation companion for:
 
 - [Public Example Reference Layer Audit](../../../../dev/engineering/audits/systems/PUBLIC_EXAMPLE_REFERENCE_LAYER_AUDIT.md)
 - [TASK-041](../../../../dev/engineering/pm/OPEN_POINTS.md#task-041-public-example--reference-layer-for-tenants-hosts-and-publisher)
+- [TASK-044](../../../../dev/engineering/pm/OPEN_POINTS.md#task-044-publisher-rendered-monetization-modes-and-module-composition)
+
+## Current publisher-rendered reference lane
+
+`xplace-example` is now the preferred isolated lane for proving publisher-rendered existing-app composition.
+
+First implementation target:
+
+- full publisher-rendered `xplace-certs`
+- `gateway_managed` payment rail
+- target monetization shape:
+  - `after:request_created`
+  - `after:response_ready` / `after:response_finalized` with release lock
+  - with `after:payment_completed` as the platform-side continuation / unlock seam
+
+Important current reality:
+
+- the first request-held lifecycle slice is now implemented in core
+- request-scoped payment reconcile/restart is now part of that held-request lifecycle
+- compact toolbar context is now aligned across publisher-rendered and JSON Forms renderers
+- the `xplace-example` certs widget now proves the current secure runtime pattern:
+  - public bootstrap page
+  - short-lived widget context from the wrapper
+  - publisher backend verifies that widget token against the gateway before exposing request-capable UI
+- current `before:tool_run` payment path should not be treated as a supported publisher-rendered mode yet
+- making it real would require temporary request persistence before payment and promotion into the permanent request after payment
+
+Current isolated reference source:
+
+- [xplace-certs-gateway-stripe-publisher-rendered manifest](../xapps/xplace-certs-gateway-stripe-publisher-rendered/manifest.json)
+- [xplace-example certs draft page](../backend/assets/xplace-certs-gateway-stripe-publisher-rendered.html)
+
+Planned follow-on reference samples:
+
+- `before:session_open`
+- `after:response_ready` / `after:response_finalized` with release lock
+
+Isolation rule:
+
+- keep code per xapp/application family in its own example-lane module/folder
+- do not mix `TASK-044` app-specific behavior into shared core unless a real generic seam is proven by a working app
+
+Reference planning docs:
+
+- [Publisher Integration Model](../../../../docs/specifications/01-publisher-rendered-integration.md)
+- [Publisher Rendered Module Composition Audit](../../../../dev/engineering/audits/systems/PUBLISHER_RENDERED_MODULE_COMPOSITION_AUDIT.md)
+- [TASK-044 Execution Note](../../../../dev/engineering/notes/TASK-044_PUBLISHER_RENDERED_CERTS_EXECUTION_NOTE.md)
 
 ## Current `xplace` surface
 
@@ -140,7 +187,6 @@ Current deployment split:
 
 Current tenant mapping:
 
-- `xconect` stays on the private production `xplace` lane
 - `xconecta`
 - `xconectb`
 - `xconectc`
@@ -148,6 +194,11 @@ Current tenant mapping:
 - `xconectb-host`
 - `xconectc-host`
   use the broader `xplace-example` fleet
+
+Practical local note:
+
+- the intended Node reference family is `xconecta`
+- the current local seeded/runtime lane may still appear as `xconect`
 
 Near-term rule:
 

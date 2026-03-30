@@ -8,6 +8,8 @@ Current shape:
 - local package boundary in [package.json](./package.json)
 - sample env in [.env.example](.env.example)
 - local dev env in [.env.dev](.env.dev)
+- isolated certs widget page in
+  [assets/xplace-certs-gateway-stripe-publisher-rendered.html](./assets/xplace-certs-gateway-stripe-publisher-rendered.html)
 - shared publisher core consumed from
   [apps/publishers/shared/xplace-core](../../shared/xplace-core/README.md)
 

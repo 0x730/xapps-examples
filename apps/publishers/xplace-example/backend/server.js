@@ -56,6 +56,30 @@ const XPLACE_EXAMPLE_DATABASE_URL = String(
 
 const xplaceExampleRepo = await createXplaceDb({ databaseUrl: XPLACE_EXAMPLE_DATABASE_URL });
 const { dbKind, dbTarget } = xplaceExampleRepo;
+const backendAssets = [
+  {
+    routePath: "/widgets/widget-sdk.js",
+    filePath: path.join(__dirname, "../../../../packages/widget-sdk/dist/index.js"),
+    contentType: "application/javascript; charset=utf-8",
+  },
+  {
+    routePath: "/widgets/xplace-certs-gateway-stripe-publisher-rendered.html",
+    filePath: path.join(__dirname, "assets/xplace-certs-gateway-stripe-publisher-rendered.html"),
+    contentType: "text/html; charset=utf-8",
+  },
+];
+
+function normalizeOrigin(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (!parsed.protocol || !parsed.host) return null;
+    return parsed.origin;
+  } catch {
+    return null;
+  }
+}
 
 function requireApiKey(request, reply) {
   const key = String(request.headers["x-xplace-api-key"] || "").trim();
@@ -103,7 +127,106 @@ const fastify = createPublisherWorkspaceApp({
   requireApiKey,
   requireAdminKey,
   buildPublisherSubjectProfilesEnvelope,
+  assets: backendAssets,
 });
+
+fastify.post(
+  "/widgets/xplace-certs-gateway-stripe-publisher-rendered/bootstrap-verify",
+  async (request, reply) => {
+    const body = request.body && typeof request.body === "object" ? request.body : {};
+    const token = String(body.token || "").trim();
+    const hostOrigin = normalizeOrigin(body.hostOrigin);
+    const installationId = String(body.installationId || "").trim();
+    const bindToolName = String(body.bindToolName || "").trim();
+    const subjectId = String(body.subjectId || "").trim();
+    const clientId = String(body.clientId || "").trim();
+    const xappId = String(body.xappId || "").trim();
+
+    if (!token) {
+      return reply.code(401).send({
+        ok: false,
+        error: { code: "WIDGET_TOKEN_REQUIRED", message: "Widget token is required" },
+      });
+    }
+
+    if (!hostOrigin) {
+      return reply.code(400).send({
+        ok: false,
+        error: {
+          code: "HOST_ORIGIN_REQUIRED",
+          message: "Host origin is required to verify browser widget context",
+        },
+      });
+    }
+
+    const verifyUrl = new URL("/v1/requests/latest", GATEWAY_BASE_URL);
+    if (installationId) verifyUrl.searchParams.set("installationId", installationId);
+    if (bindToolName) verifyUrl.searchParams.set("toolName", bindToolName);
+    if (subjectId) verifyUrl.searchParams.set("subjectId", subjectId);
+
+    let gatewayResponse;
+    try {
+      gatewayResponse = await fetch(verifyUrl, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          authorization: `Bearer ${token}`,
+          origin: hostOrigin,
+        },
+      });
+    } catch (error) {
+      request.log.warn({ err: error }, "xplace-example bootstrap verify gateway call failed");
+      return reply.code(502).send({
+        ok: false,
+        error: {
+          code: "GATEWAY_UNREACHABLE",
+          message: "Could not verify widget context with the gateway",
+        },
+      });
+    }
+
+    if (!gatewayResponse.ok) {
+      const gatewayBody = await gatewayResponse
+        .json()
+        .catch(() => ({ message: "Widget context rejected by the gateway" }));
+      request.log.info(
+        {
+          status: gatewayResponse.status,
+          installationId: installationId || null,
+          bindToolName: bindToolName || null,
+          subjectId: subjectId || null,
+          hostOrigin,
+          gatewayBody,
+        },
+        "xplace-example bootstrap verify rejected",
+      );
+      return reply.code(gatewayResponse.status === 401 || gatewayResponse.status === 403 ? 401 : 400).send({
+        ok: false,
+        error: {
+          code: "BOOTSTRAP_CONTEXT_REJECTED",
+          message: "The widget context could not be verified for this publisher runtime",
+          details: gatewayBody,
+        },
+      });
+    }
+
+    const gatewayBody = await gatewayResponse.json().catch(() => ({}));
+    return reply.send({
+      ok: true,
+      verified: true,
+      checkedAt: nowIso(),
+      context: {
+        installationId: installationId || null,
+        clientId: clientId || null,
+        xappId: xappId || null,
+        subjectId: subjectId || null,
+        bindToolName: bindToolName || null,
+        hostOrigin,
+      },
+      latestRequestId: String(gatewayBody.requestId || "").trim() || null,
+    });
+  },
+);
 
 fastify.listen({ port: PORT, host: "0.0.0.0" }).then(() => {
   fastify.log.info(

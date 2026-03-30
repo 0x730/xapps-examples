@@ -48,11 +48,11 @@ Read these first:
 
 Ownership split:
 
-| Area | Integrator app owns | Platform-owned tenant backend owns |
-| --- | --- | --- |
-| Shell | launcher, branding, local auth/session, app chrome | none |
-| Host contract | local bootstrap proxy only | subject resolution, catalog/widget sessions, bridge routes |
-| Runtime authority | none in browser | gateway/session/payment/runtime authority |
+| Area              | Integrator app owns                                | Platform-owned tenant backend owns                         |
+| ----------------- | -------------------------------------------------- | ---------------------------------------------------------- |
+| Shell             | launcher, branding, local auth/session, app chrome | none                                                       |
+| Host contract     | local bootstrap proxy only                         | subject resolution, catalog/widget sessions, bridge routes |
+| Runtime authority | none in browser                                    | gateway/session/payment/runtime authority                  |
 
 ### Path B: Full tenant backend second
 
