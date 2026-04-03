@@ -276,7 +276,11 @@
     </main>
 
     <script type="module">
-      import { createBridge, XappsBridgeError } from "/widgets/widget-sdk.js";
+      import {
+        createBridge,
+        verifyWidgetBootstrap,
+        XappsBridgeError,
+      } from "/widgets/widget-sdk.js";
 
       const bridge = createBridge();
       const form = document.getElementById("cert-form");
@@ -306,34 +310,18 @@
       }
 
       async function verifyPublisherRuntime(widgetContext) {
-        const response = await fetch(
-          "/widgets/xplace-certs-gateway-stripe-publisher-rendered/bootstrap-verify",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              token: widgetContext.token,
-              installationId: widgetContext.installationId,
-              clientId: widgetContext.clientId,
-              xappId: widgetContext.xappId,
-              subjectId: widgetContext.subjectId,
-              bindToolName: widgetContext.bindToolName,
-              hostOrigin: widgetContext.hostOrigin || null,
-            }),
+        const verified = await verifyWidgetBootstrap({
+          bridge,
+          endpoint: "/widgets/xplace-certs-gateway-stripe-publisher-rendered/bootstrap-verify",
+          body: {
+            installationId: widgetContext.installationId,
+            clientId: widgetContext.clientId,
+            xappId: widgetContext.xappId,
+            subjectId: widgetContext.subjectId,
+            bindToolName: widgetContext.bindToolName,
           },
-        );
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok || !payload.ok) {
-          throw new Error(
-            payload &&
-              payload.error &&
-              typeof payload.error.message === "string" &&
-              payload.error.message.trim()
-              ? payload.error.message
-              : "Publisher runtime verification failed.",
-          );
-        }
-        return payload;
+        });
+        return verified.payload;
       }
 
       function readDraft() {
@@ -453,24 +441,33 @@
       setFormLocked(true);
       setStatus("Așteptăm contextul widget și verificarea publisher runtime...", "neutral");
 
-      try {
-        context = await bridge.getContext();
-        await verifyPublisherRuntime(context);
-        bootstrapVerified = true;
-        setFormLocked(false);
-        setStatus(
-          "Context verificat. Poți crea cererea și continua din pagina request-ului.",
-          "ok",
-        );
-      } catch (error) {
+      if (!bridge.isEmbedded()) {
         bootstrapVerified = false;
         setFormLocked(true);
         setStatus(
-          error instanceof Error
-            ? error.message
-            : "Nu am putut verifica contextul widget pentru publisher runtime.",
+          "Acest widget trebuie deschis din Xapps Portal sau Marketplace pentru a primi contextul securizat.",
           "warn",
         );
+      } else {
+        try {
+          context = await bridge.getContext();
+          await verifyPublisherRuntime(context);
+          bootstrapVerified = true;
+          setFormLocked(false);
+          setStatus(
+            "Context verificat. Poți crea cererea și continua din pagina request-ului.",
+            "ok",
+          );
+        } catch (error) {
+          bootstrapVerified = false;
+          setFormLocked(true);
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Nu am putut verifica contextul widget pentru publisher runtime.",
+            "warn",
+          );
+        }
       }
     </script>
   </body>

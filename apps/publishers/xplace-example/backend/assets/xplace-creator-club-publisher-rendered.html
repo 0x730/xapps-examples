@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>xplace-creator-club-publisher-rendered</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f1e8;
+        --panel: rgba(255, 252, 246, 0.95);
+        --line: rgba(58, 47, 28, 0.16);
+        --ink: #241b10;
+        --muted: #6c5d49;
+        --accent: #0f766e;
+        --accent-strong: #155e75;
+        --warn: #a16207;
+        --danger: #b91c1c;
+        --shadow: 0 28px 56px rgba(36, 27, 16, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font:
+          16px/1.5 "IBM Plex Sans",
+          "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 32%),
+          linear-gradient(180deg, #fcfaf4 0%, var(--bg) 100%);
+      }
+
+      .boot-shell {
+        width: min(1240px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 20px 16px 32px;
+      }
+
+      .boot-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .boot-hero {
+        padding: 24px 28px 20px;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 56%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 252, 246, 0.98));
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 14px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.1);
+        color: var(--accent-strong);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font:
+          700 2rem/1.1 "IBM Plex Serif",
+          Georgia,
+          serif;
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 72ch;
+        color: var(--muted);
+      }
+
+      .boot-content {
+        padding: 22px 28px 28px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .status {
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--muted);
+      }
+
+      .status[data-tone="ok"] {
+        color: var(--accent-strong);
+        border-color: rgba(15, 118, 110, 0.22);
+        background: rgba(240, 253, 250, 0.96);
+      }
+
+      .status[data-tone="warn"] {
+        color: var(--warn);
+        border-color: rgba(161, 98, 7, 0.2);
+        background: rgba(255, 251, 235, 0.96);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="boot-shell">
+      <section class="boot-card">
+        <header class="boot-hero">
+          <h1>Creator Club</h1>
+        </header>
+        <div class="boot-content">
+          <div id="boot-status" class="status" data-tone="neutral">
+            Waiting for secure widget context...
+          </div>
+          <div id="root"></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { createBridge, verifyWidgetBootstrap } from "/widgets/widget-sdk.js";
+
+      const bridge = createBridge();
+      const statusEl = document.getElementById("boot-status");
+      const PLAYGROUND_SESSION_STORAGE_KEY = "xapps.xplace-example.creator-club.playground-session";
+
+      function setStatus(message, tone = "neutral") {
+        statusEl.textContent = message;
+        statusEl.dataset.tone = tone;
+      }
+
+      function readStoredSessionToken() {
+        try {
+          return String(sessionStorage.getItem(PLAYGROUND_SESSION_STORAGE_KEY) || "").trim();
+        } catch {
+          return "";
+        }
+      }
+
+      function writeStoredSessionToken(token) {
+        try {
+          if (token) {
+            sessionStorage.setItem(PLAYGROUND_SESSION_STORAGE_KEY, String(token));
+          } else {
+            sessionStorage.removeItem(PLAYGROUND_SESSION_STORAGE_KEY);
+          }
+        } catch {
+          // best effort
+        }
+      }
+
+      async function start() {
+        if (!bridge.isEmbedded()) {
+          setStatus(
+            "This publisher-rendered playground must be opened from Xapps Portal or Marketplace.",
+            "warn",
+          );
+          return;
+        }
+
+        try {
+          const context = await bridge.getContext();
+          const verified = await verifyWidgetBootstrap({
+            bridge,
+            endpoint: "/widgets/xplace-creator-club-publisher-rendered/bootstrap-verify",
+            body: {
+              installationId: context.installationId,
+              clientId: context.clientId,
+              xappId: context.xappId,
+              subjectId: context.subjectId,
+              previousSessionToken: readStoredSessionToken(),
+            },
+          });
+          window.__XPLACE_CREATOR_CLUB_BOOTSTRAP__ = verified.payload;
+          writeStoredSessionToken(verified?.payload?.session_token || "");
+          setStatus("Context verified. Loading Creator Club...", "ok");
+          const script = document.createElement("script");
+          script.src = "/widgets/xplace-creator-club-publisher-rendered.app.js";
+          script.async = true;
+          script.onload = () => {
+            setStatus("Creator Club loaded.", "ok");
+          };
+          script.onerror = () => {
+            setStatus("Could not load the Creator Club React bundle.", "warn");
+          };
+          document.body.appendChild(script);
+        } catch (error) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Could not verify widget context for Creator Club.",
+            "warn",
+          );
+        }
+      }
+
+      start();
+    </script>
+  </body>
+</html>

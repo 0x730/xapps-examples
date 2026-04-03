@@ -1,0 +1,470 @@
+{
+  "name": "xplace-example • Creator Club (Publisher-Rendered)",
+  "title": {
+    "en": "xplace-example • Creator Club (Publisher-Rendered)",
+    "ro": "xplace-example • Creator Club (randare publisher)"
+  },
+  "slug": "xplace-creator-club-publisher-rendered",
+  "description": {
+    "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
+    "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
+  },
+  "version": "1.0.21",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "visibility": "public",
+  "linking": {
+    "strategy": "platform_v1",
+    "setup_url": "__XPLACE_BACKEND_BASE_URL__/creator-club/login"
+  },
+  "tags": [
+    "xplace-example",
+    "publisher-rendered",
+    "react",
+    "monetization",
+    "playground",
+    "one-time-unlock",
+    "subscription",
+    "credit-pack",
+    "hybrid-plan"
+  ],
+  "metadata": {
+    "creator_club": {
+      "features": [
+        {
+          "key": "premium_template_vault",
+          "title": {
+            "en": "Premium Template Vault",
+            "ro": "Vault de template-uri premium"
+          },
+          "description": {
+            "en": "Durable unlock style feature that should open once current access is available.",
+            "ro": "Funcție de tip deblocare durabilă care ar trebui să se deschidă când accesul curent este disponibil."
+          },
+          "requirements": {
+            "currentAccess": true
+          }
+        },
+        {
+          "key": "team_workspace_digest",
+          "title": {
+            "en": "Team Workspace Digest",
+            "ro": "Digest pentru workspace-ul echipei"
+          },
+          "description": {
+            "en": "Subscription-oriented feature for recurring workspace summaries.",
+            "ro": "Funcție orientată pe abonament pentru rezumate recurente de workspace."
+          },
+          "requirements": {
+            "subscription": true
+          }
+        },
+        {
+          "key": "credit_burst_export",
+          "title": {
+            "en": "Credit Burst Export",
+            "ro": "Export burst pe credite"
+          },
+          "description": {
+            "en": "Wallet-style feature that expects available credits for each advanced export.",
+            "ro": "Funcție de tip portofel care cere credite disponibile pentru fiecare export avansat."
+          },
+          "requirements": {
+            "credits": 100
+          }
+        },
+        {
+          "key": "hybrid_campaign_batch",
+          "title": {
+            "en": "Hybrid Campaign Batch",
+            "ro": "Lot hibrid de campanii"
+          },
+          "description": {
+            "en": "Combined feature that expects access coverage and a meaningful credit balance.",
+            "ro": "Funcție combinată care cere acoperire de acces și un sold relevant de credite."
+          },
+          "requirements": {
+            "currentAccess": true,
+            "credits": 250
+          }
+        }
+      ]
+    }
+  },
+  "payment_guard_definitions": [
+    {
+      "name": "creator_club_gateway_managed_hosted",
+      "payment_issuer_mode": "gateway_managed",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["gateway"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_secret_refs": {
+        "gateway": "platform://payment:gateway:hmac"
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:gateway:stripe:bundle"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Creator Club checkout",
+            "ro": "Checkout Creator Club"
+          },
+          "subtitle": {
+            "en": "Gateway-managed hosted redirect",
+            "ro": "Redirect găzduit gestionat de gateway"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe."
+            }
+          },
+          {
+            "scheme": "mock_manual",
+            "title": {
+              "en": "Hosted redirect test",
+              "ro": "Test redirect găzduit"
+            }
+          }
+        ]
+      },
+      "accepts": [
+        {
+          "scheme": "mock_manual",
+          "label": "Mock Hosted Redirect"
+        }
+      ]
+    },
+    {
+      "name": "creator_club_tenant_delegated_hosted",
+      "payment_issuer_mode": "tenant_delegated",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["tenant_delegated"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_delegated_secret_refs": {
+        "tenant_delegated": {
+          "__TENANT_CLIENT_ID__": "__TENANT_DELEGATED_PAYMENT_RETURN_SECRET_REF__"
+        }
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:tenant:stripe:bundle?scope=client&scope_id=__TENANT_CLIENT_ID__"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Creator Club checkout",
+            "ro": "Checkout Creator Club"
+          },
+          "subtitle": {
+            "en": "Tenant-delegated hosted redirect",
+            "ro": "Redirect găzduit delegat tenantului"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe with tenant-scoped delegated credentials.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, cu credențiale delegate specifice tenantului."
+            }
+          },
+          {
+            "scheme": "mock_manual",
+            "title": {
+              "en": "Tenant delegated hosted redirect",
+              "ro": "Redirect găzduit delegat tenantului"
+            }
+          }
+        ]
+      },
+      "accepts": [
+        {
+          "scheme": "mock_manual",
+          "label": "Mock Hosted Redirect"
+        }
+      ]
+    },
+    {
+      "name": "creator_club_publisher_delegated_hosted",
+      "payment_issuer_mode": "publisher_delegated",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["publisher_delegated"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_delegated_secret_refs": {
+        "publisher_delegated": {
+          "__TENANT_CLIENT_ID__": "__PUBLISHER_DELEGATED_PAYMENT_RETURN_SECRET_REF__"
+        }
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:publisher:stripe:bundle?scope=publisher&scope_id=__PUBLISHER_ID__"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Creator Club checkout",
+            "ro": "Checkout Creator Club"
+          },
+          "subtitle": {
+            "en": "Publisher-delegated hosted redirect",
+            "ro": "Redirect găzduit delegat publisherului"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe with publisher-scoped delegated credentials.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, cu credențiale delegate specifice publisherului."
+            }
+          },
+          {
+            "scheme": "mock_manual",
+            "title": {
+              "en": "Publisher delegated hosted redirect",
+              "ro": "Redirect găzduit delegat publisherului"
+            }
+          }
+        ]
+      },
+      "accepts": [
+        {
+          "scheme": "mock_manual",
+          "label": "Mock Hosted Redirect"
+        }
+      ]
+    }
+  ],
+  "tools": [],
+  "monetization": {
+    "products": [
+      {
+        "slug": "creator_starter_unlock_access",
+        "title": {
+          "en": "Creator Starter Unlock",
+          "ro": "Deblocare Creator Starter"
+        },
+        "description": {
+          "en": "Durable unlock for premium templates and starter member perks.",
+          "ro": "Deblocare durabilă pentru template-uri premium și beneficii starter."
+        },
+        "product_family": "one_time_unlock",
+        "status": "active",
+        "metadata": {
+          "tier": "starter",
+          "access_scope": "subject"
+        }
+      },
+      {
+        "slug": "creator_pro_membership_access",
+        "title": {
+          "en": "Creator Pro Membership",
+          "ro": "Membership Creator Pro"
+        },
+        "description": {
+          "en": "Recurring membership for pro creator workflows and workspace briefings.",
+          "ro": "Membership recurent pentru fluxuri pro și briefinguri de workspace."
+        },
+        "product_family": "subscription_plan",
+        "status": "active",
+        "metadata": {
+          "tier": "pro",
+          "access_scope": "subject_or_realm"
+        }
+      },
+      {
+        "slug": "creator_credit_wallet_access",
+        "title": {
+          "en": "Creator Credit Wallet",
+          "ro": "Portofel Creator Credit"
+        },
+        "description": {
+          "en": "Wallet-backed top-up for export bursts and AI action packs.",
+          "ro": "Top-up bazat pe portofel pentru exporturi și pachete de acțiuni AI."
+        },
+        "product_family": "credit_pack",
+        "status": "active",
+        "metadata": {
+          "credits_unit": "creator_ops"
+        }
+      },
+      {
+        "slug": "creator_team_hybrid_access",
+        "title": {
+          "en": "Creator Team Hybrid",
+          "ro": "Creator Team Hybrid"
+        },
+        "description": {
+          "en": "Hybrid workspace plan combining recurring access with bundled credits.",
+          "ro": "Plan hibrid de workspace care combină acces recurent cu credite incluse."
+        },
+        "product_family": "hybrid_plan",
+        "status": "active",
+        "metadata": {
+          "tier": "team",
+          "access_scope": "realm"
+        }
+      }
+    ],
+    "offerings": [
+      {
+        "slug": "creator_default_paywall",
+        "title": {
+          "en": "Creator Default Paywall",
+          "ro": "Paywall implicit Creator"
+        },
+        "placement": "paywall",
+        "status": "active"
+      },
+      {
+        "slug": "creator_workspace_upgrade",
+        "title": {
+          "en": "Workspace Upgrade",
+          "ro": "Upgrade de workspace"
+        },
+        "placement": "upgrade",
+        "status": "active"
+      },
+      {
+        "slug": "creator_retention_path",
+        "title": {
+          "en": "Creator Retention Path",
+          "ro": "Flux de retenție Creator"
+        },
+        "placement": "retention",
+        "status": "active"
+      }
+    ],
+    "packages": [
+      {
+        "slug": "creator_starter_unlock",
+        "product_ref": "creator_starter_unlock_access",
+        "offering_ref": "creator_default_paywall",
+        "package_kind": "one_time_unlock",
+        "display_order": 10,
+        "status": "active",
+        "metadata": {
+          "badge": "Template unlock"
+        }
+      },
+      {
+        "slug": "creator_pro_monthly",
+        "product_ref": "creator_pro_membership_access",
+        "offering_ref": "creator_default_paywall",
+        "package_kind": "subscription",
+        "display_order": 20,
+        "status": "active",
+        "metadata": {
+          "badge": "Recurring"
+        }
+      },
+      {
+        "slug": "creator_credits_500",
+        "product_ref": "creator_credit_wallet_access",
+        "offering_ref": "creator_workspace_upgrade",
+        "package_kind": "credit_pack",
+        "display_order": 30,
+        "status": "active",
+        "metadata": {
+          "credits": 500
+        }
+      },
+      {
+        "slug": "creator_team_hybrid",
+        "product_ref": "creator_team_hybrid_access",
+        "offering_ref": "creator_retention_path",
+        "package_kind": "standard",
+        "display_order": 40,
+        "status": "active",
+        "metadata": {
+          "included_credits": 1000
+        }
+      }
+    ],
+    "prices": [
+      {
+        "slug": "creator_starter_unlock_ron",
+        "package_ref": "creator_starter_unlock",
+        "currency": "RON",
+        "amount": 29,
+        "status": "active"
+      },
+      {
+        "slug": "creator_pro_monthly_ron",
+        "package_ref": "creator_pro_monthly",
+        "currency": "RON",
+        "amount": 49,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active"
+      },
+      {
+        "slug": "creator_credits_500_ron",
+        "package_ref": "creator_credits_500",
+        "currency": "RON",
+        "amount": 79,
+        "status": "active"
+      },
+      {
+        "slug": "creator_team_hybrid_monthly_ron",
+        "package_ref": "creator_team_hybrid",
+        "currency": "RON",
+        "amount": 129,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active",
+        "metadata": {
+          "included_credits": 1000
+        }
+      }
+    ]
+  },
+  "widgets": [
+    {
+      "widget_name": "creator_club_publisher_rendered_widget",
+      "title": {
+        "en": "Creator Club",
+        "ro": "Creator Club"
+      },
+      "type": "read",
+      "renderer": "publisher",
+      "requires_linking": true,
+      "entry": {
+        "kind": "iframe_url",
+        "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-creator-club-publisher-rendered.html"
+      },
+      "capabilities": ["ui:notification"],
+      "config": {
+        "xapps": {
+          "bootstrap_transport": "signed_ticket"
+        }
+      }
+    }
+  ]
+}

@@ -60,6 +60,51 @@ Practical rule:
 - keep xapp-specific code in the example lane
 - only promote helpers into shared runtime/core when a real reusable seam is proven
 
+## Next Monetization Role
+
+After the current `OPEN-076` subscription-core checkpoint, `xplace-example` is
+also the primary proving lane for monetization productization.
+
+Execution order:
+
+1. JSON Forms monetization app first
+   - simpler rendering lane
+   - manifest-driven monetization catalog
+   - exercise all current monetization families on the same API/XPO rail
+2. publisher-rendered monetization app second
+   - login/register
+   - plans
+   - current access/current subscription
+   - same gateway/API/XPO/invoice/guard seams underneath
+
+Current landed starting point:
+
+1. first JSON Forms monetization app scaffold:
+   - [xplace-monetization-lab-jsonforms](../xapps/xplace-monetization-lab-jsonforms/README.md)
+2. first publisher-rendered React monetization playground:
+   - [xplace-creator-club-publisher-rendered](../xapps/xplace-creator-club-publisher-rendered/README.md)
+   - current proving scope:
+     - local login/register/link flow
+     - contained workspace with:
+       - dashboard
+       - plans
+       - tools
+     - detached technical lab for payment/paywall/XMS reference coverage
+     - current access/current subscription reads
+     - wallet / ledger / recent transaction reads
+     - controlled reference activation
+     - hosted payment-session create + reconcile
+     - XMS-backed tool execution and credit consumption
+     - feature gating from current XMS state
+   - intended local tenant lane:
+     - `xconect`
+
+Why here:
+
+1. it is the public/reference publisher lane
+2. it already sits next to the portal/embed/runtime/guard ecosystem we need to validate
+3. it is the right place to prove full monetization behavior before extracting SDK/kits from the settled seams
+
 Related docs:
 
 - [Existing App Integration](../../../../docs/guides/11-existing-app-integration.md)

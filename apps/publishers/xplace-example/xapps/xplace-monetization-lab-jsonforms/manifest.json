@@ -1,0 +1,493 @@
+{
+  "name": "xplace-example • Monetization Lab (JSON Forms)",
+  "title": {
+    "en": "xplace-example • Monetization Lab (JSON Forms)",
+    "ro": "xplace-example • Laborator monetizare (JSON Forms)"
+  },
+  "slug": "xplace-monetization-lab-jsonforms",
+  "description": {
+    "en": "Reference JSON Forms xapp in xplace-example for exercising one-time unlock, subscription, credit-pack, and hybrid monetization families on the current XPO rail.",
+    "ro": "Xapp de referință JSON Forms în xplace-example pentru exercitarea familiilor de monetizare one-time unlock, subscription, credit-pack și hybrid pe rail-ul XPO curent."
+  },
+  "version": "1.0.20",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "visibility": "public",
+  "tags": [
+    "xplace-example",
+    "json-forms",
+    "monetization",
+    "one-time-unlock",
+    "subscription",
+    "credit-pack",
+    "hybrid-plan"
+  ],
+  "monetization": {
+    "products": [
+      {
+        "slug": "starter_unlock_access",
+        "title": {
+          "en": "Starter Unlock",
+          "ro": "Deblocare Starter"
+        },
+        "description": {
+          "en": "One-time unlock for the starter experience.",
+          "ro": "Deblocare unică pentru experiența starter."
+        },
+        "product_family": "one_time_unlock",
+        "status": "active",
+        "metadata": {
+          "tier": "starter",
+          "access_scope": "subject"
+        }
+      },
+      {
+        "slug": "pro_subscription_access",
+        "title": {
+          "en": "Pro Subscription",
+          "ro": "Abonament Pro"
+        },
+        "description": {
+          "en": "Recurring Pro access for the current account or workspace.",
+          "ro": "Acces Pro recurent pentru contul sau workspace-ul curent."
+        },
+        "product_family": "subscription_plan",
+        "status": "active",
+        "metadata": {
+          "tier": "pro",
+          "access_scope": "subject_or_realm"
+        }
+      },
+      {
+        "slug": "credits_wallet_access",
+        "title": {
+          "en": "Credits Wallet",
+          "ro": "Portofel de credite"
+        },
+        "description": {
+          "en": "Credit-pack top-up for wallet-backed usage flows.",
+          "ro": "Top-up de tip credit-pack pentru fluxuri bazate pe portofel."
+        },
+        "product_family": "credit_pack",
+        "status": "active",
+        "metadata": {
+          "credits_unit": "usage_credit"
+        }
+      },
+      {
+        "slug": "team_hybrid_access",
+        "title": {
+          "en": "Team Hybrid",
+          "ro": "Plan hibrid Team"
+        },
+        "description": {
+          "en": "Hybrid plan combining recurring access with bundled workspace credits.",
+          "ro": "Plan hibrid care combină acces recurent cu credite incluse pentru workspace."
+        },
+        "product_family": "hybrid_plan",
+        "status": "active",
+        "metadata": {
+          "tier": "team",
+          "access_scope": "realm"
+        }
+      }
+    ],
+    "offerings": [
+      {
+        "slug": "default_paywall",
+        "title": {
+          "en": "Default Paywall",
+          "ro": "Paywall implicit"
+        },
+        "placement": "paywall",
+        "status": "active"
+      },
+      {
+        "slug": "upgrade_path",
+        "title": {
+          "en": "Upgrade Path",
+          "ro": "Flux de upgrade"
+        },
+        "placement": "upgrade",
+        "status": "active"
+      },
+      {
+        "slug": "retention_path",
+        "title": {
+          "en": "Retention Path",
+          "ro": "Flux de retenție"
+        },
+        "placement": "retention",
+        "status": "active"
+      }
+    ],
+    "packages": [
+      {
+        "slug": "starter_unlock",
+        "product_ref": "starter_unlock_access",
+        "offering_ref": "default_paywall",
+        "package_kind": "one_time_unlock",
+        "display_order": 10,
+        "status": "active",
+        "metadata": {
+          "badge": "One time"
+        }
+      },
+      {
+        "slug": "pro_monthly",
+        "product_ref": "pro_subscription_access",
+        "offering_ref": "default_paywall",
+        "package_kind": "subscription",
+        "display_order": 20,
+        "status": "active",
+        "metadata": {
+          "badge": "Most popular"
+        }
+      },
+      {
+        "slug": "credits_500",
+        "product_ref": "credits_wallet_access",
+        "offering_ref": "upgrade_path",
+        "package_kind": "credit_pack",
+        "display_order": 30,
+        "status": "active",
+        "metadata": {
+          "credits": 500
+        }
+      },
+      {
+        "slug": "team_hybrid",
+        "product_ref": "team_hybrid_access",
+        "offering_ref": "retention_path",
+        "package_kind": "standard",
+        "display_order": 40,
+        "status": "active",
+        "metadata": {
+          "catalog_role": "upgrade",
+          "included_credits": 1000
+        }
+      }
+    ],
+    "prices": [
+      {
+        "slug": "starter_unlock_ron",
+        "package_ref": "starter_unlock",
+        "currency": "RON",
+        "amount": 29,
+        "status": "active"
+      },
+      {
+        "slug": "pro_monthly_ron",
+        "package_ref": "pro_monthly",
+        "currency": "RON",
+        "amount": 49,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active"
+      },
+      {
+        "slug": "credits_500_ron",
+        "package_ref": "credits_500",
+        "currency": "RON",
+        "amount": 79,
+        "status": "active"
+      },
+      {
+        "slug": "team_hybrid_monthly_ron",
+        "package_ref": "team_hybrid",
+        "currency": "RON",
+        "amount": 129,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active",
+        "metadata": {
+          "included_credits": 1000
+        }
+      }
+    ]
+  },
+  "tools": [
+    {
+      "tool_name": "open_monetization_lab",
+      "title": {
+        "en": "Open Monetization Lab",
+        "ro": "Deschide laboratorul de monetizare"
+      },
+      "description": {
+        "en": "Reference tool for exercising the monetization catalog and scope choices in xplace-example.",
+        "ro": "Tool de referință pentru exercitarea catalogului de monetizare și a alegerilor de scope în xplace-example."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "scopeKind": {
+            "type": "string",
+            "title": "Activation Scope",
+            "enum": ["subject", "installation", "realm"],
+            "default": "subject"
+          },
+          "realmRef": {
+            "type": "string",
+            "title": "Workspace / Realm Ref",
+            "description": "Optional workspace identifier when testing realm-scoped subscriptions or hybrid plans."
+          },
+          "requestedPackage": {
+            "type": "string",
+            "title": "Requested Package",
+            "oneOf": [
+              {
+                "const": "starter_unlock",
+                "title": "Starter Unlock"
+              },
+              {
+                "const": "pro_monthly",
+                "title": "Pro Monthly"
+              },
+              {
+                "const": "credits_500",
+                "title": "Credits 500"
+              },
+              {
+                "const": "team_hybrid",
+                "title": "Team Hybrid"
+              }
+            ],
+            "default": "pro_monthly"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "title": "Contact Email"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        }
+      },
+      "input_ui_schema": {
+        "type": "Categorization",
+        "options": {
+          "variant": "stepper"
+        },
+        "elements": [
+          {
+            "type": "Category",
+            "label": "Scope",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/scopeKind"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/realmRef"
+              }
+            ]
+          },
+          {
+            "type": "Category",
+            "label": "Package",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/requestedPackage"
+              }
+            ]
+          },
+          {
+            "type": "Category",
+            "label": "Contact",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/contactEmail"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/notes",
+                "options": {
+                  "multi": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "activationScope": {
+            "type": "string"
+          },
+          "requestedPackage": {
+            "type": ["string", "null"]
+          },
+          "requestedPackageLabel": {
+            "type": "string"
+          },
+          "realmRef": {
+            "type": ["string", "null"]
+          },
+          "contactEmail": {
+            "type": ["string", "null"]
+          },
+          "notes": {
+            "type": ["string", "null"]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "checkedAt": {
+            "type": "string"
+          }
+        },
+        "required": ["status", "activationScope", "requestedPackageLabel", "summary", "checkedAt"]
+      },
+      "output_ui_schema": {
+        "xapps": {
+          "render": {
+            "kind": "kv",
+            "title": "Monetization Lab Result",
+            "fields": [
+              {
+                "label": "Status",
+                "path": "status"
+              },
+              {
+                "label": "Activation Scope",
+                "path": "activationScope"
+              },
+              {
+                "label": "Requested Package",
+                "path": "requestedPackageLabel"
+              },
+              {
+                "label": "Workspace / Realm",
+                "path": "realmRef"
+              },
+              {
+                "label": "Contact Email",
+                "path": "contactEmail"
+              },
+              {
+                "label": "Notes",
+                "path": "notes"
+              },
+              {
+                "label": "Summary",
+                "path": "summary"
+              },
+              {
+                "label": "Checked At",
+                "path": "checkedAt"
+              }
+            ]
+          }
+        },
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/status"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/activationScope"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/requestedPackageLabel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/realmRef"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/contactEmail"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/notes",
+            "options": {
+              "multi": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/summary",
+            "options": {
+              "multi": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/checkedAt"
+          }
+        ]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xplace_monetization_lab_form",
+      "title": {
+        "en": "Monetization Lab",
+        "ro": "Laborator de monetizare"
+      },
+      "type": "write",
+      "renderer": "json-forms",
+      "bind_tool_name": "open_monetization_lab",
+      "entry": {
+        "kind": "platform_template",
+        "template": "write_form"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "runtime_default"
+        }
+      }
+    }
+  ],
+  "connectivity": {
+    "executor_mode": "PUBLIC_EXECUTOR",
+    "auth_mode": "PUBLISHER_APP",
+    "signing_policy": "none",
+    "webhooks": {
+      "enabled": true
+    },
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  },
+  "event_subscriptions": [
+    {
+      "event_type": "xapps.request.completed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.request.failed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    }
+  ],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XPLACE_BACKEND_BASE_URL__/xapps/requests",
+      "timeout_ms": 10000,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff": "linear"
+      },
+      "region": "global",
+      "labels": {
+        "publisher": "xplace-example-monetization",
+        "env": "development"
+      }
+    }
+  }
+}

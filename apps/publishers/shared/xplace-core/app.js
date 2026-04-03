@@ -87,6 +87,9 @@ export function createPublisherWorkspaceApp({
     const callbackToken = String(body.callbackToken || body.callback_token || "").trim() || null;
     const asyncFlag = Boolean(body.async);
     const subjectId = String(body.subjectId || body.subject_id || "").trim() || null;
+    const xappId = String(body.xappId || body.xapp_id || "").trim() || null;
+    const clientId = String(body.clientId || body.client_id || "").trim() || null;
+    const installationId = String(body.installationId || body.installation_id || "").trim() || null;
 
     if (!requestId || !toolName) {
       return reply.code(400).send({
@@ -171,6 +174,9 @@ export function createPublisherWorkspaceApp({
       callbackToken,
       async: asyncFlag,
       subjectId,
+      xappId,
+      clientId,
+      installationId,
       request,
       requestLog: request.log,
     });

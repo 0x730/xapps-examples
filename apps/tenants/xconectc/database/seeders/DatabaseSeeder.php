@@ -16,15 +16,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // XconectC mock IdP demo user (matches the prefilled login form)
-        User::updateOrCreate(
-            array('email' => 'daniel.vladescu@gmail.com'),
+        $demoUsers = array(
             array(
-                'id' => (string)\Illuminate\Support\Str::ulid(),
+                'email' => 'daniel.vladescu@gmail.com',
                 'name' => 'Daniel Vladescu',
-                'password' => Hash::make('password'),
-            )
+            ),
+            array(
+                'email' => 'sergiu@ludo.com',
+                'name' => 'Sergiu Ludo',
+            ),
         );
 
+        foreach ($demoUsers as $demoUser) {
+            User::updateOrCreate(
+                array('email' => $demoUser['email']),
+                array(
+                    'id' => (string)\Illuminate\Support\Str::ulid(),
+                    'name' => $demoUser['name'],
+                    'password' => Hash::make('password'),
+                )
+            );
+        }
     }
 }

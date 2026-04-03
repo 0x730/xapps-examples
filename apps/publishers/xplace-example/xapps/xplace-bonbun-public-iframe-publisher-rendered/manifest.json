@@ -1,0 +1,38 @@
+{
+  "name": "xplace-example • BonBun Public Iframe (Publisher-Rendered)",
+  "title": {
+    "en": "xplace-example • BonBun Public Iframe (Publisher-Rendered)",
+    "ro": "xplace-example • BonBun iframe public (randare publisher)"
+  },
+  "slug": "xplace-bonbun-public-iframe-publisher-rendered",
+  "description": {
+    "en": "Exploratory publisher-rendered BonBun lane in xplace-example. Keeps the iframe public for partner review and does not enable bootstrap verification or linking yet.",
+    "ro": "Referință exploratorie publisher-rendered pentru BonBun în xplace-example. Păstrează iframe-ul public pentru review cu partenerul și nu activează încă verificarea de bootstrap sau linking."
+  },
+  "version": "1.0.18",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "visibility": "public",
+  "tags": ["xplace-example", "publisher-rendered", "bonbun", "public-iframe", "partner-review"],
+  "tools": [],
+  "widgets": [
+    {
+      "widget_name": "bonbun_public_iframe_widget",
+      "title": {
+        "en": "BonBun",
+        "ro": "BonBun"
+      },
+      "type": "read",
+      "renderer": "publisher",
+      "entry": {
+        "kind": "iframe_url",
+        "url": "https://bonbun.ro/"
+      },
+      "config": {
+        "xapps": {
+          "publisher_runtime_mode": "passive"
+        }
+      },
+      "capabilities": ["ui:notification"]
+    }
+  ]
+}

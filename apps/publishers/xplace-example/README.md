@@ -71,6 +71,12 @@ Current workspace pieces:
 - isolated `TASK-044` publisher-rendered certs reference lane:
   - [xapps/xplace-certs-gateway-stripe-publisher-rendered/manifest.json](./xapps/xplace-certs-gateway-stripe-publisher-rendered/manifest.json)
   - [xapps/xplace-certs-gateway-stripe-publisher-rendered/README.md](./xapps/xplace-certs-gateway-stripe-publisher-rendered/README.md)
+- isolated publisher-rendered bridge-session reference lane:
+  - [xapps/xplace-bridge-session-publisher-rendered/manifest.json](./xapps/xplace-bridge-session-publisher-rendered/manifest.json)
+  - [xapps/xplace-bridge-session-publisher-rendered/README.md](./xapps/xplace-bridge-session-publisher-rendered/README.md)
+- isolated BonBun exploratory publisher-rendered lane:
+  - [xapps/xplace-bonbun-public-iframe-publisher-rendered/manifest.json](./xapps/xplace-bonbun-public-iframe-publisher-rendered/manifest.json)
+  - [xapps/xplace-bonbun-public-iframe-publisher-rendered/README.md](./xapps/xplace-bonbun-public-iframe-publisher-rendered/README.md)
 - workspace scripts:
   - [scripts/provision-publisher.mjs](./scripts/provision-publisher.mjs)
   - [scripts/provision-publisher-admin.mjs](./scripts/provision-publisher-admin.mjs)
@@ -97,7 +103,13 @@ Current operator commands:
 ```bash
 npm run seed:xplace-example-publisher
 npm run seed:xplace-example-publisher-admin
-npm run xplace-example:prepare-republish -- --json
+npm run xplace-example:prepare-republish -- --json --target-client-slug xconect
+npm run -s xapps -- publish --yes \
+  --from apps/publishers/xplace-example/xapps/xplace-bridge-session-publisher-rendered/manifest.json \
+  --publisher-gateway-url http://localhost:3000 \
+  --api-key xplace-example-dev-api-key \
+  --replace __TENANT_CLIENT_ID__=<xconect-client-id> \
+  --replace __XPLACE_BACKEND_BASE_URL__=http://localhost:3016
 ```
 
 Current `TASK-044` lane:
@@ -105,6 +117,49 @@ Current `TASK-044` lane:
 - kept in `xplace-example` as the isolated publisher-rendered certs reference implementation
 - uses the real `after:request_created` request-held lifecycle
 - current intended example tenant lane: `xconecta`
+
+Current bridge-session lane:
+
+- kept in `xplace-example` as the isolated post-bootstrap publisher-session reference
+- current intended Node reference tenant lane: `xconect`
+- proves:
+  - verified iframe bootstrap
+  - optional signed bootstrap ticket transport for publisher-rendered `iframe_url`
+    widgets
+  - optional explicit bootstrap-origin allowlist on the publisher backend
+  - vendor assertion minting from the host bridge
+  - exchange into publisher-local session ownership
+  - session inspect/logout routes on the publisher backend
+
+Current BonBun exploratory lane:
+
+- kept in `xplace-example` as the first partner-review iframe lane
+- current intended Node reference tenant lane: `xconect`
+- proves only:
+  - real public `iframe_url` integration on a partner SPA
+  - passive publisher-rendered runtime mode for non-bridge partner review
+  - no bootstrap verification yet
+  - no linking yet
+  - separate publisher clarification brief before we enable those layers
+- current local publish:
+  - xapp id: `01KN32N19P59CQMCKT21JVCAG2`
+  - version id: `01KN33T25APFWGFYNH23N96G38`
+
+Bridge-session flow:
+
+```mermaid
+flowchart LR
+  Host[Xapps host/embed] --> Iframe[Public iframe_url shell]
+  Iframe --> Ticket["Optional xapps_bootstrap_ticket in iframe URL hash"]
+  Ticket --> Verify[Publisher bootstrap verify endpoint]
+  Verify --> Gateway[Gateway widget context verification]
+  Gateway --> Assertion[POST /v1/publisher/bridge/token]
+  Assertion --> Exchange[POST /xapps/bridge/exchange]
+  Exchange --> Session[Publisher-local session]
+  Session --> Me["GET xapps/session/me"]
+  Session --> Events["GET xapps/session/events"]
+  Session --> Logout["POST xapps/session/logout"]
+```
 
 Local dev note:
 
@@ -117,10 +172,22 @@ Local dev note:
 
 Default republish behavior:
 
-- `npm run xplace-example:prepare-republish` defaults to the full current four-xapp fleet
+- `npm run xplace-example:prepare-republish` defaults to the full current five-xapp fleet:
+  - `xplace-certs`
+  - `xplace-certs-gateway-stripe`
+  - `xplace-certs-tenant-delegated-stripe`
+  - `xplace-weather-now-gateway-stripe`
+  - `xplace-bridge-session-publisher-rendered`
 - `npm run xplace:prepare-republish` remains the narrow private production publisher path
 - grouped example-lane publish:
 
 ```bash
 npm run publish:xconect-xplace-example -- --reference-tenant-profile xconectc
 ```
+
+Bridge-session runtime note:
+
+- publishing the bridge-session xapp does not require endpoint credentials
+- using the bridge exchange at runtime still requires the backend process to have:
+  - `XPLACE_EXAMPLE_PUBLISHER_ID`
+  - `VENDOR_ASSERTION_SHARED_SECRET`

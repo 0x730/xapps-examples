@@ -20,6 +20,8 @@ Current practical model:
 
 - publisher iframe renders the business form
 - publisher runtime stays blocked until the example backend verifies the short-lived widget token against the gateway contract
+- the browser side now uses the packaged `@xapps-platform/widget-sdk` bootstrap helper and the backend side uses the packaged `@xapps-platform/server-sdk` verification helper
+- direct raw access to the publisher asset URL is expected to stay blocked; this xapp must be opened through Xapps host/embed so the wrapper can provide secure widget context
 - platform creates the request
 - platform opens the payment obligation on `after:request_created`
 - the same request resumes automatically after payment confirmation

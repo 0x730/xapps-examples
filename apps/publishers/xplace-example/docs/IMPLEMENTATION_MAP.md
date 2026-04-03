@@ -58,6 +58,178 @@ Reference planning docs:
 - [Publisher Rendered Module Composition Audit](../../../../dev/engineering/audits/systems/PUBLISHER_RENDERED_MODULE_COMPOSITION_AUDIT.md)
 - [TASK-044 Execution Note](../../../../dev/engineering/notes/TASK-044_PUBLISHER_RENDERED_CERTS_EXECUTION_NOTE.md)
 
+## Next monetization proving lane
+
+After the current `OPEN-076` Phase B checkpoint closes, `xplace-example` should
+also carry the first full monetization reference apps.
+
+Execution order:
+
+1. JSON Forms monetization app first
+   - manifest-driven catalog
+   - prove all current monetization families:
+     - `one_time_unlock`
+     - `subscription_plan`
+     - `credit_pack`
+     - `hybrid_plan` where useful
+   - validate the simpler xapp/rendering lane first
+2. publisher-rendered monetization app second
+   - login/register
+   - plan selection
+   - current subscription/access state
+   - same gateway/API/XPO/invoice/guard boundaries underneath
+
+Current landed starting point:
+
+1. first JSON Forms monetization app scaffold:
+   - `apps/publishers/xplace-example/xapps/xplace-monetization-lab-jsonforms`
+2. normal example republish defaults now include that manifest
+
+Immediate proving rule for that app:
+
+1. it is the first integrated monetization control surface, not only a catalog sample
+2. it should let a user:
+   - view all current monetization options
+   - choose package + scope
+   - save/activate the selected option through the gateway monetization/XPO rail
+   - use the real request installation/xapp context rather than a detached side-channel
+3. after activation, the resulting state should be inspectable in:
+   - portal/shared marketplace
+   - publisher operator views
+   - superadmin operator views
+   - embed/runtime current-context reads
+4. current landed implementation detail:
+   - `xplace-monetization-lab-jsonforms` now performs reference activation through the shared
+     `open_monetization_lab` tool using:
+     - catalog resolution
+     - prepare intent
+     - controlled verified transaction
+     - issue-access
+   - this proves state propagation before deeper live-checkout enforcement
+5. first operator checkpoint now landed on existing core xapp detail pages:
+   - publisher xapp detail monetization view
+   - superadmin xapp detail monetization view
+   - both now expose:
+     - catalog
+     - subscriptions
+     - entitlements
+     - wallet accounts
+6. next operator-product lane is explicit:
+   - publisher monetization studio
+   - manifest-compatible catalog authoring source
+   - publish/version/import loop
+   - runtime inspection and controlled operations on the same xapp
+   - xapp-first now, reusable later for other monetizable entities
+   - working note:
+     - `dev/engineering/notes/xms/OPEN-076_PUBLISHER_MONETIZATION_STUDIO_NOTE.md`
+   - current landed baseline:
+     - dedicated publisher monetization builder page per xapp
+     - xapp detail stays overview/entrypoint
+     - draft-first manifest monetization editing
+     - draft creation from the current manifest baseline
+     - normal authoring is now draft-based and not gated behind publisher `devMode`
+     - sectioned structured catalog editor for:
+       - `products`
+       - `offerings`
+       - `packages`
+       - `prices`
+     - structured fields now cover:
+       - titles / descriptions
+       - status
+       - placement
+       - display order
+       - metadata
+       - trial / intro / country policies
+       - real price slugs
+       - schema-aligned package kinds
+     - plus:
+       - top-level advanced JSON for monetization extras
+       - spreadsheet-style bulk import
+     - current draft entity refs are now selectable in the studio for:
+       - `product_ref`
+       - `offering_ref`
+       - `package_ref`
+     - dedicated studio page now also includes:
+       - runtime inspection for subscriptions / entitlements / wallet accounts
+       - transaction inspection for the current xapp runtime surface
+       - first runtime lifecycle actions for subscriptions:
+         - refresh state
+         - cancel
+         - reconcile payment session
+       - release actions for publish / archive on xapp versions
+       - draft-vs-published release review for added / removed / changed catalog items
+       - guided advanced recipe actions for:
+         - `one_time_unlock`
+         - `subscription_plan`
+         - `credit_pack`
+         - `hybrid_plan`
+       - explicit support surface for complete monetization coverage:
+         - entities:
+           - `products`
+           - `offerings`
+           - `packages`
+           - `prices`
+           - `subscriptions`
+           - `entitlements`
+           - `wallet_accounts`
+           - `transactions`
+         - functionalities:
+           - draft authoring
+           - bulk import
+           - cross-reference selection
+           - runtime inspection
+           - release review
+           - release actions
+           - guided advanced monetization options
+           - lifecycle actions
+           - overrides / temporary offers
+           - reporting / audit views
+7. this comes before deeper hook/guard-driven purchase enforcement in the proving lane
+
+Current publisher-rendered monetization playground:
+
+1. `apps/publishers/xplace-example/xapps/xplace-creator-club-publisher-rendered`
+2. real publisher-rendered React shell served from the normal `xplace-example` backend
+3. current proving scope:
+   - platform linking guard + publisher setup flow on the normal manifest contract
+   - local login/register for the playground surface
+   - current catalog read from XMS
+   - current access / current subscription / wallet account / wallet ledger read from XMS
+   - controlled reference activation
+   - hosted payment-session creation + reconcile on the current XPO rail
+   - mixed-state runtime rendering for access / subscription / credits in the publisher-rendered UI
+   - inferred durable unlock / entitlement visibility from current access projection + purchase activity
+   - recent purchase intent / transaction visibility for the current proving flow
+   - feature gating against current XMS state
+   - current frontend structure keeps:
+     - a contained member-facing workspace in `App.jsx`, split into:
+       - `Dashboard`
+       - `Plans`
+       - `Tools`
+     - a separate technical lab page in `App.jsx`
+     - a dedicated app snapshot route for the workspace and app-named plan/tool actions
+     - stateful playground orchestration in `hooks/useCreatorClubPlayground.js`
+     - local copy / runtime shaping in `frontend/creator-club/lib/`
+     - passive state refresh on the real app surface so plan/access/credits update without using technical buttons
+   - current backend structure keeps:
+     - HTTP routes in `backend/playground/routes.js`
+     - gateway and XMS reads in `backend/playground/gatewayClient.js`
+     - shared session/linking/runtime helpers in `backend/playground/runtimeSupport.js`
+4. target local tenant lane:
+   - `xconect`
+5. this app should remain the main publisher-rendered in-app monetization proving surface before widening the same ideas into additional renderers
+
+Possible later follow-on:
+
+1. provide a separate flexible guard/configuration xapp for per-xapp monetization settings
+2. keep that outside the first proving lane
+
+Important rule:
+
+1. these apps should consume the landed monetization core
+2. they should not redefine the core monetization model inside `xplace-example`
+3. only after these apps are proven should we extract/update SDKs and kits from the exercised seams
+
 ## Current `xplace` surface
 
 Current workspace files:

@@ -2,7 +2,17 @@ import dotenv from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createGatewayApiClient } from "../../../../packages/server-sdk/dist/index.js";
+import {
+  isBootstrapOriginAllowed,
+  normalizeOrigin,
+  parseAllowedOrigins,
+} from "./bootstrapOriginPolicy.js";
 import { createPublisherWorkspaceApp } from "../../shared/xplace-core/app.js";
+import {
+  createInMemoryPublisherSessionBridgeStore,
+  registerPublisherSessionBridgeRoutes,
+} from "../../shared/publisherSessionBridge.js";
 import { createXplaceDb } from "../../shared/xplace-core/repo.js";
 import { nowIso } from "../../shared/xplace-core/runtime.js";
 import {
@@ -14,6 +24,9 @@ import {
   createXplaceToolRegistry,
   listWorkspaceTools,
 } from "../../shared/xplace-core/tools.js";
+import { createPlaygroundAccountsRepo } from "./playground/accountsRepo.js";
+import { registerMonetizationPlaygroundRoutes } from "./playground/routes.js";
+import { createPlaygroundSessionStore } from "./playground/sessionStore.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,6 +49,9 @@ const XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY = String(
 const XPLACE_EXAMPLE_XAPP_INGEST_API_KEY = String(
   process.env.XPLACE_EXAMPLE_XAPP_INGEST_API_KEY || XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
 );
+const XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY = String(
+  process.env.XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY || "",
+).trim();
 const XPLACE_EXAMPLE_ADMIN_KEY = String(
   process.env.XPLACE_EXAMPLE_ADMIN_KEY || "xplace-example-dev-admin-key",
 );
@@ -53,8 +69,30 @@ const XPLACE_EXAMPLE_DATABASE_URL = String(
   process.env.XPLACE_EXAMPLE_DATABASE_URL ||
     "postgresql:///xplace_example?host=/var/run/postgresql",
 ).trim();
+const XPLACE_EXAMPLE_PUBLISHER_ID = String(process.env.XPLACE_EXAMPLE_PUBLISHER_ID || "").trim();
+const XPLACE_EXAMPLE_BRIDGE_SESSION_TTL_SECONDS = Number(
+  process.env.XPLACE_EXAMPLE_BRIDGE_SESSION_TTL_SECONDS || 3600,
+);
+const XPLACE_EXAMPLE_PLAYGROUND_SESSION_TTL_SECONDS = Number(
+  process.env.XPLACE_EXAMPLE_PLAYGROUND_SESSION_TTL_SECONDS || 4 * 60 * 60,
+);
+const XPLACE_EXAMPLE_WIDGET_ALLOWED_ORIGINS = parseAllowedOrigins(
+  process.env.XPLACE_EXAMPLE_WIDGET_ALLOWED_ORIGINS,
+);
+const XPLACE_EXAMPLE_PORTAL_BASE_URL = String(
+  process.env.XPLACE_EXAMPLE_PORTAL_BASE_URL || "http://localhost:5177/apps/portal",
+).trim();
+const XPLACE_EXAMPLE_PUBLISHER_BASE_URL = String(
+  process.env.XPLACE_EXAMPLE_PUBLISHER_BASE_URL || "http://localhost:5176/apps/publisher",
+).trim();
 
 const xplaceExampleRepo = await createXplaceDb({ databaseUrl: XPLACE_EXAMPLE_DATABASE_URL });
+const xplaceExamplePlaygroundAccountsRepo = await createPlaygroundAccountsRepo({
+  databaseUrl: XPLACE_EXAMPLE_DATABASE_URL,
+});
+const xplaceExamplePlaygroundSessions = createPlaygroundSessionStore({
+  sessionTtlSeconds: XPLACE_EXAMPLE_PLAYGROUND_SESSION_TTL_SECONDS,
+});
 const { dbKind, dbTarget } = xplaceExampleRepo;
 const backendAssets = [
   {
@@ -67,19 +105,17 @@ const backendAssets = [
     filePath: path.join(__dirname, "assets/xplace-certs-gateway-stripe-publisher-rendered.html"),
     contentType: "text/html; charset=utf-8",
   },
+  {
+    routePath: "/widgets/xplace-bridge-session-publisher-rendered.html",
+    filePath: path.join(__dirname, "assets/xplace-bridge-session-publisher-rendered.html"),
+    contentType: "text/html; charset=utf-8",
+  },
+  {
+    routePath: "/widgets/xplace-creator-club-publisher-rendered.html",
+    filePath: path.join(__dirname, "assets/xplace-creator-club-publisher-rendered.html"),
+    contentType: "text/html; charset=utf-8",
+  },
 ];
-
-function normalizeOrigin(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return null;
-  try {
-    const parsed = new URL(raw);
-    if (!parsed.protocol || !parsed.host) return null;
-    return parsed.origin;
-  } catch {
-    return null;
-  }
-}
 
 function requireApiKey(request, reply) {
   const key = String(request.headers["x-xplace-api-key"] || "").trim();
@@ -99,9 +135,24 @@ function requireAdminKey(request, reply) {
   return true;
 }
 
+function rejectDisallowedBootstrapOrigin(reply, hostOrigin) {
+  if (!isBootstrapOriginAllowed(hostOrigin, XPLACE_EXAMPLE_WIDGET_ALLOWED_ORIGINS)) {
+    return reply.code(403).send({
+      ok: false,
+      error: {
+        code: "HOST_ORIGIN_NOT_ALLOWED",
+        message: "Host origin is not allowed for widget bootstrap verification",
+      },
+    });
+  }
+  return null;
+}
+
 const XPLACE_EXAMPLE_TOOL_REGISTRY = createXplaceToolRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,
   nowIso,
+  gatewayBaseUrl: GATEWAY_BASE_URL,
+  gatewayClientApiKey: XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
 });
 const XPLACE_EXAMPLE_PREVIEW_REGISTRY = createXplacePreviewRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,
@@ -130,11 +181,28 @@ const fastify = createPublisherWorkspaceApp({
   assets: backendAssets,
 });
 
+await registerPublisherSessionBridgeRoutes(fastify, {
+  store: createInMemoryPublisherSessionBridgeStore(),
+  sessionTtlSeconds: XPLACE_EXAMPLE_BRIDGE_SESSION_TTL_SECONDS,
+});
+
+await registerMonetizationPlaygroundRoutes(fastify, {
+  gatewayBaseUrl: GATEWAY_BASE_URL,
+  gatewayClientApiKey: XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
+  publisherGatewayApiKey: XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
+  sessionStore: xplaceExamplePlaygroundSessions,
+  accountsRepo: xplaceExamplePlaygroundAccountsRepo,
+  portalBaseUrl: XPLACE_EXAMPLE_PORTAL_BASE_URL,
+  publisherBaseUrl: XPLACE_EXAMPLE_PUBLISHER_BASE_URL,
+  widgetAllowedOrigins: XPLACE_EXAMPLE_WIDGET_ALLOWED_ORIGINS,
+});
+
 fastify.post(
   "/widgets/xplace-certs-gateway-stripe-publisher-rendered/bootstrap-verify",
   async (request, reply) => {
     const body = request.body && typeof request.body === "object" ? request.body : {};
     const token = String(body.token || "").trim();
+    const bootstrapTicket = String(body.bootstrapTicket || body.bootstrap_ticket || "").trim();
     const hostOrigin = normalizeOrigin(body.hostOrigin);
     const installationId = String(body.installationId || "").trim();
     const bindToolName = String(body.bindToolName || "").trim();
@@ -142,10 +210,13 @@ fastify.post(
     const clientId = String(body.clientId || "").trim();
     const xappId = String(body.xappId || "").trim();
 
-    if (!token) {
+    if (!token && !bootstrapTicket) {
       return reply.code(401).send({
         ok: false,
-        error: { code: "WIDGET_TOKEN_REQUIRED", message: "Widget token is required" },
+        error: {
+          code: "WIDGET_TOKEN_REQUIRED",
+          message: "Widget token or bootstrap ticket is required",
+        },
       });
     }
 
@@ -159,20 +230,21 @@ fastify.post(
       });
     }
 
-    const verifyUrl = new URL("/v1/requests/latest", GATEWAY_BASE_URL);
-    if (installationId) verifyUrl.searchParams.set("installationId", installationId);
-    if (bindToolName) verifyUrl.searchParams.set("toolName", bindToolName);
-    if (subjectId) verifyUrl.searchParams.set("subjectId", subjectId);
+    const blockedOriginReply = rejectDisallowedBootstrapOrigin(reply, hostOrigin);
+    if (blockedOriginReply) return blockedOriginReply;
 
-    let gatewayResponse;
+    let verified;
     try {
-      gatewayResponse = await fetch(verifyUrl, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          authorization: `Bearer ${token}`,
-          origin: hostOrigin,
-        },
+      verified = await createGatewayApiClient({
+        baseUrl: GATEWAY_BASE_URL,
+        token,
+        fetchImpl: globalThis.fetch,
+      }).verifyBrowserWidgetContext({
+        hostOrigin,
+        bootstrapTicket: bootstrapTicket || null,
+        installationId: installationId || null,
+        bindToolName: bindToolName || null,
+        subjectId: subjectId || null,
       });
     } catch (error) {
       request.log.warn({ err: error }, "xplace-example bootstrap verify gateway call failed");
@@ -185,32 +257,6 @@ fastify.post(
       });
     }
 
-    if (!gatewayResponse.ok) {
-      const gatewayBody = await gatewayResponse
-        .json()
-        .catch(() => ({ message: "Widget context rejected by the gateway" }));
-      request.log.info(
-        {
-          status: gatewayResponse.status,
-          installationId: installationId || null,
-          bindToolName: bindToolName || null,
-          subjectId: subjectId || null,
-          hostOrigin,
-          gatewayBody,
-        },
-        "xplace-example bootstrap verify rejected",
-      );
-      return reply.code(gatewayResponse.status === 401 || gatewayResponse.status === 403 ? 401 : 400).send({
-        ok: false,
-        error: {
-          code: "BOOTSTRAP_CONTEXT_REJECTED",
-          message: "The widget context could not be verified for this publisher runtime",
-          details: gatewayBody,
-        },
-      });
-    }
-
-    const gatewayBody = await gatewayResponse.json().catch(() => ({}));
     return reply.send({
       ok: true,
       verified: true,
@@ -223,7 +269,82 @@ fastify.post(
         bindToolName: bindToolName || null,
         hostOrigin,
       },
-      latestRequestId: String(gatewayBody.requestId || "").trim() || null,
+      publisherId: XPLACE_EXAMPLE_PUBLISHER_ID || null,
+      latestRequestId: String(verified?.latestRequestId || "").trim() || null,
+    });
+  },
+);
+
+fastify.post(
+  "/widgets/xplace-bridge-session-publisher-rendered/bootstrap-verify",
+  async (request, reply) => {
+    const body = request.body && typeof request.body === "object" ? request.body : {};
+    const token = String(body.token || "").trim();
+    const bootstrapTicket = String(body.bootstrapTicket || body.bootstrap_ticket || "").trim();
+    const hostOrigin = normalizeOrigin(body.hostOrigin);
+    const installationId = String(body.installationId || "").trim();
+    const subjectId = String(body.subjectId || "").trim();
+
+    if (!token && !bootstrapTicket) {
+      return reply.code(401).send({
+        ok: false,
+        error: {
+          code: "WIDGET_TOKEN_REQUIRED",
+          message: "Widget token or bootstrap ticket is required",
+        },
+      });
+    }
+
+    if (!hostOrigin) {
+      return reply.code(400).send({
+        ok: false,
+        error: {
+          code: "HOST_ORIGIN_REQUIRED",
+          message: "Host origin is required to verify browser widget context",
+        },
+      });
+    }
+
+    const blockedOriginReply = rejectDisallowedBootstrapOrigin(reply, hostOrigin);
+    if (blockedOriginReply) return blockedOriginReply;
+
+    let verified;
+    try {
+      verified = await createGatewayApiClient({
+        baseUrl: GATEWAY_BASE_URL,
+        token,
+        fetchImpl: globalThis.fetch,
+      }).verifyBrowserWidgetContext({
+        hostOrigin,
+        bootstrapTicket: bootstrapTicket || null,
+        installationId: installationId || null,
+        subjectId: subjectId || null,
+      });
+    } catch (error) {
+      request.log.warn(
+        { err: error },
+        "xplace-example bridge bootstrap verify gateway call failed",
+      );
+      return reply.code(502).send({
+        ok: false,
+        error: {
+          code: "GATEWAY_UNREACHABLE",
+          message: "Could not verify widget context with the gateway",
+        },
+      });
+    }
+
+    return reply.send({
+      ok: true,
+      verified: true,
+      checkedAt: nowIso(),
+      publisherId: XPLACE_EXAMPLE_PUBLISHER_ID || null,
+      context: {
+        installationId: installationId || null,
+        subjectId: subjectId || null,
+        hostOrigin,
+      },
+      latestRequestId: String(verified?.latestRequestId || "").trim() || null,
     });
   },
 );

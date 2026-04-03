@@ -50,7 +50,96 @@ function mapAnafCompanyPayload(payload) {
   };
 }
 
-export function createXplaceToolRegistry({ weatherApiBaseUrl, nowIso }) {
+function readNormalizedScopeSelection(input) {
+  const scopeKind = String(input?.scopeKind || "subject")
+    .trim()
+    .toLowerCase();
+  const activationScope =
+    scopeKind === "installation" || scopeKind === "realm" ? scopeKind : "subject";
+  return {
+    activationScope,
+    requestedPackage: String(input?.requestedPackage || "")
+      .trim()
+      .toLowerCase(),
+    realmRef: String(input?.realmRef || "").trim() || null,
+    contactEmail: String(input?.contactEmail || "").trim() || null,
+    notes: String(input?.notes || "").trim() || null,
+  };
+}
+
+function getPackageLabel(packageSlug) {
+  const packageLabelMap = {
+    starter_unlock: "Starter Unlock",
+    pro_monthly: "Pro Monthly",
+    credits_500: "Credits 500",
+    team_hybrid: "Team Hybrid",
+  };
+  return (
+    packageLabelMap[
+      String(packageSlug || "")
+        .trim()
+        .toLowerCase()
+    ] ||
+    packageSlug ||
+    "Unknown package"
+  );
+}
+
+async function readJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchGatewayJson({
+  gatewayBaseUrl,
+  gatewayClientApiKey,
+  path,
+  method = "GET",
+  body,
+  requestLog,
+}) {
+  const url = new URL(path, `${String(gatewayBaseUrl || "").replace(/\/+$/, "")}/`);
+  let response;
+  try {
+    response = await fetch(url, {
+      method,
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        "x-api-key": gatewayClientApiKey,
+      },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+  } catch (err) {
+    requestLog?.warn(
+      { err: err?.message || String(err), url: String(url), method },
+      "xplace monetization lab gateway request failed",
+    );
+    throw new Error(`Gateway request failed for ${method} ${path}`);
+  }
+  const json = await readJsonSafe(response);
+  if (!response.ok) {
+    requestLog?.warn(
+      { status: response.status, url: String(url), method, body: json },
+      "xplace monetization lab gateway response failed",
+    );
+    const message =
+      String(json?.message || json?.error?.message || "").trim() ||
+      `Gateway request failed for ${method} ${path}`;
+    throw new Error(message);
+  }
+  return json;
+}
+
+export function createXplaceToolRegistry({
+  weatherApiBaseUrl,
+  nowIso,
+  gatewayBaseUrl = "",
+  gatewayClientApiKey = "",
+}) {
   return {
     submit_certificate_request: {
       key: "submit_certificate_request",
@@ -152,6 +241,254 @@ export function createXplaceToolRegistry({ weatherApiBaseUrl, nowIso }) {
             windSpeedKmh: wind,
             provider: "open-meteo",
             summary: `Current weather for ${label}: ${temp}${unitLabel}, code ${code}, wind ${wind} km/h`,
+            checkedAt: nowIso(),
+          },
+        };
+      },
+    },
+    open_monetization_lab: {
+      key: "open_monetization_lab",
+      mode: XPLACE_REQUEST_MODES.AUTO,
+      xapp: "xplace-monetization-lab-jsonforms",
+      title: "Open Monetization Lab (automatic reference response)",
+      validate(payload) {
+        const scopeKind = String(payload.scopeKind || "")
+          .trim()
+          .toLowerCase();
+        if (
+          scopeKind &&
+          scopeKind !== "subject" &&
+          scopeKind !== "installation" &&
+          scopeKind !== "realm"
+        ) {
+          return {
+            ok: false,
+            message: "scopeKind must be subject, installation, or realm",
+          };
+        }
+        return { ok: true };
+      },
+      async handle({
+        payload,
+        requestId,
+        xappId,
+        clientId,
+        installationId,
+        subjectId,
+        requestLog,
+      }) {
+        const { activationScope, requestedPackage, realmRef, contactEmail, notes } =
+          readNormalizedScopeSelection(payload);
+        const selectedPackageLabel = getPackageLabel(requestedPackage);
+
+        if (!String(gatewayBaseUrl || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Gateway base URL is not configured for the monetization lab" },
+          };
+        }
+        if (!String(gatewayClientApiKey || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Target client API key is not configured for the monetization lab",
+            },
+          };
+        }
+        if (!String(xappId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Xapp installation context is missing for the monetization lab" },
+          };
+        }
+        if (!String(clientId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Client context is missing for the monetization lab" },
+          };
+        }
+        if (activationScope === "subject" && !String(subjectId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Subject context is required for subject-scoped activation" },
+          };
+        }
+        if (activationScope === "installation" && !String(installationId || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Installation context is required for installation-scoped activation",
+            },
+          };
+        }
+        if (activationScope === "realm" && !realmRef) {
+          return {
+            status: "error",
+            result: { message: "realmRef is required for realm-scoped activation" },
+          };
+        }
+
+        let preparedIntent = null;
+        let transaction = null;
+        let issuedAccess = null;
+        let currentSubscription = null;
+        let accessProjection = null;
+        try {
+          const catalog = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization`,
+            requestLog,
+          });
+          const offering = Array.isArray(catalog?.items)
+            ? catalog.items.find((item) =>
+                Array.isArray(item?.packages)
+                  ? item.packages.some((pkg) => String(pkg?.slug || "").trim() === requestedPackage)
+                  : false,
+              )
+            : null;
+          const pkg =
+            offering && Array.isArray(offering.packages)
+              ? offering.packages.find(
+                  (item) =>
+                    String(item?.slug || "")
+                      .trim()
+                      .toLowerCase() === requestedPackage,
+                )
+              : null;
+          const price = pkg && Array.isArray(pkg.prices) ? (pkg.prices[0] ?? null) : null;
+          if (!offering || !pkg || !price) {
+            return {
+              status: "error",
+              result: {
+                message: `Requested package is not available for this xapp: ${requestedPackage || "unknown"}`,
+              },
+            };
+          }
+
+          preparedIntent = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/prepare`,
+            method: "POST",
+            body: {
+              offering_id: offering.id,
+              package_id: pkg.id,
+              price_id: price.id,
+              ...(activationScope === "subject" ? { subject_id: subjectId } : {}),
+              ...(activationScope === "installation" ? { installation_id: installationId } : {}),
+              ...(activationScope === "realm" ? { realm_ref: realmRef } : {}),
+              request_id: requestId || null,
+              source_kind: "owner_managed_external",
+              source_ref: requestId
+                ? `xplace-monetization-lab:${requestId}`
+                : "xplace-monetization-lab",
+              payment_lane: "reference_activation",
+            },
+            requestLog,
+          });
+
+          const intentId = String(preparedIntent?.prepared_intent?.purchase_intent_id || "").trim();
+          if (!intentId) {
+            throw new Error("Prepared purchase intent missing purchase_intent_id");
+          }
+
+          transaction = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/${encodeURIComponent(intentId)}/transactions`,
+            method: "POST",
+            body: {
+              status: "verified",
+              provider_ref: "xplace-monetization-lab",
+              evidence_ref: requestId
+                ? `xplace-monetization-lab:${requestId}`
+                : "xplace-monetization-lab",
+              request_id: requestId || null,
+            },
+            requestLog,
+          });
+
+          issuedAccess = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/${encodeURIComponent(intentId)}/issue-access`,
+            method: "POST",
+            body: {},
+            requestLog,
+          });
+
+          const scopeQuery =
+            activationScope === "subject"
+              ? `subject_id=${encodeURIComponent(String(subjectId || "").trim())}`
+              : activationScope === "installation"
+                ? `installation_id=${encodeURIComponent(String(installationId || "").trim())}`
+                : `realm_ref=${encodeURIComponent(String(realmRef || "").trim())}`;
+          accessProjection = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
+            requestLog,
+          });
+
+          const subscriptionRes = await fetch(
+            new URL(
+              `/v1/xapps/${encodeURIComponent(xappId)}/monetization/current-subscription?${scopeQuery}`,
+              `${String(gatewayBaseUrl || "").replace(/\/+$/, "")}/`,
+            ),
+            {
+              headers: {
+                accept: "application/json",
+                "x-api-key": gatewayClientApiKey,
+              },
+            },
+          );
+          if (subscriptionRes.ok) {
+            currentSubscription = await readJsonSafe(subscriptionRes);
+          } else {
+            currentSubscription = null;
+          }
+        } catch (err) {
+          return {
+            status: "error",
+            result: {
+              message: err?.message || String(err),
+              activationScope,
+              requestedPackage: requestedPackage || null,
+              realmRef,
+            },
+          };
+        }
+
+        return {
+          status: "success",
+          result: {
+            status: "success",
+            activationScope,
+            requestedPackage: requestedPackage || null,
+            requestedPackageLabel: selectedPackageLabel,
+            realmRef,
+            contactEmail,
+            notes,
+            clientId: clientId || null,
+            xappId: xappId || null,
+            installationId: installationId || null,
+            subjectId: subjectId || null,
+            preparedIntent: preparedIntent?.prepared_intent ?? null,
+            transaction: transaction?.transaction ?? null,
+            accessProjection: accessProjection?.access_projection ?? null,
+            currentSubscription: currentSubscription?.current_subscription ?? null,
+            issuedAccess: issuedAccess
+              ? {
+                  idempotent: Boolean(issuedAccess.idempotent),
+                  issuance_mode: issuedAccess.issuance_mode || null,
+                  entitlement: issuedAccess.entitlement ?? null,
+                  subscription_contract: issuedAccess.subscription_contract ?? null,
+                  wallet_account: issuedAccess.wallet_account ?? null,
+                  wallet_ledger: issuedAccess.wallet_ledger ?? null,
+                }
+              : null,
+            summary: `Monetization lab activated ${selectedPackageLabel} on ${activationScope} scope for the current request context.`,
             checkedAt: nowIso(),
           },
         };

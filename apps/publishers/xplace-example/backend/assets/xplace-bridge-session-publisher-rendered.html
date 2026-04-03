@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>xplace-bridge-session-publisher-rendered</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4efe7;
+        --card: rgba(255, 252, 246, 0.95);
+        --line: rgba(67, 55, 35, 0.14);
+        --ink: #22170d;
+        --muted: #695946;
+        --accent: #145f86;
+        --accent-soft: rgba(20, 95, 134, 0.12);
+        --ok: #166534;
+        --warn: #92400e;
+        --err: #b91c1c;
+        --shadow: 0 22px 48px rgba(34, 23, 13, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font:
+          16px/1.5 "IBM Plex Sans",
+          "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(20, 95, 134, 0.16), transparent 30%),
+          linear-gradient(180deg, #faf7f2 0%, var(--bg) 100%);
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+      }
+      .shell {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .hero {
+        padding: 28px 28px 22px;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(20, 95, 134, 0.12), transparent 60%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 252, 246, 0.96));
+      }
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        margin: 0 0 14px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0 0 10px;
+        font:
+          700 2rem/1.1 "IBM Plex Serif",
+          Georgia,
+          serif;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        max-width: 70ch;
+      }
+      .content {
+        display: grid;
+        gap: 22px;
+        padding: 28px;
+      }
+      .panel {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .status {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.74);
+        color: var(--muted);
+      }
+      .status[data-tone="ok"] {
+        color: var(--ok);
+        background: rgba(240, 253, 244, 0.92);
+      }
+      .status[data-tone="warn"] {
+        color: var(--warn);
+        background: rgba(255, 247, 237, 0.94);
+      }
+      .status[data-tone="err"] {
+        color: var(--err);
+        background: rgba(254, 242, 242, 0.94);
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .primary {
+        background: linear-gradient(135deg, var(--accent), #0b7aac);
+        color: #fff;
+      }
+      .secondary {
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+      button[disabled] {
+        cursor: wait;
+        opacity: 0.7;
+      }
+      pre {
+        margin: 0;
+        padding: 16px;
+        overflow: auto;
+        border-radius: 16px;
+        border: 1px solid rgba(67, 55, 35, 0.1);
+        background: #161411;
+        color: #f7f4ef;
+        font:
+          13px/1.45 "IBM Plex Mono",
+          monospace;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      @media (max-width: 640px) {
+        main {
+          padding-inline: 12px;
+        }
+        .hero,
+        .content {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="shell">
+        <header class="hero">
+          <p class="eyebrow">xplace-example / publisher session bridge</p>
+          <h1>Verified bootstrap to publisher-local session</h1>
+          <p class="lead">
+            This reference keeps the iframe bootstrap public, verifies runtime with the gateway,
+            then asks the bridge for a vendor assertion and exchanges it into a publisher-local
+            session. It shows the stronger session-ownership path without changing the current certs
+            payment example.
+          </p>
+        </header>
+
+        <div class="content">
+          <section class="panel">
+            <div class="label">Current state</div>
+            <div id="status" class="status">Waiting for bridge context…</div>
+            <div class="actions">
+              <button id="start-session" class="primary" disabled>Mint publisher session</button>
+              <button id="refresh-session" class="secondary" disabled>Read session</button>
+              <button id="logout-session" class="secondary" disabled>Logout session</button>
+            </div>
+            <div class="meta">
+              Flow: public iframe shell → bootstrap verify → vendor assertion → local publisher
+              session.
+            </div>
+          </section>
+
+          <div class="grid">
+            <section class="panel">
+              <div class="label">Verified bootstrap</div>
+              <pre id="bootstrap-output">Waiting…</pre>
+            </section>
+            <section class="panel">
+              <div class="label">Publisher session</div>
+              <pre id="session-output">No session yet.</pre>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="label">Session events</div>
+            <pre id="events-output">No events yet.</pre>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { createBridge, verifyWidgetBootstrap } from "/widgets/widget-sdk.js";
+
+      const statusEl = document.getElementById("status");
+      const bootstrapOutput = document.getElementById("bootstrap-output");
+      const sessionOutput = document.getElementById("session-output");
+      const eventsOutput = document.getElementById("events-output");
+      const startBtn = document.getElementById("start-session");
+      const refreshBtn = document.getElementById("refresh-session");
+      const logoutBtn = document.getElementById("logout-session");
+
+      const bridge = createBridge();
+      let verifiedPayload = null;
+      let sessionToken = "";
+
+      function writeJson(target, value) {
+        target.textContent = JSON.stringify(value, null, 2);
+      }
+
+      function setStatus(message, tone = "") {
+        statusEl.textContent = message;
+        if (tone) {
+          statusEl.setAttribute("data-tone", tone);
+        } else {
+          statusEl.removeAttribute("data-tone");
+        }
+      }
+
+      async function fetchWithSession(path, options = {}) {
+        if (!sessionToken) throw new Error("Publisher session not established yet");
+        const headers = new Headers(options.headers || {});
+        headers.set("authorization", `Bearer ${sessionToken}`);
+        const response = await fetch(path, { ...options, headers });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(body.message || `Request failed (${response.status})`);
+        }
+        return body;
+      }
+
+      async function loadSessionDetails() {
+        const [session, events] = await Promise.all([
+          fetchWithSession("/xapps/session/me"),
+          fetchWithSession("/xapps/session/events"),
+        ]);
+        writeJson(sessionOutput, session);
+        writeJson(eventsOutput, events);
+      }
+
+      async function bootstrap() {
+        setStatus("Verifying widget bootstrap…");
+        const verified = await verifyWidgetBootstrap({
+          bridge,
+          endpoint: "/widgets/xplace-bridge-session-publisher-rendered/bootstrap-verify",
+        });
+        verifiedPayload = verified.payload || {};
+        writeJson(bootstrapOutput, {
+          context: verified.context,
+          payload: verified.payload,
+        });
+        startBtn.disabled = false;
+        setStatus("Bootstrap verified. You can mint a publisher-local session.", "ok");
+      }
+
+      startBtn.addEventListener("click", async () => {
+        if (!verifiedPayload) return;
+        startBtn.disabled = true;
+        try {
+          if (!verifiedPayload.publisherId) {
+            throw new Error(
+              "XPLACE_EXAMPLE_PUBLISHER_ID is not configured on the backend, so bridge exchange cannot request a vendor assertion yet.",
+            );
+          }
+          setStatus("Requesting vendor assertion from bridge…");
+          const assertion = await bridge.getVendorAssertion({
+            publisher_id: verifiedPayload.publisherId,
+            scopes: ["publisher.api:read"],
+          });
+          const exchange = await fetch("/xapps/bridge/exchange", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              vendor_assertion: assertion.vendor_assertion,
+              publisher_user_id:
+                verifiedPayload.context?.subjectId ||
+                verifiedPayload.context?.installationId ||
+                "xplace-example-demo-user",
+            }),
+          });
+          const payload = await exchange.json().catch(() => ({}));
+          if (!exchange.ok) {
+            throw new Error(payload.message || `Session exchange failed (${exchange.status})`);
+          }
+          sessionToken = String(payload.session_token || "");
+          refreshBtn.disabled = false;
+          logoutBtn.disabled = false;
+          await loadSessionDetails();
+          setStatus("Publisher-local session established.", "ok");
+        } catch (error) {
+          setStatus(error?.message || String(error), "err");
+        } finally {
+          startBtn.disabled = false;
+        }
+      });
+
+      refreshBtn.addEventListener("click", async () => {
+        refreshBtn.disabled = true;
+        try {
+          setStatus("Refreshing publisher session…");
+          await loadSessionDetails();
+          setStatus("Publisher session refreshed.", "ok");
+        } catch (error) {
+          setStatus(error?.message || String(error), "err");
+        } finally {
+          refreshBtn.disabled = false;
+        }
+      });
+
+      logoutBtn.addEventListener("click", async () => {
+        logoutBtn.disabled = true;
+        try {
+          setStatus("Revoking publisher session…");
+          const payload = await fetchWithSession("/xapps/session/logout", { method: "POST" });
+          writeJson(sessionOutput, payload);
+          const events = await fetchWithSession("/xapps/session/events");
+          writeJson(eventsOutput, events);
+          sessionToken = "";
+          refreshBtn.disabled = true;
+          logoutBtn.disabled = true;
+          setStatus("Publisher session revoked.", "warn");
+        } catch (error) {
+          setStatus(error?.message || String(error), "err");
+        } finally {
+          logoutBtn.disabled = false;
+        }
+      });
+
+      bootstrap().catch((error) => {
+        writeJson(bootstrapOutput, { error: error?.message || String(error) });
+        setStatus(error?.message || "Bootstrap verification failed", "err");
+      });
+    </script>
+  </body>
+</html>
