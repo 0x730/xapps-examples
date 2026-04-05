@@ -51,11 +51,21 @@ function buildPlaygroundSnapshotPayload({
   snapshot,
   recentPurchaseActivity,
 }) {
+  const entitlements = Array.isArray(snapshot?.entitlements) ? snapshot.entitlements : [];
+  const currentSubscriptionProductId = readTrimmedString(
+    snapshot?.current_subscription?.product_id,
+  );
+  const additiveEntitlements = entitlements.filter((item) => {
+    const productId = readTrimmedString(item?.product_id);
+    const status = readTrimmedString(item?.status).toLowerCase();
+    return Boolean(productId) && productId !== currentSubscriptionProductId && status === "active";
+  });
   return {
     scope_kind: scopeKind,
     scope_fields: scopeFields,
     access_projection: snapshot?.access_projection || null,
     current_subscription: snapshot?.current_subscription || null,
+    additive_entitlements: additiveEntitlements,
     wallet_accounts: Array.isArray(snapshot?.wallet_accounts) ? snapshot.wallet_accounts : [],
     wallet_ledger: Array.isArray(snapshot?.wallet_ledger) ? snapshot.wallet_ledger : [],
     ...recentPurchaseActivity,
@@ -264,6 +274,13 @@ export function createPlaygroundGatewayClient({ gatewayBaseUrl, gatewayClientApi
           playground: true,
           app: PLAYGROUND_SOURCE_REF,
         },
+      });
+    },
+
+    async finalizePaymentSession({ xappId, intentId }) {
+      return finalizeXappHostedPurchase(gateway, {
+        xappId: readTrimmedString(xappId),
+        intentId: readTrimmedString(intentId),
       });
     },
 

@@ -129,6 +129,9 @@ export function MemberOverviewPanel({
               <span className="creator-badge">
                 {view.snapshotSummary.accessCoverage.coverageLabel}
               </span>
+              {Array.isArray(view.additiveEntitlements) && view.additiveEntitlements.length > 0 ? (
+                <span className="creator-badge">add-ons {view.additiveEntitlements.length}</span>
+              ) : null}
             </div>
           </div>
 
@@ -150,6 +153,17 @@ export function MemberOverviewPanel({
                 {view.currentSubscription?.status ? "Subscription boundary." : "Not applicable."}
               </span>
             </div>
+            {view.durableUnlockSummary?.visible ? (
+              <div className="creator-summary-item">
+                <label>Add-on unlock</label>
+                <strong>{view.durableUnlockSummary.tierLabel}</strong>
+                <span>
+                  {view.durableUnlockSummary.additiveToSubscription
+                    ? "Added on top of the active membership."
+                    : view.durableUnlockSummary.sourceRefLabel}
+                </span>
+              </div>
+            ) : null}
             <div className="creator-summary-item">
               <label>Scope</label>
               <strong>{view.runtimeMix.scopeLabel}</strong>

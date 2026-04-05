@@ -78,6 +78,7 @@ Execution order:
    - plan selection
    - current subscription/access state
    - same gateway/API/XPO/invoice/guard boundaries underneath
+   - manifest-defined paywalls v1 consumed through the same XMS catalog/API surface
 
 Current landed starting point:
 
@@ -196,7 +197,21 @@ Current publisher-rendered monetization playground:
    - current catalog read from XMS
    - current access / current subscription / wallet account / wallet ledger read from XMS
    - controlled reference activation
-   - hosted payment-session creation + reconcile on the current XPO rail
+   - hosted payment-session creation on the current XPO rail
+   - workspace snapshot now attempts platform-style hosted finalize automatically for the latest
+     checkout intent
+   - explicit finalize/reconcile remains available in the technical lab as recovery/reference
+   - the xapp manifest now also declares versioned `event_subscriptions` on the shared
+     `xplace-example` webhook ingress for:
+     - request completion/failure
+     - `XMS` purchase intent / reconcile / access issuance / access snapshot lifecycle events
+   - the workspace snapshot now reads a recent filtered `XMS` webhook feed from the shared
+     `xplace-example` webhook store so the real app can show that those lifecycle events were
+     received by the xapp
+   - the technical lab monetization-state panel now renders that recent `XMS` event list in more
+     detail for inspection
+   - the xapp manifest now also declares `connectivity` + `endpoints.prod` on the shared
+     `xplace-example` request ingress so the same app can later exercise platform request lanes
    - mixed-state runtime rendering for access / subscription / credits in the publisher-rendered UI
    - inferred durable unlock / entitlement visibility from current access projection + purchase activity
    - recent purchase intent / transaction visibility for the current proving flow

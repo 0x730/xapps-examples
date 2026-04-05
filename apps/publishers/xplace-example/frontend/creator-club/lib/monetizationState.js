@@ -84,11 +84,21 @@ function buildAccessProvenanceLabel({
 function buildDurableUnlockSummary({
   accessProjection,
   currentSubscription,
+  additiveEntitlements,
   recentPurchaseIntent,
   recentTransactions,
   snapshotSummary,
 }) {
+  const activeAdditiveEntitlements = Array.isArray(additiveEntitlements)
+    ? additiveEntitlements.filter(
+        (item) =>
+          readString(item?.status).toLowerCase() === "active" &&
+          Boolean(readString(item?.product_id)),
+      )
+    : [];
+  const primaryAdditiveEntitlement = activeAdditiveEntitlements[0] || null;
   const sourceRef = readString(accessProjection?.source_ref);
+  const subscriptionStatus = readString(currentSubscription?.status);
   const entitlementState = readString(accessProjection?.entitlement_state);
   const tier = readString(accessProjection?.tier);
   const recentPackageSlug = readString(
@@ -98,16 +108,17 @@ function buildDurableUnlockSummary({
     recentPackageSlug.toLowerCase().includes("unlock") ||
     readString(recentPurchaseIntent?.package?.package_kind).toLowerCase() === "one_time_unlock";
   const likelyDurableUnlock =
-    !Object.keys(currentSubscription || {}).length &&
-    !isUsageCreditSource(sourceRef) &&
-    Boolean(
-      likelyUnlockFromRecentPackage ||
-      entitlementState === "active" ||
-      entitlementState === "expired" ||
-      entitlementState === "suspended" ||
-      entitlementState === "grace_period" ||
-      (tier && sourceRef),
-    );
+    activeAdditiveEntitlements.length > 0 ||
+    Boolean(likelyUnlockFromRecentPackage) ||
+    (!subscriptionStatus &&
+      !isUsageCreditSource(sourceRef) &&
+      Boolean(
+        entitlementState === "active" ||
+        entitlementState === "expired" ||
+        entitlementState === "suspended" ||
+        entitlementState === "grace_period" ||
+        (tier && sourceRef),
+      ));
 
   if (!likelyDurableUnlock) {
     return {
@@ -122,25 +133,41 @@ function buildDurableUnlockSummary({
 
   let inferenceReason =
     "Inferred from the current access projection because no active subscription is visible on this scope.";
-  if (likelyUnlockFromRecentPackage) {
-    inferenceReason =
-      "Backed by the recent unlock-style package plus the current access projection for this scope.";
+  if (primaryAdditiveEntitlement) {
+    inferenceReason = subscriptionStatus
+      ? "Backed by an explicit active add-on entitlement on top of the current recurring membership."
+      : "Backed by an explicit active durable entitlement for this scope.";
+  } else if (likelyUnlockFromRecentPackage) {
+    inferenceReason = subscriptionStatus
+      ? "Backed by a recent unlock-style purchase. It is additive to the active recurring membership rather than a membership replacement."
+      : "Backed by the recent unlock-style package plus the current access projection for this scope.";
   } else if (sourceRef) {
     inferenceReason = `Backed by access projection source ${formatStateLabel(sourceRef)} with no active subscription present.`;
   }
 
   return {
     visible: true,
-    statusLabel: formatStateLabel(entitlementState, "unknown"),
-    tierLabel: formatStateLabel(tier, "—"),
+    additiveToSubscription: Boolean(subscriptionStatus),
+    statusLabel: formatStateLabel(
+      primaryAdditiveEntitlement?.status || entitlementState,
+      "unknown",
+    ),
+    tierLabel: formatStateLabel(primaryAdditiveEntitlement?.tier || tier, "—"),
     coverageLabel: snapshotSummary.accessCoverage.coverageLabel,
-    sourceRefLabel: formatStateLabel(sourceRef, "—"),
-    stateVersionLabel: formatStateLabel(accessProjection?.state_version, "—"),
+    sourceRefLabel: formatStateLabel(primaryAdditiveEntitlement?.source_ref || sourceRef, "—"),
+    stateVersionLabel: formatStateLabel(
+      primaryAdditiveEntitlement?.state_version || accessProjection?.state_version,
+      "—",
+    ),
     recentPackageLabel: formatStateLabel(recentPackageSlug, "—"),
-    purchaseIntentLabel: readString(recentPurchaseIntent?.purchase_intent_id) || "—",
+    purchaseIntentLabel:
+      readString(primaryAdditiveEntitlement?.purchase_intent_id) ||
+      readString(recentPurchaseIntent?.purchase_intent_id) ||
+      "—",
     transactionLabel: readString(latestTransaction?.id) || "—",
     transactionStatusLabel: formatStateLabel(latestTransaction?.status, "—"),
     inferenceReason,
+    entitlements: activeAdditiveEntitlements,
   };
 }
 
@@ -154,11 +181,13 @@ export function buildMonetizationStateView(statePayload) {
   const recentTransactions = sortByOccurredAtDescending(
     readArrayRecords(state.recent_transactions),
   );
+  const additiveEntitlements = readArrayRecords(state.additive_entitlements);
   const recentPurchaseIntent = readObjectRecord(state.recent_purchase_intent);
   const snapshotSummary = summarizeXappMonetizationSnapshot(state);
   const durableUnlockSummary = buildDurableUnlockSummary({
     accessProjection,
     currentSubscription,
+    additiveEntitlements,
     recentPurchaseIntent,
     recentTransactions,
     snapshotSummary,
@@ -167,6 +196,7 @@ export function buildMonetizationStateView(statePayload) {
   return {
     accessProjection,
     currentSubscription,
+    additiveEntitlements,
     scopeFields,
     walletAccounts,
     walletLedger,

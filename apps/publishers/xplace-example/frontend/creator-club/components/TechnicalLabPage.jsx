@@ -25,6 +25,7 @@ export function TechnicalLabPage(props) {
     stateBusy,
     catalogBusy,
     packages,
+    catalogPaywalls,
     selected,
     setSelected,
     paymentPresets,
@@ -44,7 +45,7 @@ export function TechnicalLabPage(props) {
     activePaywallFeature,
     featurePaywall,
     featureCopy,
-    setPaywallFeatureKey,
+    closePaywall,
     handleRunFeature,
     openPaywall,
   } = props;
@@ -155,13 +156,15 @@ export function TechnicalLabPage(props) {
         features={features}
         statePayload={statePayload}
         openPaywall={openPaywall}
+        paywalls={catalogPaywalls}
+        workspacePaywallSlug={String(props.workspacePaywall?.slug || "").trim()}
       />
 
       <FeaturePaywallPanel
         activePaywallFeature={activePaywallFeature}
         featurePaywall={featurePaywall}
         featureCopy={featureCopy}
-        setPaywallFeatureKey={setPaywallFeatureKey}
+        closePaywall={closePaywall}
         setSelected={setSelected}
         busyAction={busyAction}
         handleReferenceActivate={handleReferenceActivate}

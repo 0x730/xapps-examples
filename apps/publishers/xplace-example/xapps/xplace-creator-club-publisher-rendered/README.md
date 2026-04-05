@@ -32,6 +32,10 @@ Current model:
 - monetization still goes through the gateway XMS/XPO APIs, not a side backend model
 - hosted payment lanes are definition-backed through manifest `payment_guard_definitions`,
   not a local ad hoc payment config
+- billing-profile readiness is enforced at widget boot through the normal
+  `before:session_open` subject-profile guard path, using the tenant-owned
+  `xconect_tenant_billing_business` definition plus the shared publisher
+  candidate endpoint
 - the app now shows both:
   - `XMS mode` from the selected package/family
   - `Payment lane` from the selected payment definition

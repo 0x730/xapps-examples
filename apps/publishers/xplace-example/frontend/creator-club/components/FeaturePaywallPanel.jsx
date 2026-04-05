@@ -6,7 +6,7 @@ export function FeaturePaywallPanel({
   activePaywallFeature,
   featurePaywall,
   featureCopy,
-  setPaywallFeatureKey,
+  closePaywall,
   setSelected,
   busyAction,
   handleReferenceActivate,
@@ -27,11 +27,8 @@ export function FeaturePaywallPanel({
             <div className="creator-meta">{activePaywallFeature.description}</div>
           </div>
           <div className="creator-actions">
-            <button
-              className="creator-button secondary"
-              type="button"
-              onClick={() => setPaywallFeatureKey("")}
-            >
+            <span className="creator-badge">preview open</span>
+            <button className="creator-button secondary" type="button" onClick={closePaywall}>
               Close paywall
             </button>
           </div>

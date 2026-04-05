@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dbabfe6823f3c1a08915530ed6f04edd",
+    "content-hash": "2744679d99239406c5eae3998c85ecb2",
     "packages": [
         {
             "name": "xapps-platform/xapps-backend-kit",
-            "version": "0.1.4",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/0x730/xapps-backend-kit-php.git",
-                "reference": "254ea5cc8ac48d6de30fd99d538ae90ee82f5aec"
+                "reference": "d7ebb7a8369cdb23ff48a681a1e58bcc77cc9c0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/254ea5cc8ac48d6de30fd99d538ae90ee82f5aec",
-                "reference": "254ea5cc8ac48d6de30fd99d538ae90ee82f5aec",
+                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/d7ebb7a8369cdb23ff48a681a1e58bcc77cc9c0f",
+                "reference": "d7ebb7a8369cdb23ff48a681a1e58bcc77cc9c0f",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2",
-                "xapps-platform/xapps-php": "^0.1.2"
+                "xapps-platform/xapps-php": "^0.2.1"
             },
             "type": "library",
             "autoload": {
@@ -49,20 +49,20 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-backend-kit-php"
             },
-            "time": "2026-03-26T23:36:15+00:00"
+            "time": "2026-04-03T17:52:26+00:00"
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.1.4",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/0x730/xapps-php.git",
-                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d"
+                "reference": "40da99db572acf01f0f46801de325fd4565123e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
-                "reference": "c9ccbe052f204ce8efbdb4d9ab25c5d6c870e89d",
+                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/40da99db572acf01f0f46801de325fd4565123e3",
+                "reference": "40da99db572acf01f0f46801de325fd4565123e3",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
             },
-            "time": "2026-03-26T23:34:29+00:00"
+            "time": "2026-04-03T17:31:41+00:00"
         }
     ],
     "packages-dev": [],

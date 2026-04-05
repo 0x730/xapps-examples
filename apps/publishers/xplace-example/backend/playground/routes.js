@@ -28,6 +28,7 @@ export const PLAYGROUND_JS_ROUTE = `/widgets/${PLAYGROUND_SLUG}.app.js`;
 export const PLAYGROUND_BOOTSTRAP_ROUTE = `/widgets/${PLAYGROUND_SLUG}/bootstrap-verify`;
 export const PLAYGROUND_API_BASE_ROUTE = `/widgets/${PLAYGROUND_SLUG}/api`;
 export const PLAYGROUND_SETUP_BASE_ROUTE = "/creator-club";
+const RECENT_XMS_EVENT_LIMIT = 10;
 
 function normalizeOriginLoose(value) {
   const raw = String(value || "").trim();
@@ -225,6 +226,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
     gatewayBaseUrl,
     gatewayClientApiKey,
     publisherGatewayApiKey,
+    repo,
     sessionStore,
     accountsRepo,
     portalBaseUrl,
@@ -284,6 +286,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
       xappDetail?.manifest && typeof xappDetail.manifest === "object" ? xappDetail.manifest : {};
     return {
       items: Array.isArray(catalog?.items) ? catalog.items : [],
+      paywalls: Array.isArray(catalog?.paywalls) ? catalog.paywalls : [],
       payment_presets: listCreatorClubPaymentPresetsFromManifest(manifest),
       feature_definitions: listCreatorClubFeaturesFromManifest(manifest),
     };
@@ -299,11 +302,83 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
     });
   }
 
+  async function readRecentXmsEvents(session) {
+    if (!repo?.listWebhooks) return [];
+    const xappId = String(session?.context?.xapp_id || "").trim();
+    if (!xappId) return [];
+    const rows = await repo.listWebhooks({ limit: Math.max(40, RECENT_XMS_EVENT_LIMIT * 4) });
+    return rows
+      .filter((row) => {
+        const envelope = row?.payload && typeof row.payload === "object" ? row.payload : {};
+        const payload =
+          envelope?.payload && typeof envelope.payload === "object" ? envelope.payload : {};
+        return (
+          String(row?.event_type || "").startsWith("xapps.xms.") &&
+          String(payload?.xapp_id || "").trim() === xappId
+        );
+      })
+      .slice(0, RECENT_XMS_EVENT_LIMIT)
+      .map((row) => {
+        const envelope = row?.payload && typeof row.payload === "object" ? row.payload : {};
+        const payload =
+          envelope?.payload && typeof envelope.payload === "object" ? envelope.payload : {};
+        return {
+          id: String(row.id || "").trim() || null,
+          event_id: String(row.event_id || "").trim() || null,
+          event_type: String(row.event_type || "").trim() || null,
+          received_at: String(row.received_at || "").trim() || null,
+          request_id: String(payload?.request_id || "").trim() || null,
+          payment_session_id: String(payload?.payment_session_id || "").trim() || null,
+          purchase_intent_id: String(payload?.purchase_intent_id || "").trim() || null,
+          snapshot_id: String(payload?.snapshot_id || "").trim() || null,
+          reason: String(payload?.reason || "").trim() || null,
+          source_ref: String(payload?.source_ref || "").trim() || null,
+        };
+      });
+  }
+
+  async function maybeFinalizeWorkspacePayment(session, query = {}) {
+    const intentId = String(query.intentId || "").trim();
+    if (!intentId) {
+      return null;
+    }
+    try {
+      const finalized = await gatewayClient.finalizePaymentSession({
+        xappId: session.context.xapp_id,
+        intentId,
+      });
+      return {
+        attempted: true,
+        finalized: true,
+        payment_session_id:
+          String(finalized?.payment_session?.payment_session_id || "").trim() || null,
+        payment_status: String(finalized?.payment_session?.status || "").trim() || null,
+        intent_status: String(finalized?.prepared_intent?.status || "").trim() || null,
+        issuance_mode: String(finalized?.issued?.issuance_mode || "").trim() || null,
+        idempotent: finalized?.issued?.idempotent === true,
+        lifecycle_events: [
+          "xapps.xms.transaction.reconciled",
+          "xapps.xms.access.issued",
+          "xapps.xms.access_snapshot.refreshed",
+        ],
+      };
+    } catch (error) {
+      return {
+        attempted: true,
+        finalized: false,
+        message:
+          error && error.message ? String(error.message) : "Workspace payment refresh failed",
+      };
+    }
+  }
+
   async function buildWorkspaceSnapshot(request, session, query = {}) {
-    const [catalogData, state, linkStatus] = await Promise.all([
+    const payment_refresh = await maybeFinalizeWorkspacePayment(session, query);
+    const [catalogData, state, linkStatus, xmsEvents] = await Promise.all([
       readCatalogData(session),
       readStateData(session, query),
       readWorkspaceLinkStatus(session),
+      readRecentXmsEvents(session),
     ]);
     return {
       ok: true,
@@ -311,6 +386,8 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
       links: buildPlaygroundLinks({ portalBaseUrl, publisherBaseUrl, session }),
       link_status: linkStatus,
       auth: buildWorkspaceAuth(session, request),
+      ...(payment_refresh ? { payment_refresh } : {}),
+      xms_events: xmsEvents,
       ...catalogData,
       ...state,
     };
@@ -379,8 +456,9 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
         lifecycle: [
           "prepare_purchase_intent",
           "create_gateway_payment_session",
-          "reconcile_payment_session",
-          "issue_access",
+          "hosted_payment_completion",
+          "platform_finalize_purchase",
+          "refresh_workspace_state",
         ],
       },
     };

@@ -9,7 +9,7 @@
     "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
     "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
   },
-  "version": "1.0.21",
+  "version": "1.0.47",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "linking": {
@@ -95,7 +95,9 @@
       "name": "creator_club_gateway_managed_hosted",
       "payment_issuer_mode": "gateway_managed",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["gateway"],
+      "payment_allowed_issuers": [
+        "gateway"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -150,7 +152,9 @@
       "name": "creator_club_tenant_delegated_hosted",
       "payment_issuer_mode": "tenant_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["tenant_delegated"],
+      "payment_allowed_issuers": [
+        "tenant_delegated"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -207,7 +211,9 @@
       "name": "creator_club_publisher_delegated_hosted",
       "payment_issuer_mode": "publisher_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["publisher_delegated"],
+      "payment_allowed_issuers": [
+        "publisher_delegated"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -443,7 +449,154 @@
           "included_credits": 1000
         }
       }
-    ]
+    ],
+    "paywalls": [
+      {
+        "slug": "creator_workspace_default",
+        "title": {
+          "en": "Workspace plans",
+          "ro": "Planuri workspace"
+        },
+        "description": {
+          "en": "Default workspace paywall for the main member plans flow.",
+          "ro": "Paywall-ul implicit pentru fluxul principal de planuri."
+        },
+        "placement": "paywall",
+        "offering_refs": [
+          "creator_default_paywall"
+        ],
+        "package_refs": [
+          "creator_starter_unlock",
+          "creator_pro_monthly"
+        ],
+        "default_package_ref": "creator_pro_monthly",
+        "status": "active"
+      },
+      {
+        "slug": "creator_workspace_upgrade_paywall",
+        "title": {
+          "en": "Workspace upgrades",
+          "ro": "Upgrade-uri workspace"
+        },
+        "placement": "upgrade",
+        "offering_refs": [
+          "creator_workspace_upgrade"
+        ],
+        "package_refs": [
+          "creator_credits_500"
+        ],
+        "default_package_ref": "creator_credits_500",
+        "status": "active"
+      },
+      {
+        "slug": "creator_workspace_retention_paywall",
+        "title": {
+          "en": "Retention offers",
+          "ro": "Oferte de retenție"
+        },
+        "placement": "retention",
+        "offering_refs": [
+          "creator_retention_path"
+        ],
+        "package_refs": [
+          "creator_team_hybrid"
+        ],
+        "default_package_ref": "creator_team_hybrid",
+        "status": "active"
+      }
+    ],
+    "hooks": {
+      "after_payment_completed": {
+        "enabled": true,
+        "invoice_ref": "gateway_payment_invoice",
+        "by_payment_guard_ref": {
+          "creator_club_gateway_managed_hosted": {
+            "invoice_ref": "gateway_payment_invoice"
+          },
+          "creator_club_tenant_delegated_hosted": {
+            "invoice_ref": "tenant_payment_invoice"
+          },
+          "creator_club_publisher_delegated_hosted": {
+            "invoice_ref": "publisher_payment_invoice"
+          }
+        }
+      }
+    }
+  },
+  "guards": [
+    {
+      "slug": "xconect-tenant-subject-profile-policy",
+      "trigger": "before:session_open",
+      "headless": false,
+      "config": {
+        "subject_profile_guard_ref": "xconect_tenant_billing_business",
+        "subject_profile_sources": {
+          "publisher": {
+            "provider_kind": "endpoint",
+            "endpoint_base_url": "__XPLACE_BACKEND_BASE_URL__/guard/subject-profiles/publisher-candidates",
+            "tool_payload": {
+              "xapp_slug": "xplace-creator-club-publisher-rendered",
+              "widget_name": "creator_club_publisher_rendered_widget"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "guards_policy": {
+    "before:session_open": "all"
+  },
+  "connectivity": {
+    "executor_mode": "PUBLIC_EXECUTOR",
+    "auth_mode": "PUBLISHER_APP",
+    "signing_policy": "none",
+    "webhooks": {
+      "enabled": true
+    },
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  },
+  "event_subscriptions": [
+    {
+      "event_type": "xapps.request.completed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.request.failed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.xms.purchase_intent.prepared",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.xms.transaction.reconciled",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.xms.access.issued",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.xms.access_snapshot.refreshed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    }
+  ],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XPLACE_BACKEND_BASE_URL__/xapps/requests",
+      "timeout_ms": 10000,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff": "linear"
+      },
+      "region": "global",
+      "labels": {
+        "publisher": "xplace-example-creator-club",
+        "env": "development"
+      }
+    }
   },
   "widgets": [
     {
@@ -459,7 +612,9 @@
         "kind": "iframe_url",
         "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-creator-club-publisher-rendered.html"
       },
-      "capabilities": ["ui:notification"],
+      "capabilities": [
+        "ui:notification"
+      ],
       "config": {
         "xapps": {
           "bootstrap_transport": "signed_ticket"

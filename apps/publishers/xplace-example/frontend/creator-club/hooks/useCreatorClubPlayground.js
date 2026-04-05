@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   buildFeaturePaywall,
+  flattenXappMonetizationPaywallPackages,
   flattenXappMonetizationCatalog,
   getDefaultXappMonetizationScopeKind,
   hasInstallationMonetizationContext,
   hasSubjectMonetizationContext,
+  listXappMonetizationPaywalls,
   resolveXmsModeForPackage,
+  selectXappMonetizationPaywall,
 } from "../../../../../../node_modules/@xapps-platform/browser-host/dist/index.js";
 import { buildFeatureCopyModel } from "../lib/featureCopy.js";
 import {
@@ -46,6 +49,7 @@ export function useCreatorClubPlayground({ apiBase }) {
   const [selected, setSelected] = useState(null);
   const [paymentPresetKey, setPaymentPresetKey] = useState("");
   const [paywallFeatureKey, setPaywallFeatureKey] = useState("");
+  const [paywallPreviewOpen, setPaywallPreviewOpen] = useState(false);
   const [lastIntentId, setLastIntentId] = useState("");
   const [lastPaymentPageUrl, setLastPaymentPageUrl] = useState("");
   const [lastPaymentRuntime, setLastPaymentRuntime] = useState(null);
@@ -59,6 +63,23 @@ export function useCreatorClubPlayground({ apiBase }) {
   const [lastStateRefreshAt, setLastStateRefreshAt] = useState("");
 
   const packages = useMemo(() => flattenXappMonetizationCatalog(catalog), [catalog]);
+  const catalogPaywalls = useMemo(
+    () => listXappMonetizationPaywalls(statePayload?.paywalls),
+    [statePayload],
+  );
+  const workspacePaywall = useMemo(
+    () =>
+      selectXappMonetizationPaywall({
+        paywalls: catalogPaywalls,
+        placement: "default_paywall",
+      }),
+    [catalogPaywalls],
+  );
+  const featurePaywallPackages = useMemo(() => {
+    if (!workspacePaywall) return packages;
+    const items = flattenXappMonetizationPaywallPackages(workspacePaywall);
+    return items.length ? items : packages;
+  }, [packages, workspacePaywall]);
   const subjectScopeAvailable = hasSubjectMonetizationContext(session);
   const installationScopeAvailable = hasInstallationMonetizationContext(session);
   const selectedPaymentPreset =
@@ -296,8 +317,8 @@ export function useCreatorClubPlayground({ apiBase }) {
       packageItem,
       ({ opened, packageTitle, paymentLabel }) =>
         opened
-          ? `Hosted payment session created for ${packageTitle} on ${paymentLabel}. Complete payment in the opened page, then reconcile back here.`
-          : `Hosted payment session created for ${packageTitle} on ${paymentLabel}, but the browser blocked the automatic open. Use the hosted payment link below, then reconcile back here.`,
+          ? `Hosted payment session created for ${packageTitle} on ${paymentLabel}. Complete payment in the opened page, then the playground can finalize it here.`
+          : `Hosted payment session created for ${packageTitle} on ${paymentLabel}, but the browser blocked the automatic open. Use the hosted payment link below, then finalize it here if needed.`,
     );
   }
 
@@ -307,8 +328,8 @@ export function useCreatorClubPlayground({ apiBase }) {
       packageItem,
       ({ opened, packageTitle }) =>
         opened
-          ? `Checkout opened for ${packageTitle}. Return here when payment completes.`
-          : `Checkout is ready for ${packageTitle}. Open the hosted payment link, then refresh payment status here.`,
+          ? `Checkout opened for ${packageTitle}. Return here when payment completes and the workspace will refresh automatically.`
+          : `Checkout is ready for ${packageTitle}. Open the hosted payment link. The workspace will refresh automatically after payment, and the fallback check stays here if needed.`,
     );
   }
 
@@ -352,7 +373,7 @@ export function useCreatorClubPlayground({ apiBase }) {
   async function handleAppReconcile() {
     return runReconcileRequest(
       "/app/plans/payment-session/reconcile",
-      "Payment status refreshed for the latest plan checkout.",
+      "Payment status checked for the latest plan checkout.",
     );
   }
 
@@ -415,11 +436,11 @@ export function useCreatorClubPlayground({ apiBase }) {
       activePaywallFeature
         ? buildFeaturePaywall({
             feature: activePaywallFeature,
-            packages,
+            packages: featurePaywallPackages,
             selectedPackage: selected,
           })
         : null,
-    [activePaywallFeature, packages, selected],
+    [activePaywallFeature, featurePaywallPackages, selected],
   );
   const linkedHint = String(
     linkStatus?.publisherUserEmail || linkStatus?.publisherUserId || "",
@@ -437,10 +458,15 @@ export function useCreatorClubPlayground({ apiBase }) {
   );
 
   useEffect(() => {
-    if (activePaywallFeature?.available) {
+    if (activePaywallFeature?.available && !paywallPreviewOpen) {
       setPaywallFeatureKey("");
     }
-  }, [activePaywallFeature]);
+  }, [activePaywallFeature, paywallPreviewOpen]);
+
+  function closePaywall() {
+    setPaywallPreviewOpen(false);
+    setPaywallFeatureKey("");
+  }
 
   function openPaywall(feature) {
     const featureKey = String(feature?.key || "").trim();
@@ -449,6 +475,7 @@ export function useCreatorClubPlayground({ apiBase }) {
       statePayload,
       featurePaywall: null,
     });
+    setPaywallPreviewOpen(true);
     setPaywallFeatureKey(featureKey);
     setActivity({
       tone: "warn",
@@ -474,6 +501,8 @@ export function useCreatorClubPlayground({ apiBase }) {
     statePayload,
     stateBusy,
     packages,
+    catalogPaywalls,
+    workspacePaywall,
     selected,
     setSelected,
     paymentPresets,
@@ -493,6 +522,7 @@ export function useCreatorClubPlayground({ apiBase }) {
     featureCopy,
     linkedHint,
     setPaywallFeatureKey,
+    closePaywall,
     refreshState,
     refreshWorkspaceSnapshot,
     handleReferenceActivate,

@@ -12,8 +12,13 @@ function renderSourceMeta(sourceKind, stateVersion) {
   )}`;
 }
 
+function formatXmsEventType(value) {
+  return formatStateLabel(String(value || "").replace(/^xapps\.xms\./, ""), "event");
+}
+
 export function MonetizationStatePanel({ statePayload }) {
   const view = buildMonetizationStateView(statePayload);
+  const xmsEvents = Array.isArray(statePayload?.xms_events) ? statePayload.xms_events : [];
   const {
     accessProjection,
     currentSubscription,
@@ -416,6 +421,61 @@ export function MonetizationStatePanel({ statePayload }) {
             <div className="creator-empty">
               No recent purchase intent is attached yet. Create a hosted payment session or use
               reference activation to populate this activity view.
+            </div>
+          )}
+        </section>
+
+        <section className="creator-state-block">
+          <h3>Recent XMS events</h3>
+          <div className="creator-meta">
+            Showing the latest 10 stored lifecycle events for this xapp.
+          </div>
+          {xmsEvents.length ? (
+            <div className="creator-detail-list">
+              {xmsEvents.map((event, index) => (
+                <div
+                  className="creator-detail-card"
+                  key={String(event?.id || event?.event_id || `xms-event-${index}`)}
+                >
+                  <div className="creator-detail-head">
+                    <div className="creator-detail-title">
+                      <strong>{formatXmsEventType(event?.event_type)}</strong>
+                      <span>
+                        {String(event?.event_id || event?.id || "").trim() ||
+                          "event id unavailable"}
+                      </span>
+                    </div>
+                    <span className="creator-badge">{formatDateTime(event?.received_at)}</span>
+                  </div>
+                  <div className="creator-badge-row">
+                    {event?.purchase_intent_id ? (
+                      <span className="creator-badge">
+                        intent {String(event.purchase_intent_id)}
+                      </span>
+                    ) : null}
+                    {event?.payment_session_id ? (
+                      <span className="creator-badge">
+                        session {String(event.payment_session_id)}
+                      </span>
+                    ) : null}
+                    {event?.snapshot_id ? (
+                      <span className="creator-badge">snapshot {String(event.snapshot_id)}</span>
+                    ) : null}
+                  </div>
+                  <div className="creator-meta">
+                    {event?.reason
+                      ? `reason ${formatStateLabel(event.reason)}`
+                      : event?.source_ref
+                        ? `source ${formatStateLabel(event.source_ref)}`
+                        : "Stored webhook event received by the xapp"}
+                    {event?.request_id ? ` · request ${String(event.request_id)}` : ""}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="creator-empty">
+              No XMS lifecycle events have been received yet for the current xapp installation.
             </div>
           )}
         </section>

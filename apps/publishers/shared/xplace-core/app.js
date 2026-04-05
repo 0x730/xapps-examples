@@ -19,6 +19,7 @@ export function createPublisherWorkspaceApp({
   listWorkspaceTools,
   requireApiKey,
   requireAdminKey,
+  verifyEventWebhook,
   buildPublisherSubjectProfilesEnvelope,
   assets = [],
 }) {
@@ -65,6 +66,21 @@ export function createPublisherWorkspaceApp({
 
   fastify.post("/webhooks/events", async (request, reply) => {
     const body = request.body && typeof request.body === "object" ? request.body : {};
+    if (typeof verifyEventWebhook === "function") {
+      const verification = await verifyEventWebhook({
+        request,
+        body,
+      });
+      if (!verification?.ok) {
+        return reply.code(Number(verification?.statusCode || 401)).send({
+          ok: false,
+          error: {
+            code: String(verification?.code || "EVENT_WEBHOOK_SIGNATURE_INVALID"),
+            message: String(verification?.message || "Invalid event webhook signature"),
+          },
+        });
+      }
+    }
     const eventId = String(body.eventId || body.id || "").trim() || null;
     const eventType = String(body.eventType || body.type || "").trim() || null;
     await repo.insertWebhook({

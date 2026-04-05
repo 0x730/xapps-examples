@@ -39,6 +39,7 @@ export function WorkspacePage({
   statePayload,
   lastStateRefreshAt,
   packages,
+  workspacePaywall,
   selected,
   setSelected,
   selectedPaymentPreset,
@@ -75,13 +76,6 @@ export function WorkspacePage({
       {activeSection === "dashboard" ? (
         <div className="creator-stack">
           <section className="creator-zone">
-            <div className="creator-zone-head">
-              <div>
-                <p className="creator-kicker">Membership</p>
-                <h2>Plan and account overview.</h2>
-              </div>
-              <div className="creator-meta">Current member state.</div>
-            </div>
             <MemberOverviewPanel
               session={session}
               links={links}
@@ -94,13 +88,6 @@ export function WorkspacePage({
           </section>
 
           <section className="creator-zone">
-            <div className="creator-zone-head">
-              <div>
-                <p className="creator-kicker">Usage</p>
-                <h2>Recent activity.</h2>
-              </div>
-              <div className="creator-meta">Current scope.</div>
-            </div>
             <MemberActivityPanel statePayload={statePayload} />
           </section>
         </div>
@@ -110,6 +97,7 @@ export function WorkspacePage({
         <WorkspacePlansPanel
           statePayload={statePayload}
           packages={packages}
+          workspacePaywall={workspacePaywall}
           selected={selected}
           setSelected={setSelected}
           selectedPaymentPreset={selectedPaymentPreset}

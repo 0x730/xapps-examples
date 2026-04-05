@@ -93,9 +93,21 @@ Current landed starting point:
      - current access/current subscription reads
      - wallet / ledger / recent transaction reads
      - controlled reference activation
-     - hosted payment-session create + reconcile
+     - hosted payment-session create + workspace auto-finalize on return/refresh
+     - explicit finalize/reconcile kept in the technical lab as fallback/reference
      - XMS-backed tool execution and credit consumption
      - feature gating from current XMS state
+     - xapp-versioned `event_subscriptions` for request and XMS lifecycle events on the shared
+       `xplace-example` webhook ingress
+     - local/dev platform event delivery now allows loopback webhook targets for those xapp
+       subscriptions, while production can still gate loopback targets through
+       `EVENT_DELIVERY_LOOPBACK_ALLOWLIST`
+     - shared `/webhooks/events` now verifies signed `event_delivery` webhook headers using the
+       same xapp ingress secret already provisioned for `xplace-example` endpoint credentials
+     - workspace activity now also shows the latest received XMS lifecycle event from the stored
+       xapp webhook feed
+     - xapp `endpoints.prod` wiring on the shared `xplace-example` request ingress for future
+       platform request-path proving
    - intended local tenant lane:
      - `xconect`
 

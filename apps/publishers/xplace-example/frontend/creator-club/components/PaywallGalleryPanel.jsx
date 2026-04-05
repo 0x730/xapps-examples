@@ -1,9 +1,21 @@
 import React from "react";
+import {
+  buildMonetizationPaywallHtml,
+  buildMonetizationPaywallRenderModel,
+  monetizationPaywallRendererStyles,
+} from "../../../../../../packages/browser-host/dist/index.js";
 import { buildFeatureCopyModel } from "../lib/featureCopy.js";
 
-export function PaywallGalleryPanel({ features, statePayload, openPaywall }) {
+export function PaywallGalleryPanel({
+  features,
+  statePayload,
+  openPaywall,
+  paywalls = [],
+  workspacePaywallSlug = "",
+}) {
   return (
     <section className="creator-card creator-stack">
+      <style>{monetizationPaywallRendererStyles}</style>
       <div className="creator-section-head">
         <div>
           <p className="creator-kicker">Paywall gallery</p>
@@ -14,6 +26,49 @@ export function PaywallGalleryPanel({ features, statePayload, openPaywall }) {
           whether the tool is already available.
         </div>
       </div>
+      {paywalls.length ? (
+        <div className="creator-stack">
+          <div className="creator-badge-row">
+            {paywalls.map((item) => {
+              const renderModel = buildMonetizationPaywallRenderModel(item);
+              const itemSlug = String(item.slug || "").trim();
+              return (
+                <span className="creator-badge" key={String(item.slug || renderModel.paywallLabel)}>
+                  {renderModel.paywallLabel} · {renderModel.packageCountLabel}
+                  {workspacePaywallSlug && itemSlug === workspacePaywallSlug
+                    ? " · workspace-selected"
+                    : ""}
+                </span>
+              );
+            })}
+          </div>
+          {paywalls.map((item) => {
+            const renderModel = buildMonetizationPaywallRenderModel(item);
+            const itemSlug = String(item.slug || "").trim();
+            return (
+              <div key={String(item.slug || renderModel.paywallLabel)} className="creator-stack">
+                <div className="creator-badge-row">
+                  {itemSlug ? <span className="creator-badge">slug {itemSlug}</span> : null}
+                  {item.placement ? (
+                    <span className="creator-badge">placement {String(item.placement)}</span>
+                  ) : null}
+                  {workspacePaywallSlug && itemSlug === workspacePaywallSlug ? (
+                    <span className="creator-badge">selected by workspace flow</span>
+                  ) : null}
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: buildMonetizationPaywallHtml(item, {
+                      actionLabel: "Choose plan",
+                      interactive: false,
+                    }),
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
       <div className="creator-list">
         {features.map((feature) => {
           const featureCopy = buildFeatureCopyModel({

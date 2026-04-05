@@ -9,7 +9,7 @@
     "en": "Publisher-rendered certificate request app in xplace-example using the request-owned after:request_created payment lifecycle.",
     "ro": "Aplicație publisher-rendered pentru cereri de certificate în xplace-example, folosind ciclul de plată deținut de cerere pe after:request_created."
   },
-  "version": "1.0.23",
+  "version": "1.0.46",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -74,7 +74,10 @@
             "description": "Opțional: detalii suplimentare despre utilizarea certificatului."
           }
         },
-        "required": ["companyCui", "requestPurpose"]
+        "required": [
+          "companyCui",
+          "requestPurpose"
+        ]
       },
       "output_schema": {
         "type": "object",
@@ -93,7 +96,10 @@
             "type": "string"
           }
         },
-        "required": ["status", "requestRef"]
+        "required": [
+          "status",
+          "requestRef"
+        ]
       },
       "output_ui_schema": {
         "xapps": {
@@ -167,7 +173,11 @@
           "result_presentation": "runtime_default"
         }
       },
-      "capabilities": ["requests:create", "requests:read", "ui:notification"]
+      "capabilities": [
+        "requests:create",
+        "requests:read",
+        "ui:notification"
+      ]
     }
   ],
   "guards": [
@@ -177,7 +187,9 @@
       "headless": false,
       "config": {
         "subject_profile_guard_ref": "xconect_tenant_billing_business",
-        "tools": ["submit_certificate_request_async"],
+        "tools": [
+          "submit_certificate_request_async"
+        ],
         "subject_profile_sources": {
           "publisher": {
             "provider_kind": "endpoint",
@@ -198,7 +210,9 @@
         "effect_kind": "policy",
         "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
         "tool_name": "evaluate_tenant_payment_policy",
-        "tools": ["submit_certificate_request_async"],
+        "tools": [
+          "submit_certificate_request_async"
+        ],
         "allow_orchestration_approval": true
       }
     },

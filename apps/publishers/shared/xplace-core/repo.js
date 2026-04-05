@@ -129,6 +129,31 @@ export async function createXplaceDb({ databaseUrl, poolMax = 10 }) {
     );
   }
 
+  async function listWebhooks({ limit = 50 } = {}) {
+    const normalizedLimit = clampLimit(limit, 50);
+    const result = await pool.query(
+      `
+        SELECT
+          id,
+          event_id,
+          event_type,
+          payload_json,
+          received_at
+        FROM xplace_webhooks
+        ORDER BY received_at DESC
+        LIMIT $1
+      `,
+      [normalizedLimit],
+    );
+    return result.rows.map((row) => ({
+      id: row.id,
+      event_id: row.event_id || null,
+      event_type: row.event_type || null,
+      payload: parseJsonSafe(row.payload_json, {}),
+      received_at: row.received_at,
+    }));
+  }
+
   async function listRequests({ status = "", limit = 100 } = {}) {
     const trimmed = String(status || "").trim();
     const normalizedLimit = clampLimit(limit, 100);
@@ -277,6 +302,7 @@ export async function createXplaceDb({ databaseUrl, poolMax = 10 }) {
     countRequests,
     upsertRequest,
     insertWebhook,
+    listWebhooks,
     listRequests,
     getRequestByRequestId,
     updateManualResponse,

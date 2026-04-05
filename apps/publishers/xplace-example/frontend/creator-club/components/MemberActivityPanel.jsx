@@ -44,6 +44,24 @@ function buildPurchaseSummary(intent) {
   };
 }
 
+function buildXmsEventSummary(entry) {
+  const eventType = formatStateLabel(
+    String(entry?.event_type || "").replace(/^xapps\.xms\./, ""),
+    "event",
+  );
+  const reason = String(entry?.reason || "").trim();
+  const sourceRef = String(entry?.source_ref || "").trim();
+  return {
+    title: `${eventType} event`,
+    subtitle: reason
+      ? formatStateLabel(reason, "Lifecycle update")
+      : sourceRef
+        ? `Source ${formatStateLabel(sourceRef)}`
+        : "XMS lifecycle delivery",
+    meta: formatDateTime(entry?.received_at),
+  };
+}
+
 function buildPrimaryActivity({ latestPurchase, latestTransaction, latestLedger }) {
   if (latestTransaction) {
     return {
@@ -78,6 +96,12 @@ function buildPrimaryActivity({ latestPurchase, latestTransaction, latestLedger 
 
 export function MemberActivityPanel({ statePayload }) {
   const view = buildMonetizationStateView(statePayload);
+  const paymentRefresh =
+    statePayload?.payment_refresh &&
+    typeof statePayload.payment_refresh === "object" &&
+    !Array.isArray(statePayload.payment_refresh)
+      ? statePayload.payment_refresh
+      : null;
   const latestLedger = view.walletLedger[0] || null;
   const latestTransaction = view.recentTransactions[0] || null;
   const latestPurchase = view.recentPurchaseIntent;
@@ -86,10 +110,15 @@ export function MemberActivityPanel({ statePayload }) {
     latestTransaction,
     latestLedger,
   });
+  const latestXmsEvent =
+    Array.isArray(statePayload?.xms_events) && statePayload.xms_events.length
+      ? statePayload.xms_events[0]
+      : null;
   const activityItems = [
     latestPurchase ? buildPurchaseSummary(latestPurchase) : null,
     latestTransaction ? buildTransactionSummary(latestTransaction) : null,
     latestLedger ? buildLedgerSummary(latestLedger) : null,
+    latestXmsEvent ? buildXmsEventSummary(latestXmsEvent) : null,
   ].filter(Boolean);
 
   return (
@@ -168,6 +197,31 @@ export function MemberActivityPanel({ statePayload }) {
               ? view.durableUnlockSummary.sourceRefLabel
               : "None visible."}
           </span>
+        </div>
+        <div className="creator-summary-item">
+          <label>Latest checkout</label>
+          <strong>
+            {paymentRefresh?.finalized
+              ? formatStateLabel(paymentRefresh?.payment_status, "Completed")
+              : "No applied checkout"}
+          </strong>
+          <span>
+            {paymentRefresh?.finalized
+              ? formatStateLabel(paymentRefresh?.issuance_mode, "State refreshed")
+              : "None."}
+          </span>
+        </div>
+        <div className="creator-summary-item">
+          <label>Latest XMS event</label>
+          <strong>
+            {latestXmsEvent
+              ? formatStateLabel(
+                  String(latestXmsEvent?.event_type || "").replace(/^xapps\.xms\./, ""),
+                  "Event received",
+                )
+              : "No XMS event received"}
+          </strong>
+          <span>{latestXmsEvent ? formatDateTime(latestXmsEvent?.received_at) : "None."}</span>
         </div>
       </div>
 

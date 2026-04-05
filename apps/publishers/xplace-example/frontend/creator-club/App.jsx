@@ -513,6 +513,8 @@ function App() {
     statePayload,
     stateBusy,
     packages,
+    catalogPaywalls,
+    workspacePaywall,
     selected,
     setSelected,
     paymentPresets,
@@ -532,6 +534,7 @@ function App() {
     featureCopy,
     linkedHint,
     setPaywallFeatureKey,
+    closePaywall,
     refreshState,
     refreshWorkspaceSnapshot,
     handleReferenceActivate,
@@ -627,6 +630,7 @@ function App() {
           statePayload={statePayload}
           lastStateRefreshAt={lastStateRefreshAt}
           packages={packages}
+          workspacePaywall={workspacePaywall}
           selected={selected}
           setSelected={setSelected}
           selectedPaymentPreset={selectedPaymentPreset}
@@ -659,6 +663,8 @@ function App() {
           stateBusy={stateBusy}
           catalogBusy={catalogBusy}
           packages={packages}
+          catalogPaywalls={catalogPaywalls}
+          workspacePaywall={workspacePaywall}
           selected={selected}
           setSelected={setSelected}
           paymentPresets={paymentPresets}
@@ -678,7 +684,7 @@ function App() {
           activePaywallFeature={activePaywallFeature}
           featurePaywall={featurePaywall}
           featureCopy={featureCopy}
-          setPaywallFeatureKey={setPaywallFeatureKey}
+          closePaywall={closePaywall}
           handleRunFeature={handleRunFeature}
           openPaywall={openPaywall}
         />

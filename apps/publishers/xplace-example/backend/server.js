@@ -2,7 +2,10 @@ import dotenv from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createGatewayApiClient } from "../../../../packages/server-sdk/dist/index.js";
+import {
+  createGatewayApiClient,
+  verifyXappsSignature,
+} from "../../../../packages/server-sdk/dist/index.js";
 import {
   isBootstrapOriginAllowed,
   normalizeOrigin,
@@ -85,6 +88,10 @@ const XPLACE_EXAMPLE_PORTAL_BASE_URL = String(
 const XPLACE_EXAMPLE_PUBLISHER_BASE_URL = String(
   process.env.XPLACE_EXAMPLE_PUBLISHER_BASE_URL || "http://localhost:5176/apps/publisher",
 ).trim();
+const XPLACE_EXAMPLE_SIGNING_CONTEXT_STRICT =
+  String(process.env.SIGNING_CONTEXT_STRICT || "true").trim() !== "false";
+const XPLACE_EXAMPLE_SIGNING_CONTEXT_ALLOW_LEGACY_FALLBACK =
+  String(process.env.SIGNING_CONTEXT_ALLOW_LEGACY_FALLBACK || "true").trim() !== "false";
 
 const xplaceExampleRepo = await createXplaceDb({ databaseUrl: XPLACE_EXAMPLE_DATABASE_URL });
 const xplaceExamplePlaygroundAccountsRepo = await createPlaygroundAccountsRepo({
@@ -167,6 +174,45 @@ const buildPublisherSubjectProfilesEnvelope = createPublisherSubjectProfilesEnve
   }),
 });
 
+async function verifyEventWebhook({ request, body }) {
+  const kid = String(request.headers["x-xapps-kid"] || "").trim();
+  const timestamp = String(request.headers["x-xapps-ts"] || "").trim();
+  const signature = String(request.headers["x-xapps-signature"] || "").trim();
+  const nonce = String(request.headers["x-xapps-nonce"] || "").trim();
+  const source = String(request.headers["x-xapps-source"] || "").trim();
+  if (!kid || !timestamp || !signature) {
+    return {
+      ok: false,
+      code: "EVENT_WEBHOOK_SIGNATURE_REQUIRED",
+      message: "Signed event delivery headers are required",
+    };
+  }
+
+  const result = verifyXappsSignature({
+    method: request.method,
+    pathWithQuery: request.url,
+    body: JSON.stringify(body ?? {}),
+    timestamp,
+    signature,
+    secret: XPLACE_EXAMPLE_XAPP_INGEST_API_KEY,
+    nonce: nonce || undefined,
+    source: source === "event_delivery" || source === "dispatch" ? source : undefined,
+    requireSourceInSignature: XPLACE_EXAMPLE_SIGNING_CONTEXT_STRICT,
+    allowLegacyWithoutSource: XPLACE_EXAMPLE_SIGNING_CONTEXT_ALLOW_LEGACY_FALLBACK,
+    maxSkewSeconds: 300,
+  });
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      code: "EVENT_WEBHOOK_SIGNATURE_INVALID",
+      message: `Signature verification failed: ${result.reason}`,
+    };
+  }
+
+  return { ok: true };
+}
+
 const fastify = createPublisherWorkspaceApp({
   serviceName: "xplace-example",
   repo: xplaceExampleRepo,
@@ -177,6 +223,7 @@ const fastify = createPublisherWorkspaceApp({
   listWorkspaceTools,
   requireApiKey,
   requireAdminKey,
+  verifyEventWebhook,
   buildPublisherSubjectProfilesEnvelope,
   assets: backendAssets,
 });
@@ -190,6 +237,7 @@ await registerMonetizationPlaygroundRoutes(fastify, {
   gatewayBaseUrl: GATEWAY_BASE_URL,
   gatewayClientApiKey: XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
   publisherGatewayApiKey: XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
+  repo: xplaceExampleRepo,
   sessionStore: xplaceExamplePlaygroundSessions,
   accountsRepo: xplaceExamplePlaygroundAccountsRepo,
   portalBaseUrl: XPLACE_EXAMPLE_PORTAL_BASE_URL,
