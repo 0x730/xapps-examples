@@ -9,7 +9,7 @@
     "en": "Tenant-owned gateway-managed Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout).",
     "ro": "Xapp de gardă de plată Stripe gestionat de gateway, deținut de tenant, pentru xconect (checkout Stripe găzduit de gateway)."
   },
-  "version": "1.0.368",
+  "version": "1.0.383",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
@@ -21,15 +21,7 @@
       "hidden": true
     }
   },
-  "tags": [
-    "xconect",
-    "tenant",
-    "guards",
-    "payment",
-    "policy",
-    "gateway-managed",
-    "stripe"
-  ],
+  "tags": ["xconect", "tenant", "guards", "payment", "policy", "gateway-managed", "stripe"],
   "tools": [
     {
       "tool_name": "evaluate_tenant_payment_policy",
@@ -90,9 +82,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "allowed"
-        ]
+        "required": ["allowed"]
       }
     }
   ],
@@ -123,9 +113,7 @@
       "payment_type": "pay_by_request",
       "payment_issuer_mode": "gateway_managed",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": [
-        "gateway"
-      ],
+      "payment_allowed_issuers": ["gateway"],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,

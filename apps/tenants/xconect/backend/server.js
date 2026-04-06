@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import { db } from "../../../../dist/src/db/knex.js";
+import { resolveClientInstallationPolicy } from "../../../../dist/src/clients/installationPolicy.js";
 import {
   createEmbedHostProxyService as createEmbedHostProxyServiceSdk,
   createGatewayApiClient as createGatewayApiClientSdk,
@@ -54,6 +56,12 @@ function normalizeBackendKitOptions(input = {}) {
   });
 }
 
+async function resolveXconectInstallationPolicy() {
+  const tenantSlug = String(BACKEND_KIT_OPTIONS.reference?.tenant || "xconect").trim() || "xconect";
+  const client = await db("clients").select("details_jsonb").where({ slug: tenantSlug }).first();
+  return resolveClientInstallationPolicy(client?.details_jsonb ?? null);
+}
+
 async function createBackendKit(input = {}) {
   return createBackendKitBase(input, {
     normalizeOptions: normalizeBackendKitOptions,
@@ -71,8 +79,7 @@ async function createBackendKit(input = {}) {
             {
               createGatewayClient: ({ baseUrl, apiKey }) =>
                 createGatewayApiClientSdk({ baseUrl, apiKey }),
-              createEmbedHostProxyService: ({ gatewayClient, gatewayUrl, hostModes }) =>
-                createEmbedHostProxyServiceSdk({ gatewayClient, gatewayUrl, hostModes }),
+              createEmbedHostProxyService: (input) => createEmbedHostProxyServiceSdk(input),
             },
           ),
         registerHostRoutes: (fastify, hostOptions) => fastify.register(hostRoutes, hostOptions),
@@ -220,12 +227,14 @@ const fastify = Fastify({ logger: true, bodyLimit: 1_048_576 });
 const hostProxyService = createHostProxyServiceBase(
   {
     gateway: BACKEND_KIT_OPTIONS.gateway,
-    reference: BACKEND_KIT_OPTIONS.reference,
+    reference: {
+      ...BACKEND_KIT_OPTIONS.reference,
+      resolveInstallationPolicy: resolveXconectInstallationPolicy,
+    },
   },
   {
     createGatewayClient: ({ baseUrl, apiKey }) => createGatewayApiClientSdk({ baseUrl, apiKey }),
-    createEmbedHostProxyService: ({ gatewayClient, gatewayUrl, hostModes }) =>
-      createEmbedHostProxyServiceSdk({ gatewayClient, gatewayUrl, hostModes }),
+    createEmbedHostProxyService: (input) => createEmbedHostProxyServiceSdk(input),
   },
 );
 const backendKitOptions = {
