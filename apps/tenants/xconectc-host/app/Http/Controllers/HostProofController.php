@@ -133,8 +133,13 @@ class HostProofController extends Controller
             'Content-Type' => 'application/json',
             'X-API-Key' => $this->bootstrapApiKey(),
         ])->post($this->bootstrapBackendBaseUrl() . '/api/host-bootstrap', [
+            'subjectId' => trim((string) $request->input('subjectId', '')),
+            'type' => trim((string) $request->input('type', '')),
+            'identifier' => is_array($request->input('identifier')) ? $request->input('identifier') : null,
             'email' => trim((string) $request->input('email', '')),
             'name' => trim((string) $request->input('name', '')),
+            'metadata' => is_array($request->input('metadata')) ? $request->input('metadata') : null,
+            'linkId' => trim((string) ($request->input('linkId', $request->input('link_id', '')))),
             'origin' => $this->publicBaseUrl(),
         ]);
 

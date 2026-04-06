@@ -55,8 +55,8 @@
           <h1>Start with one calm question, then enter the marketplace.</h1>
           <p>
             This is the PHP reference tenant entry for the same marketplace contract as xconect.
-            Name and email stay browser-local here; the stable subject identity still comes from the
-            gateway resolve flow, so the same email returns to the same subject.
+            Name and email stay browser-local here; the stable subject identity comes from the
+            explicit kind plus identifier fields sent to the gateway resolve flow.
           </p>
           <div class="journey">
             <div class="journey-step is-active">
@@ -143,6 +143,93 @@
                 </label>
               </div>
 
+              <div class="identity-choice">
+                <div class="question-index">Optional subject override</div>
+                <p class="identity-choice-copy">
+                  If the same email can represent multiple tenant identities, choose one here before
+                  launch.
+                </p>
+                <div class="identity-preset-row">
+                  <button class="secondary-button" id="identity-preset-individual" type="button">
+                    Individual
+                  </button>
+                  <button class="secondary-button" id="identity-preset-company-a" type="button">
+                    Company A
+                  </button>
+                  <button class="secondary-button" id="identity-preset-company-b" type="button">
+                    Company B
+                  </button>
+                  <button class="secondary-button" id="identity-preset-clear" type="button">
+                    Email-only
+                  </button>
+                </div>
+              </div>
+
+              <details class="identity-advanced" id="identity-advanced">
+                <summary>Custom identity fields</summary>
+                <p class="advanced-note">
+                  Use these raw fields only when the preset buttons are not enough. Subject identity
+                  is defined by kind plus identifier type and identifier value. Hint and metadata
+                  are attached context.
+                </p>
+                <div class="field-grid">
+                  <label>
+                    Identity kind
+                    <select id="subjectType" name="subjectType">
+                      <option value="">Email-only subject</option>
+                      <option value="individual">Individual</option>
+                      <option value="business_member">Business member</option>
+                    </select>
+                  </label>
+                  <label>
+                    Identifier type
+                    <input
+                      id="subjectIdentifierType"
+                      name="subjectIdentifierType"
+                      type="text"
+                      value=""
+                      placeholder="tenant_member_id"
+                    />
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Identifier value
+                    <input
+                      id="subjectIdentifierValue"
+                      name="subjectIdentifierValue"
+                      type="text"
+                      value=""
+                      placeholder="acct-a"
+                    />
+                  </label>
+                  <label>
+                    Identifier hint
+                    <input
+                      id="subjectIdentifierHint"
+                      name="subjectIdentifierHint"
+                      type="text"
+                      value=""
+                      placeholder="Company A"
+                    />
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Metadata JSON
+                    <input
+                      id="subjectMetadata"
+                      name="subjectMetadata"
+                      type="text"
+                      value=""
+                      placeholder='{"company":"A","role":"member"}'
+                    />
+                  </label>
+                </div>
+              </details>
+
               <div class="question-block compact">
                 <div class="question-index">Question 2 of 2</div>
                 <p class="question-copy">
@@ -228,6 +315,12 @@
         const nameInput = document.getElementById("name");
         const emailInput = document.getElementById("email");
         const xappIdInput = document.getElementById("xappId");
+        const identityAdvancedEl = document.getElementById("identity-advanced");
+        const subjectTypeInput = document.getElementById("subjectType");
+        const subjectIdentifierTypeInput = document.getElementById("subjectIdentifierType");
+        const subjectIdentifierValueInput = document.getElementById("subjectIdentifierValue");
+        const subjectIdentifierHintInput = document.getElementById("subjectIdentifierHint");
+        const subjectMetadataInput = document.getElementById("subjectMetadata");
         const localeSelect = document.getElementById("host-locale-select");
         const themeSelect = document.getElementById("host-theme-select");
         const themeAliases = { slate: "harbor", graphite: "atlas" };
@@ -323,7 +416,10 @@
             return;
           }
           identityCard.hidden = false;
-          identityCopy.textContent = `${identity.name || "Unknown"} · ${identity.email || "-"} · subject ${identity.subjectId}`;
+          const parts = [identity.name, identity.email].filter(
+            (value) => typeof value === "string" && value.trim(),
+          );
+          identityCopy.textContent = `${parts.length ? parts.join(" · ") : "Resolved subject"} · subject ${identity.subjectId}`;
         }
 
         function setBusy(busy, message) {
@@ -346,11 +442,161 @@
           return "";
         }
 
-        async function resolveSubject(email, name) {
+        function readOptionalString(value) {
+          return typeof value === "string" ? value.trim() : "";
+        }
+
+        function syncIdentityAdvancedVisibility(override = null) {
+          if (!(identityAdvancedEl instanceof HTMLDetailsElement)) return;
+          const current =
+            override ||
+            mergeIdentityOverrides(readIdentityOverrideFromForm(), readIdentityOverrideFromQuery());
+          identityAdvancedEl.open = Boolean(
+            current?.subjectId ||
+            current?.type ||
+            current?.identifier ||
+            current?.metadata,
+          );
+        }
+
+        function readIdentityOverrideFromQuery() {
+          const subjectId = readOptionalString(currentUrl.searchParams.get("subjectId"));
+          const type =
+            readOptionalString(currentUrl.searchParams.get("subjectType")) ||
+            readOptionalString(currentUrl.searchParams.get("type"));
+          const idType =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierType")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierType"));
+          const identifierValue =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierValue")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierValue"));
+          const identifierHint =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierHint")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierHint"));
+          const metadataRaw =
+            readOptionalString(currentUrl.searchParams.get("subjectMetadata")) ||
+            readOptionalString(currentUrl.searchParams.get("metadata"));
+          let metadata = null;
+          if (metadataRaw) {
+            try {
+              const parsed = JSON.parse(metadataRaw);
+              if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                metadata = parsed;
+              }
+            } catch {
+              // ignore malformed metadata query
+            }
+          }
+          return {
+            ...(subjectId ? { subjectId } : {}),
+            ...(type ? { type } : {}),
+            ...(idType && identifierValue
+              ? {
+                  identifier: {
+                    idType,
+                    value: identifierValue,
+                    ...(identifierHint ? { hint: identifierHint } : {}),
+                  },
+                }
+              : {}),
+            ...(metadata ? { metadata } : {}),
+          };
+        }
+
+        function readIdentityOverrideFromForm() {
+          const type = readOptionalString(subjectTypeInput?.value);
+          const idType = readOptionalString(subjectIdentifierTypeInput?.value);
+          const identifierValue = readOptionalString(subjectIdentifierValueInput?.value);
+          const identifierHint = readOptionalString(subjectIdentifierHintInput?.value);
+          const metadataRaw = readOptionalString(subjectMetadataInput?.value);
+          let metadata = null;
+          if (metadataRaw) {
+            try {
+              const parsed = JSON.parse(metadataRaw);
+              if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                metadata = parsed;
+              }
+            } catch {
+              throw new Error("Metadata JSON must be a valid object.");
+            }
+          }
+          return {
+            ...(type ? { type } : {}),
+            ...(idType && identifierValue
+              ? {
+                  identifier: {
+                    idType,
+                    value: identifierValue,
+                    ...(identifierHint ? { hint: identifierHint } : {}),
+                  },
+                }
+              : {}),
+            ...(metadata ? { metadata } : {}),
+          };
+        }
+
+        function mergeIdentityOverrides(...entries) {
+          return entries.reduce((acc, entry) => {
+            if (!entry || typeof entry !== "object") return acc;
+            return {
+              ...acc,
+              ...entry,
+              ...(entry.identifier ? { identifier: entry.identifier } : {}),
+              ...(entry.metadata ? { metadata: entry.metadata } : {}),
+            };
+          }, {});
+        }
+
+        function applyIdentityPreset(kind) {
+          if (
+            !subjectTypeInput ||
+            !subjectIdentifierTypeInput ||
+            !subjectIdentifierValueInput ||
+            !subjectIdentifierHintInput ||
+            !subjectMetadataInput
+          ) {
+            return;
+          }
+          if (kind === "individual") {
+            subjectTypeInput.value = "individual";
+            subjectIdentifierTypeInput.value = "person_identity_id";
+            subjectIdentifierValueInput.value = "person-default";
+            subjectIdentifierHintInput.value = "Individual";
+            subjectMetadataInput.value = '{"profile":"individual"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          if (kind === "company-a") {
+            subjectTypeInput.value = "business_member";
+            subjectIdentifierTypeInput.value = "tenant_member_id";
+            subjectIdentifierValueInput.value = "acct-a";
+            subjectIdentifierHintInput.value = "Company A";
+            subjectMetadataInput.value = '{"company":"A","role":"member"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          if (kind === "company-b") {
+            subjectTypeInput.value = "business_member";
+            subjectIdentifierTypeInput.value = "tenant_member_id";
+            subjectIdentifierValueInput.value = "acct-b";
+            subjectIdentifierHintInput.value = "Company B";
+            subjectMetadataInput.value = '{"company":"B","role":"member"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          subjectTypeInput.value = "";
+          subjectIdentifierTypeInput.value = "";
+          subjectIdentifierValueInput.value = "";
+          subjectIdentifierHintInput.value = "";
+          subjectMetadataInput.value = "";
+          syncIdentityAdvancedVisibility({});
+        }
+
+        async function resolveSubject(input) {
           const response = await fetch("/api/resolve-subject", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, name }),
+            body: JSON.stringify(input),
           });
           const raw = await response.text();
           const payload = (() => {
@@ -413,24 +659,54 @@
           }
         });
 
+        document
+          .getElementById("identity-preset-individual")
+          ?.addEventListener("click", () => applyIdentityPreset("individual"));
+        document
+          .getElementById("identity-preset-company-a")
+          ?.addEventListener("click", () => applyIdentityPreset("company-a"));
+        document
+          .getElementById("identity-preset-company-b")
+          ?.addEventListener("click", () => applyIdentityPreset("company-b"));
+        document
+          .getElementById("identity-preset-clear")
+          ?.addEventListener("click", () => applyIdentityPreset("clear"));
+
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
+          let identityOverride;
+          try {
+            identityOverride = mergeIdentityOverrides(
+              readIdentityOverrideFromForm(),
+              readIdentityOverrideFromQuery(),
+            );
+          } catch (error) {
+            setBusy(false, String(error?.message || "Identity override is invalid."));
+            return;
+          }
           const mode = String(
             form.querySelector('input[name="mode"]:checked')?.value || "single-panel",
           );
           const name = String(nameInput.value || "").trim();
           const email = String(emailInput.value || "").trim();
-          if (!name || !email) {
+          if (!identityOverride.subjectId && !identityOverride.identifier && (!name || !email)) {
             setBusy(false, "Name and email are required.");
             return;
           }
           try {
             setBusy(true, "Resolving subject...");
-            const resolved = await resolveSubject(email, name);
+            const resolved = await resolveSubject({
+              ...identityOverride,
+              ...(email ? { email } : {}),
+              ...(name ? { name } : {}),
+            });
             const subjectId = extractSubjectId(resolved);
             const identity = {
               name,
               email,
+              ...(identityOverride.type ? { type: identityOverride.type } : {}),
+              ...(identityOverride.identifier ? { identifier: identityOverride.identifier } : {}),
+              ...(identityOverride.metadata ? { metadata: identityOverride.metadata } : {}),
               subjectId,
             };
             window.localStorage.setItem(storageKey, JSON.stringify(identity));
@@ -448,6 +724,7 @@
 
         applyTheme(readTheme(), { persist: false });
         applyLocale(readLocale(), { persist: false });
+        syncIdentityAdvancedVisibility();
         syncSelectedModeUi();
         renderEntryErrorFromQuery();
         renderStoredIdentity(readStoredIdentity());

@@ -47,6 +47,93 @@
               </label>
             </div>
 
+            <div class="identity-choice">
+              <div class="question-index">Optional subject override</div>
+              <p class="identity-choice-copy">
+                If the same email can represent multiple tenant identities, choose one before
+                launch.
+              </p>
+              <div class="identity-preset-row">
+                <button type="button" class="secondary-button" id="identity-preset-individual">
+                  Individual
+                </button>
+                <button type="button" class="secondary-button" id="identity-preset-company-a">
+                  Company A
+                </button>
+                <button type="button" class="secondary-button" id="identity-preset-company-b">
+                  Company B
+                </button>
+                <button type="button" class="secondary-button" id="identity-preset-clear">
+                  Email-only
+                </button>
+              </div>
+            </div>
+
+            <details class="identity-advanced" id="identity-advanced">
+              <summary>Custom identity fields</summary>
+              <p class="advanced-note">
+                Use these raw fields only when the preset buttons are not enough. Subject identity
+                is defined by kind plus identifier type and identifier value. Hint and metadata are
+                attached context.
+              </p>
+              <div class="single-xapp-inline">
+                <label class="single-xapp-field">
+                  <span>Identity kind</span>
+                  <select id="subjectType" name="subjectType">
+                    <option value="">Email-only subject</option>
+                    <option value="individual">Individual</option>
+                    <option value="business_member">Business member</option>
+                  </select>
+                </label>
+                <label class="single-xapp-field">
+                  <span>Identifier type</span>
+                  <input
+                    id="subjectIdentifierType"
+                    name="subjectIdentifierType"
+                    type="text"
+                    value=""
+                    placeholder="tenant_member_id"
+                  />
+                </label>
+                <label class="single-xapp-field">
+                  <span>Identifier value</span>
+                  <input
+                    id="subjectIdentifierValue"
+                    name="subjectIdentifierValue"
+                    type="text"
+                    value=""
+                    placeholder="acct-a"
+                  />
+                </label>
+              </div>
+
+              <div class="single-xapp-inline">
+                <label class="single-xapp-field">
+                  <span>Identifier hint</span>
+                  <input
+                    id="subjectIdentifierHint"
+                    name="subjectIdentifierHint"
+                    type="text"
+                    value=""
+                    placeholder="Company A"
+                  />
+                </label>
+              </div>
+
+              <div class="single-xapp-inline">
+                <label class="single-xapp-field" style="flex: 1 1 100%">
+                  <span>Metadata JSON</span>
+                  <input
+                    id="subjectMetadata"
+                    name="subjectMetadata"
+                    type="text"
+                    value=""
+                    placeholder='{"company":"A","role":"member"}'
+                  />
+                </label>
+              </div>
+            </details>
+
             <div class="single-xapp-inline">
               <label class="single-xapp-field">
                 <span>Language</span>

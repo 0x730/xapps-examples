@@ -1,5 +1,5 @@
 body {
-  overflow: hidden;
+  overflow: auto;
 }
 
 main {
@@ -295,6 +295,57 @@ body[data-entry-mode="single-xapp"] .single-xapp-only {
   line-height: 1.35;
 }
 
+.identity-choice {
+  margin-top: 0.72rem;
+  padding: 0.78rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, white);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 8%, transparent),
+    color-mix(in srgb, var(--panel-strong) 74%, transparent)
+  );
+}
+
+.identity-choice-copy {
+  margin: 0 0 0.72rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.identity-advanced {
+  margin-top: 0.72rem;
+  padding: 0.78rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, white);
+  background: color-mix(in srgb, var(--panel-strong) 72%, transparent);
+}
+
+.identity-advanced summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.identity-advanced[open] {
+  background: color-mix(in srgb, var(--panel-strong) 84%, transparent);
+}
+
+.advanced-note {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.identity-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.72rem;
+}
+
 label {
   display: grid;
   gap: 0.4rem;
@@ -434,6 +485,13 @@ button:disabled {
   opacity: 0.7;
   cursor: wait;
   transform: none;
+}
+
+.secondary-button {
+  background: color-mix(in srgb, var(--panel-strong) 86%, transparent);
+  color: var(--ink);
+  box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, white);
 }
 
 .secondary-link {

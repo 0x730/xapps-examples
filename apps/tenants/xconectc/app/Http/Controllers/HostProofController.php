@@ -144,8 +144,15 @@ class HostProofController extends Controller
             return response()->json(['message' => 'XAPPS_API_KEY not configured'], 500);
         }
 
+        $subjectId = trim((string) $request->input('subjectId', ''));
+        $type = trim((string) $request->input('type', ''));
+        $identifier = $request->input('identifier');
+        $identifier = is_array($identifier) ? $identifier : null;
         $email = trim((string) $request->input('email', ''));
         $name = trim((string) $request->input('name', ''));
+        $metadata = $request->input('metadata');
+        $metadata = is_array($metadata) ? $metadata : null;
+        $linkId = trim((string) ($request->input('linkId', $request->input('link_id', ''))));
         $origin = trim((string) $request->input('origin', ''));
         if ($origin === '') {
             $origin = trim((string) $request->headers->get('origin', ''));
@@ -154,39 +161,46 @@ class HostProofController extends Controller
             $origin = $this->publicBaseUrl();
         }
 
-        if ($email === '') {
-            return response()->json(['message' => 'email is required'], 400);
+        if ($subjectId === '' && $email === '' && $identifier === null) {
+            return response()->json(['message' => 'subjectId, identifier, or email is required'], 400);
         }
 
-        $resolveResponse = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'X-API-Key' => $this->apiKey(),
-        ])->post($this->gatewayUrl() . '/v1/subjects/resolve', [
-            'type' => 'user',
-            'identifier' => [
-                'idType' => 'email',
-                'value' => $email,
-                'hint' => $email,
-            ],
-            'email' => $email,
-        ]);
-
-        $resolveData = $resolveResponse->json();
-        if (!$resolveResponse->ok()) {
-            return response()->json(
-                is_array($resolveData) ? $resolveData : ['message' => 'subject resolution failed'],
-                $resolveResponse->status(),
-            );
-        }
-
-        $subjectId = trim((string) ($resolveData['subjectId'] ?? $resolveData['subject_id'] ?? ''));
         if ($subjectId === '') {
-            return response()->json(['message' => 'resolve-subject response missing subjectId'], 502);
+            $resolvePayload = [
+                'type' => $type !== '' ? $type : 'user',
+                'identifier' => $identifier ?? [
+                    'idType' => 'email',
+                    'value' => $email,
+                    'hint' => $email,
+                ],
+                'email' => $email !== '' ? $email : null,
+                'name' => $name !== '' ? $name : null,
+                'metadata' => $metadata,
+                'linkId' => $linkId !== '' ? $linkId : null,
+            ];
+
+            $resolveResponse = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-API-Key' => $this->apiKey(),
+            ])->post($this->gatewayUrl() . '/v1/subjects/resolve', $resolvePayload);
+
+            $resolveData = $resolveResponse->json();
+            if (!$resolveResponse->ok()) {
+                return response()->json(
+                    is_array($resolveData) ? $resolveData : ['message' => 'subject resolution failed'],
+                    $resolveResponse->status(),
+                );
+            }
+
+            $subjectId = trim((string) ($resolveData['subjectId'] ?? $resolveData['subject_id'] ?? ''));
+            if ($subjectId === '') {
+                return response()->json(['message' => 'resolve-subject response missing subjectId'], 502);
+            }
         }
 
         return response()->json(xapps_backend_kit_build_host_bootstrap_result([
             'subjectId' => $subjectId,
-            'email' => $email,
+            'email' => $email !== '' ? $email : null,
             'name' => $name !== '' ? $name : null,
             'origin' => $origin,
             'signingSecret' => $this->hostBootstrapSigningSecret(),

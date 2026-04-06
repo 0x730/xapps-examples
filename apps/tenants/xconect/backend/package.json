@@ -9,10 +9,10 @@
     "dev": "node --watch-path . --watch-path ../host server.js"
   },
   "dependencies": {
-    "@xapps-platform/backend-kit": "^0.2.5",
+    "@xapps-platform/backend-kit": "^0.2.6",
     "@xapps-platform/browser-host": "^0.1.9",
     "@xapps-platform/embed-sdk": "^0.1.9",
-    "@xapps-platform/server-sdk": "^0.2.4",
+    "@xapps-platform/server-sdk": "^0.2.5",
     "dotenv": "^17.2.3",
     "fastify": "^5.7.4"
   }

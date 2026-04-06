@@ -36,7 +36,12 @@ export function readProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
   if (!identity) return null;
   const bootstrapToken = String(identity.bootstrapToken || "").trim();
   const expiresAt = parseExpiry(identity);
-  if (!identity?.email || !identity?.subjectId || !bootstrapToken) {
+  const subjectId = String(identity?.subjectId || "").trim();
+  const identifier =
+    identity?.identifier && typeof identity.identifier === "object" ? identity.identifier : null;
+  const identifierType = String(identifier?.idType || "").trim();
+  const identifierValue = String(identifier?.value || "").trim();
+  if ((!subjectId && (!identifierType || !identifierValue)) || !bootstrapToken) {
     clearProofIdentity(storageKey);
     return null;
   }
@@ -52,14 +57,42 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
     .trim()
     .toLowerCase();
   const name = String(identity?.name || "").trim();
-  if (!email || !name) {
-    throw new Error("Stored host identity is missing email/name for silent re-bootstrap");
+  const subjectId = String(identity?.subjectId || "").trim();
+  const type = String(identity?.type || "").trim();
+  const identifier =
+    identity?.identifier && typeof identity.identifier === "object" ? identity.identifier : null;
+  const identifierType = String(identifier?.idType || "").trim();
+  const identifierValue = String(identifier?.value || "").trim();
+  const identifierHint = String(identifier?.hint || "").trim();
+  const linkId = String(identity?.linkId || "").trim();
+  const metadata =
+    identity?.metadata && typeof identity.metadata === "object" && !Array.isArray(identity.metadata)
+      ? identity.metadata
+      : null;
+  if (!subjectId && (!identifierType || !identifierValue) && !email) {
+    throw new Error("Stored host identity is missing subject identity for silent re-bootstrap");
   }
 
   const response = await fetch(HOST_BOOTSTRAP_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, name }),
+    body: JSON.stringify({
+      ...(subjectId ? { subjectId } : {}),
+      ...(type ? { type } : {}),
+      ...(identifierType && identifierValue
+        ? {
+            identifier: {
+              idType: identifierType,
+              value: identifierValue,
+              ...(identifierHint ? { hint: identifierHint } : {}),
+            },
+          }
+        : {}),
+      ...(email ? { email } : {}),
+      ...(name ? { name } : {}),
+      ...(metadata ? { metadata } : {}),
+      ...(linkId ? { linkId } : {}),
+    }),
   });
   const raw = await response.text();
   const data = (() => {
@@ -73,10 +106,10 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
     throw new Error(String(data?.message || "host bootstrap refresh failed"));
   }
 
-  const subjectId = String(data?.subjectId || data?.subject_id || identity?.subjectId || "").trim();
+  const nextSubjectId = String(data?.subjectId || data?.subject_id || subjectId || "").trim();
   const bootstrapToken = String(data?.bootstrapToken || data?.bootstrap_token || "").trim();
   const expiresIn = Number(data?.expiresIn || data?.expires_in || 300) || 300;
-  if (!subjectId || !bootstrapToken) {
+  if (!nextSubjectId || !bootstrapToken) {
     throw new Error("host bootstrap refresh response missing subjectId/bootstrapToken");
   }
 
@@ -84,7 +117,19 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
     ...identity,
     name,
     email,
-    subjectId,
+    ...(type ? { type } : {}),
+    ...(identifierType && identifierValue
+      ? {
+          identifier: {
+            idType: identifierType,
+            value: identifierValue,
+            ...(identifierHint ? { hint: identifierHint } : {}),
+          },
+        }
+      : {}),
+    ...(metadata ? { metadata } : {}),
+    ...(linkId ? { linkId } : {}),
+    subjectId: nextSubjectId,
     bootstrapToken,
     bootstrapExpiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     resolvedAt: new Date().toISOString(),

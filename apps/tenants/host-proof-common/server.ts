@@ -134,8 +134,27 @@ export async function startHostProofServer(config: HostProofServerConfig) {
         "X-API-Key": bootstrapApiKey,
       },
       body: JSON.stringify({
-        email: String(body.email || "").trim(),
-        name: String(body.name || "").trim(),
+        ...(typeof body.subjectId === "string" && body.subjectId.trim()
+          ? { subjectId: body.subjectId.trim() }
+          : {}),
+        ...(typeof body.type === "string" && body.type.trim() ? { type: body.type.trim() } : {}),
+        ...(body.identifier &&
+        typeof body.identifier === "object" &&
+        !Array.isArray(body.identifier)
+          ? { identifier: body.identifier }
+          : {}),
+        ...(typeof body.email === "string" && body.email.trim()
+          ? { email: body.email.trim() }
+          : {}),
+        ...(typeof body.name === "string" && body.name.trim() ? { name: body.name.trim() } : {}),
+        ...(body.metadata && typeof body.metadata === "object" && !Array.isArray(body.metadata)
+          ? { metadata: body.metadata }
+          : {}),
+        ...(typeof body.linkId === "string" && body.linkId.trim()
+          ? { linkId: body.linkId.trim() }
+          : typeof body.link_id === "string" && body.link_id.trim()
+            ? { linkId: body.link_id.trim() }
+            : {}),
         origin: publicBaseUrl,
       }),
     });
