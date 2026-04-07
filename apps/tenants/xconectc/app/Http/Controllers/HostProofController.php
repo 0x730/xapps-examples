@@ -145,6 +145,7 @@ class HostProofController extends Controller
         }
 
         $subjectId = trim((string) $request->input('subjectId', ''));
+        $requestedSubjectId = $subjectId;
         $type = trim((string) $request->input('type', ''));
         $identifier = $request->input('identifier');
         $identifier = is_array($identifier) ? $identifier : null;
@@ -163,8 +164,11 @@ class HostProofController extends Controller
         if ($subjectId === '' && $email === '' && $identifier === null) {
             return response()->json(['message' => 'subjectId, identifier, or email is required'], 400);
         }
+        if ($subjectId !== '' && $email === '' && $identifier === null) {
+            return response()->json(['message' => 'subjectId requires identifier or email for validation'], 400);
+        }
 
-        if ($subjectId === '') {
+        if ($subjectId === '' || $email !== '' || $identifier !== null) {
             $resolvePayload = [
                 'type' => $type !== '' ? $type : 'user',
                 'identifier' => $identifier ?? [
@@ -192,6 +196,9 @@ class HostProofController extends Controller
             $subjectId = trim((string) ($resolveData['subjectId'] ?? $resolveData['subject_id'] ?? ''));
             if ($subjectId === '') {
                 return response()->json(['message' => 'resolve-subject response missing subjectId'], 502);
+            }
+            if ($requestedSubjectId !== '' && $requestedSubjectId !== $subjectId) {
+                return response()->json(['message' => 'subjectId does not match the resolved subject for the provided identity'], 400);
             }
         }
 

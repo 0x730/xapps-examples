@@ -9,7 +9,7 @@
     "en": "Tenant-owned tenant-delegated Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout with tenant-scoped credentials).",
     "ro": "Xapp de gardă de plată Stripe delegat tenantului, deținut de tenant, pentru xconect (checkout Stripe găzduit de gateway cu credențiale specifice tenantului)."
   },
-  "version": "1.0.318",
+  "version": "1.0.319",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
