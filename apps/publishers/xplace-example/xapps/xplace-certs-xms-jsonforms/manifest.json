@@ -9,7 +9,7 @@
     "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption.",
     "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.6",
+  "version": "1.0.15",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -21,6 +21,138 @@
     "subscription",
     "credit-pack",
     "hybrid-plan"
+  ],
+  "payment_guard_definitions": [
+    {
+      "name": "cert_xms_gateway_managed_hosted",
+      "payment_issuer_mode": "gateway_managed",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["gateway"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_secret_refs": {
+        "gateway": "platform://payment:gateway:hmac"
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:gateway:stripe:bundle"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
+          },
+          "subtitle": {
+            "en": "Gateway-managed hosted redirect",
+            "ro": "Redirect găzduit gestionat de gateway"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "cert_xms_tenant_delegated_hosted",
+      "payment_issuer_mode": "tenant_delegated",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["tenant_delegated"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_delegated_secret_refs": {
+        "tenant_delegated": {
+          "__TENANT_CLIENT_ID__": "__TENANT_DELEGATED_PAYMENT_RETURN_SECRET_REF__"
+        }
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:tenant:stripe:bundle?scope=client&scope_id=__TENANT_CLIENT_ID__"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
+          },
+          "subtitle": {
+            "en": "Tenant-delegated hosted redirect",
+            "ro": "Redirect găzduit delegat tenantului"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe with tenant-scoped delegated credentials.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, cu credențiale delegate specifice tenantului."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "cert_xms_publisher_delegated_hosted",
+      "payment_issuer_mode": "publisher_delegated",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["publisher_delegated"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_delegated_secret_refs": {
+        "publisher_delegated": {
+          "__TENANT_CLIENT_ID__": "__PUBLISHER_DELEGATED_PAYMENT_RETURN_SECRET_REF__"
+        }
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:publisher:stripe:bundle?scope=publisher&scope_id=__PUBLISHER_ID__"
+        }
+      },
+      "payment_ui": {
+        "copy": {
+          "title": {
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
+          },
+          "subtitle": {
+            "en": "Publisher-delegated hosted redirect",
+            "ro": "Redirect găzduit delegat publisherului"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe with publisher-scoped delegated credentials.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe, cu credențiale delegate specifice publisherului."
+            }
+          }
+        ]
+      }
+    }
   ],
   "monetization": {
     "products": [
@@ -57,7 +189,7 @@
         "metadata": {
           "access_tier": "cert_membership",
           "access_scope": "subject",
-          "included_credits": 3
+          "included_credits": 4
         }
       },
       {
@@ -138,7 +270,7 @@
         "status": "active",
         "metadata": {
           "badge": "7-day trial",
-          "included_credits": 3
+          "included_credits": 4
         }
       },
       {
@@ -194,7 +326,7 @@
         },
         "status": "active",
         "metadata": {
-          "included_credits": 3
+          "included_credits": 4
         }
       },
       {
@@ -260,7 +392,18 @@
     "hooks": {
       "after_payment_completed": {
         "enabled": true,
-        "invoice_ref": "gateway_payment_invoice"
+        "invoice_ref": "gateway_payment_invoice",
+        "by_payment_guard_ref": {
+          "cert_xms_gateway_managed_hosted": {
+            "invoice_ref": "gateway_payment_invoice"
+          },
+          "cert_xms_tenant_delegated_hosted": {
+            "invoice_ref": "tenant_payment_invoice"
+          },
+          "cert_xms_publisher_delegated_hosted": {
+            "invoice_ref": "publisher_payment_invoice"
+          }
+        }
       }
     }
   },

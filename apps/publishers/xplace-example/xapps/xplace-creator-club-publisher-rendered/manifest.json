@@ -9,7 +9,7 @@
     "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
     "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
   },
-  "version": "1.0.77",
+  "version": "1.0.84",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "linking": {

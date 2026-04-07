@@ -5,6 +5,11 @@ Reference platform-rendered JSON Forms certificate app for `TASK-051`.
 This app proves XMS as a reusable system capability, not a certificate-specific shortcut:
 
 - catalog-level package purchase in portal and embed
+- hosted checkout lane selection through manifest `payment_guard_definitions`
+  - `gateway_managed`
+  - `tenant_delegated`
+  - `publisher_delegated`
+  - Stripe only in this reference app
 - free trial subscription purchase through the existing XMS trial policy
 - one-time unlock request allowance before certificate request execution
 - credit-pack wallet top-up and request-time wallet consumption
@@ -18,6 +23,16 @@ This app proves XMS as a reusable system capability, not a certificate-specific 
 The existing pay-by-request certificate apps remain unchanged and continue to cover XPO guard payment examples.
 
 This app intentionally does not use `after:request_created` request-held payment gating. XMS purchase happens at catalog/paywall level, request-time XMS UX gating happens through reusable `before:tool_run` guard policy, final credit/access enforcement happens in the shared publisher request handler, and notification proving is bound to `after:response_finalized`.
+
+Hosted payment lane contract:
+
+- default hosted purchase can resolve to the gateway-managed Stripe definition
+- the app also exposes explicit tenant-delegated and publisher-delegated Stripe-hosted definitions
+- `mock_manual` is intentionally not exposed here; subscription and hybrid proving should stay on the real Stripe recurring lane
+- `after_payment_completed` invoice routing follows the selected `payment_guard_ref`
+  - `cert_xms_gateway_managed_hosted` -> `gateway_payment_invoice`
+  - `cert_xms_tenant_delegated_hosted` -> `tenant_payment_invoice`
+  - `cert_xms_publisher_delegated_hosted` -> `publisher_payment_invoice`
 
 Current request consumption policy:
 
@@ -38,3 +53,17 @@ So this app proves the production posture we actually want for platform-rendered
 - catalog/paywall drives what can be bought
 - guard/runtime UX blocks when allowance is missing
 - publisher handler performs final authoritative access and credit validation
+
+For the `cert_single_unlock` one-time package specifically:
+
+- purchase issues a one-time entitlement plus `included_credits`
+- submit consumes that allowance from the active subject
+- once the included credits are exhausted, current coverage should read as consumed rather than available
+- the package should become buyable again after exhaustion
+
+For `cert_trial_monthly`:
+
+- the trial is free-trial first, so initial activation should not open Stripe
+- the trial issues `4` included credits against a request cost of `2`, so the subject can complete two requests during the trial lane
+- that free trial is single-use across this app's recurring certificate plans for the active subject; later recurring upgrades like `cert_hybrid_monthly` are normal paid replacements, not a second trial
+- recurring paid billing is the later Stripe concern, not the initial trial activation
