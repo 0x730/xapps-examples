@@ -64,7 +64,6 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
   const identifierType = String(identifier?.idType || "").trim();
   const identifierValue = String(identifier?.value || "").trim();
   const identifierHint = String(identifier?.hint || "").trim();
-  const linkId = String(identity?.linkId || "").trim();
   const metadata =
     identity?.metadata && typeof identity.metadata === "object" && !Array.isArray(identity.metadata)
       ? identity.metadata
@@ -91,7 +90,6 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
       ...(email ? { email } : {}),
       ...(name ? { name } : {}),
       ...(metadata ? { metadata } : {}),
-      ...(linkId ? { linkId } : {}),
     }),
   });
   const raw = await response.text();
@@ -128,7 +126,6 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
         }
       : {}),
     ...(metadata ? { metadata } : {}),
-    ...(linkId ? { linkId } : {}),
     subjectId: nextSubjectId,
     bootstrapToken,
     bootstrapExpiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),

@@ -64,6 +64,7 @@ services:
         "apps/tenants/xconectb/backend/public/index.php",
       ]
     environment:
+      PHP_CLI_SERVER_WORKERS: ${PHP_CLI_SERVER_WORKERS:-4}
       XCONECTB_PORT: ${XCONECTB_PORT:-3313}
       XAPPS_GATEWAY_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
       GATEWAY_BASE_URL: ${INTERNAL_GATEWAY_BASE_URL:-https://gateway.0x730.com}
@@ -114,6 +115,7 @@ services:
         "mkdir -p /app/apps/tenants/xconectc/database /app/apps/tenants/xconectc/storage && touch /app/apps/tenants/xconectc/database/database.sqlite && if [ ! -f /app/apps/tenants/xconectc/storage/idp_private.pem ]; then openssl genrsa -out /app/apps/tenants/xconectc/storage/idp_private.pem 2048; fi && php /app/apps/tenants/xconectc/artisan migrate --force && php /app/apps/tenants/xconectc/artisan db:seed --force && php /app/apps/tenants/xconectc/artisan serve --host=0.0.0.0 --port=${XCONECTC_PORT:-8001}",
       ]
     environment:
+      PHP_CLI_SERVER_WORKERS: ${PHP_CLI_SERVER_WORKERS:-4}
       APP_ENV: ${XCONECTC_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_APP_DEBUG:-false}
       APP_KEY: ${XCONECTC_APP_KEY:-base64:4aQNHs2PAAv8bEzkE0dS+DR23B8DQdnMfh4hGZhqJbQ=}
@@ -156,6 +158,7 @@ services:
         "mkdir -p /app/apps/tenants/xconectc-host/database /app/apps/tenants/xconectc-host/storage && touch /app/apps/tenants/xconectc-host/database/database.sqlite && if [ ! -f /app/apps/tenants/xconectc-host/storage/idp_private.pem ]; then openssl genrsa -out /app/apps/tenants/xconectc-host/storage/idp_private.pem 2048; fi && php /app/apps/tenants/xconectc-host/artisan migrate --force && php /app/apps/tenants/xconectc-host/artisan db:seed --force && php /app/apps/tenants/xconectc-host/artisan serve --host=0.0.0.0 --port=${XCONECTC_HOST_PORT:-8002}",
       ]
     environment:
+      PHP_CLI_SERVER_WORKERS: ${PHP_CLI_SERVER_WORKERS:-4}
       APP_ENV: ${XCONECTC_HOST_APP_ENV:-production}
       APP_DEBUG: ${XCONECTC_HOST_APP_DEBUG:-false}
       APP_KEY: ${XCONECTC_HOST_APP_KEY:-base64:4aQNHs2PAAv8bEzkE0dS+DR23B8DQdnMfh4hGZhqJbQ=}

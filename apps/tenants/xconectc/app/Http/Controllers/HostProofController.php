@@ -152,7 +152,6 @@ class HostProofController extends Controller
         $name = trim((string) $request->input('name', ''));
         $metadata = $request->input('metadata');
         $metadata = is_array($metadata) ? $metadata : null;
-        $linkId = trim((string) ($request->input('linkId', $request->input('link_id', ''))));
         $origin = trim((string) $request->input('origin', ''));
         if ($origin === '') {
             $origin = trim((string) $request->headers->get('origin', ''));
@@ -173,10 +172,8 @@ class HostProofController extends Controller
                     'value' => $email,
                     'hint' => $email,
                 ],
-                'email' => $email !== '' ? $email : null,
-                'name' => $name !== '' ? $name : null,
-                'metadata' => $metadata,
-                'linkId' => $linkId !== '' ? $linkId : null,
+                ...($email !== '' ? ['email' => $email] : []),
+                ...($metadata !== null ? ['metadata' => $metadata] : []),
             ];
 
             $resolveResponse = Http::withHeaders([

@@ -134,6 +134,75 @@ async function fetchGatewayJson({
   return json;
 }
 
+function buildWeatherFallbackSnapshot({ latitude, longitude, units = "celsius", label, nowIso }) {
+  const seed = Math.abs(Math.round(latitude * 100) + Math.round(longitude * 100));
+  const celsius = Number((14 + (seed % 120) / 10).toFixed(1));
+  const temperature =
+    units === "fahrenheit" ? Number(((celsius * 9) / 5 + 32).toFixed(1)) : celsius;
+  const windSpeedKmh = Number((6 + (seed % 80) / 10).toFixed(1));
+  const weatherCode = [0, 1, 2, 3, 45, 51, 61][seed % 7];
+  const elevation = Number((80 + (seed % 900)).toFixed(0));
+  return {
+    label: String(label || "").trim() || `${latitude},${longitude}`,
+    latitude,
+    longitude,
+    temperature,
+    temperatureUnit: units === "fahrenheit" ? "F" : "C",
+    weatherCode,
+    windSpeedKmh,
+    elevation,
+    timezone: "demo/offline",
+    provider: "open-meteo-fallback",
+    checkedAt: nowIso(),
+  };
+}
+
+function buildWeatherPreviewFallbackBody({ fallback, message }) {
+  return {
+    status: "upstream_fallback",
+    message,
+    summary: {
+      latitude: fallback.latitude,
+      longitude: fallback.longitude,
+      timezone: fallback.timezone,
+      elevation: fallback.elevation,
+      fetchedAt: fallback.checkedAt,
+      provider: fallback.provider,
+    },
+    tags: ["weather", fallback.latitude >= 0 ? "northern-hemisphere" : "southern-hemisphere", "publisher-preview", "offline-demo"],
+    badges: [
+      { label: "Offline demo", tone: "warning" },
+      { label: "Publisher API", tone: "success" },
+      { label: fallback.elevation > 500 ? "High Elevation" : "Low Elevation", tone: fallback.elevation > 500 ? "warning" : "neutral" },
+    ],
+    stations: [
+      { name: "Selected Coordinates", distanceKm: 0, kind: "target" },
+      { name: "Offline Demo Context", distanceKm: 1, kind: "derived" },
+    ],
+    cards: [
+      {
+        title: "Coordinates",
+        subtitle: fallback.timezone,
+        latitude: fallback.latitude,
+        longitude: fallback.longitude,
+        elevation: fallback.elevation,
+      },
+      {
+        title: "Current Snapshot",
+        subtitle: "Offline demo fallback",
+        temperature_2m: fallback.temperature,
+        weather_code: fallback.weatherCode,
+        time: fallback.checkedAt,
+      },
+    ],
+    current: {
+      temperature_2m: fallback.temperature,
+      weather_code: fallback.weatherCode,
+      time: fallback.checkedAt,
+    },
+  };
+}
+
 export function createXplaceToolRegistry({
   weatherApiBaseUrl,
   nowIso,
@@ -200,9 +269,28 @@ export function createXplaceToolRegistry({
             { err: err?.message || String(err) },
             "xplace weather upstream request failed",
           );
+          const fallback = buildWeatherFallbackSnapshot({
+            latitude,
+            longitude,
+            units,
+            label,
+            nowIso,
+          });
           return {
-            status: "error",
-            result: { message: "Weather upstream request failed" },
+            status: "success",
+            result: {
+              locationLabel: fallback.label,
+              latitude,
+              longitude,
+              temperature: fallback.temperature,
+              temperatureUnit: fallback.temperatureUnit,
+              weatherCode: fallback.weatherCode,
+              windSpeedKmh: fallback.windSpeedKmh,
+              provider: fallback.provider,
+              upstreamStatus: "unavailable",
+              summary: `Current weather for ${fallback.label}: ${fallback.temperature}${fallback.temperatureUnit}, code ${fallback.weatherCode}, wind ${fallback.windSpeedKmh} km/h (offline demo fallback)`,
+              checkedAt: fallback.checkedAt,
+            },
           };
         }
         if (!upstreamRes.ok || !upstreamBody || typeof upstreamBody !== "object") {
@@ -210,9 +298,28 @@ export function createXplaceToolRegistry({
             { status: upstreamRes.status },
             "xplace weather upstream returned invalid response",
           );
+          const fallback = buildWeatherFallbackSnapshot({
+            latitude,
+            longitude,
+            units,
+            label,
+            nowIso,
+          });
           return {
-            status: "error",
-            result: { message: "Weather upstream returned an invalid response" },
+            status: "success",
+            result: {
+              locationLabel: fallback.label,
+              latitude,
+              longitude,
+              temperature: fallback.temperature,
+              temperatureUnit: fallback.temperatureUnit,
+              weatherCode: fallback.weatherCode,
+              windSpeedKmh: fallback.windSpeedKmh,
+              provider: fallback.provider,
+              upstreamStatus: `invalid:${upstreamRes.status}`,
+              summary: `Current weather for ${fallback.label}: ${fallback.temperature}${fallback.temperatureUnit}, code ${fallback.weatherCode}, wind ${fallback.windSpeedKmh} km/h (offline demo fallback)`,
+              checkedAt: fallback.checkedAt,
+            },
           };
         }
         const current =
@@ -676,17 +783,33 @@ export function createXplacePreviewRegistry({ weatherApiBaseUrl, anafApiBaseUrl,
             { err: err?.message || String(err) },
             "xplace weather preview upstream request failed",
           );
+          const fallback = buildWeatherFallbackSnapshot({
+            latitude,
+            longitude,
+            nowIso,
+          });
           return {
-            ok: false,
-            status: 502,
-            body: { message: "Preview upstream request failed" },
+            ok: true,
+            status: 200,
+            body: buildWeatherPreviewFallbackBody({
+              fallback,
+              message: "Open-Meteo preview is unavailable; showing offline demo data.",
+            }),
           };
         }
         if (!upstreamRes.ok || !upstreamBody || typeof upstreamBody !== "object") {
+          const fallback = buildWeatherFallbackSnapshot({
+            latitude,
+            longitude,
+            nowIso,
+          });
           return {
-            ok: false,
-            status: 502,
-            body: { message: "Preview upstream returned invalid response" },
+            ok: true,
+            status: 200,
+            body: buildWeatherPreviewFallbackBody({
+              fallback,
+              message: "Open-Meteo preview returned an invalid response; showing offline demo data.",
+            }),
           };
         }
         const current =

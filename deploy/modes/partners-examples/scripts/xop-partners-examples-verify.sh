@@ -46,15 +46,20 @@ wait_for_json_post_ok() {
   local body_json="$3"
   local i
   local body
+  local http_code
+  local response_file
+  response_file="$(mktemp)"
   for ((i = 1; i <= VERIFY_RETRIES; i++)); do
-    body="$(curl -fsS -X POST "${url}" -H 'Content-Type: application/json' -d "${body_json}" 2>/dev/null || true)"
-    if [[ -n "${body}" ]] && printf '%s' "${body}" | node -e '
+    http_code="$(curl -sS -o "${response_file}" -w '%{http_code}' -X POST "${url}" -H 'Content-Type: application/json' -d "${body_json}" 2>/dev/null || true)"
+    body="$(cat "${response_file}" 2>/dev/null || true)"
+    if [[ "${http_code}" =~ ^2[0-9][0-9]$ ]] && [[ -n "${body}" ]] && printf '%s' "${body}" | node -e '
 const fs = require("node:fs");
 const raw = fs.readFileSync(0, "utf8");
 const data = JSON.parse(raw);
 if (!String(data.subjectId || "").trim()) process.exit(1);
 if (!String(data.bootstrapToken || "").trim()) process.exit(1);
 ' >/dev/null 2>&1; then
+      rm -f "${response_file}"
       return 0
     fi
     if [[ "${i}" -lt "${VERIFY_RETRIES}" ]]; then
@@ -62,10 +67,11 @@ if (!String(data.bootstrapToken || "").trim()) process.exit(1);
       sleep "${VERIFY_SLEEP_SECONDS}"
     fi
   done
-  echo "[xop-partners-examples-verify] ${label} failed after ${VERIFY_RETRIES} retries: ${url}"
+  echo "[xop-partners-examples-verify] ${label} failed after ${VERIFY_RETRIES} retries: ${url} (last status: ${http_code:-n/a})"
   if [[ -n "${body:-}" ]]; then
     echo "[xop-partners-examples-verify] last body: ${body}"
   fi
+  rm -f "${response_file}"
   return 1
 }
 
@@ -100,13 +106,21 @@ process.exit(1);
 
 print_service_debug() {
   local service="$1"
+  local profile_args=(
+    --profile example-publisher
+    --profile host-proof
+    --profile tenant-b
+    --profile tenant-b-host-proof
+    --profile tenant-c
+    --profile tenant-c-host-proof
+  )
   echo "[xop-partners-examples-verify] --- ${service} status ---"
-  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps "${service}"; then
-    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps || true
+  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" "${profile_args[@]}" ps "${service}"; then
+    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" "${profile_args[@]}" ps || true
   fi
   echo "[xop-partners-examples-verify] --- ${service} logs (last 120) ---"
-  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" logs --tail 120 "${service}"; then
-    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" logs --tail 120 || true
+  if ! docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" "${profile_args[@]}" logs --tail 120 "${service}"; then
+    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" "${profile_args[@]}" logs --tail 120 || true
   fi
 }
 

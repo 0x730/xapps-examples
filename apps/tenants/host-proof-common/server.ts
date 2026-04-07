@@ -150,11 +150,6 @@ export async function startHostProofServer(config: HostProofServerConfig) {
         ...(body.metadata && typeof body.metadata === "object" && !Array.isArray(body.metadata)
           ? { metadata: body.metadata }
           : {}),
-        ...(typeof body.linkId === "string" && body.linkId.trim()
-          ? { linkId: body.linkId.trim() }
-          : typeof body.link_id === "string" && body.link_id.trim()
-            ? { linkId: body.link_id.trim() }
-            : {}),
         origin: publicBaseUrl,
       }),
     });

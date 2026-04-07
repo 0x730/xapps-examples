@@ -105,6 +105,8 @@ if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
   require_http_url "XCONECTA_HOST_BACKEND_BASE_URL"
   require_http_url "XCONECTA_HOST_BOOTSTRAP_BACKEND_BASE_URL"
   require_non_empty "XCONECTA_HOST_BOOTSTRAP_API_KEY"
+  require_non_empty "XCONECTA_HOST_BOOTSTRAP_API_KEYS"
+  require_non_empty "XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET"
   require_csv_contains "XCONECTA_ALLOWED_ORIGINS" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta allowed origins"
   require_csv_contains "XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTA_HOST_PUBLIC_BASE_URL:-}" "xconecta payment return allowlist"
 fi
@@ -124,6 +126,8 @@ if [[ "${ENABLE_XCONECTB:-0}" == "1" ]]; then
     require_http_url "XCONECTB_HOST_BACKEND_BASE_URL"
     require_http_url "XCONECTB_HOST_BOOTSTRAP_BACKEND_BASE_URL"
     require_non_empty "XCONECTB_HOST_BOOTSTRAP_API_KEY"
+    require_non_empty "XCONECTB_HOST_BOOTSTRAP_API_KEYS"
+    require_non_empty "XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET"
     require_csv_contains "XCONECTB_ALLOWED_ORIGINS" "${XCONECTB_HOST_PUBLIC_BASE_URL:-}" "xconectb allowed origins"
     require_csv_contains "XCONECTB_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTB_HOST_PUBLIC_BASE_URL:-}" "xconectb payment return allowlist"
   fi
@@ -148,6 +152,8 @@ if [[ "${ENABLE_XCONECTC:-0}" == "1" ]]; then
     require_http_url "XCONECTC_HOST_BACKEND_BASE_URL"
     require_http_url "XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL"
     require_non_empty "XCONECTC_HOST_BOOTSTRAP_API_KEY"
+    require_non_empty "XCONECTC_HOST_BOOTSTRAP_API_KEYS"
+    require_non_empty "XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET"
     require_csv_contains "XCONECTC_ALLOWED_ORIGINS" "${XCONECTC_HOST_PUBLIC_BASE_URL:-}" "xconectc allowed origins"
     require_csv_contains "XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTC_HOST_PUBLIC_BASE_URL:-}" "xconectc payment return allowlist"
   fi

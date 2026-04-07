@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createXplaceToolRegistry, listWorkspaceTools } from "./tools.js";
+import {
+  createXplacePreviewRegistry,
+  createXplaceToolRegistry,
+  listWorkspaceTools,
+} from "./tools.js";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -175,5 +179,49 @@ describe("xplace monetization lab tool", () => {
 
     expect(result.status).toBe("error");
     expect(result.result.message).toContain("Target client API key");
+  });
+});
+
+describe("xplace weather preview/tool fallback", () => {
+  it("returns offline demo weather data when the tool upstream is unavailable", async () => {
+    const registry = createXplaceToolRegistry({
+      weatherApiBaseUrl: "https://api.open-meteo.com",
+      nowIso: () => "2026-04-01T12:00:00.000Z",
+    });
+    vi.spyOn(global, "fetch").mockRejectedValue(new Error("fetch failed"));
+
+    const result = await registry.lookup_weather_now.handle({
+      payload: {
+        latitude: 46.7712,
+        longitude: 23.6236,
+        locationLabel: "Cluj",
+      },
+    });
+
+    expect(result.status).toBe("success");
+    expect(result.result.provider).toBe("open-meteo-fallback");
+    expect(result.result.upstreamStatus).toBe("unavailable");
+    expect(result.result.summary).toContain("offline demo fallback");
+  });
+
+  it("returns offline demo preview data when the preview upstream is unavailable", async () => {
+    const registry = createXplacePreviewRegistry({
+      weatherApiBaseUrl: "https://api.open-meteo.com",
+      anafApiBaseUrl: "https://webservicesp.anaf.ro",
+      nowIso: () => "2026-04-01T12:00:00.000Z",
+    });
+    vi.spyOn(global, "fetch").mockRejectedValue(new Error("fetch failed"));
+
+    const result = await registry.weather_location_details.handle({
+      payload: {
+        latitude: 46.7712,
+        longitude: 23.6236,
+      },
+    });
+
+    expect(result.status).toBe(200);
+    expect(result.body.status).toBe("upstream_fallback");
+    expect(result.body.summary.provider).toBe("open-meteo-fallback");
+    expect(result.body.tags).toContain("offline-demo");
   });
 });

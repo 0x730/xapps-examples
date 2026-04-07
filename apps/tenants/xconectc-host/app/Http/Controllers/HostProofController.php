@@ -129,17 +129,25 @@ class HostProofController extends Controller
             return response()->json(['message' => 'Host bootstrap api key is not configured'], 500);
         }
 
+        $subjectId = trim((string) $request->input('subjectId', ''));
+        $type = trim((string) $request->input('type', ''));
+        $identifier = $request->input('identifier');
+        $identifier = is_array($identifier) ? $identifier : null;
+        $email = trim((string) $request->input('email', ''));
+        $name = trim((string) $request->input('name', ''));
+        $metadata = $request->input('metadata');
+        $metadata = is_array($metadata) ? $metadata : null;
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'X-API-Key' => $this->bootstrapApiKey(),
         ])->post($this->bootstrapBackendBaseUrl() . '/api/host-bootstrap', [
-            'subjectId' => trim((string) $request->input('subjectId', '')),
-            'type' => trim((string) $request->input('type', '')),
-            'identifier' => is_array($request->input('identifier')) ? $request->input('identifier') : null,
-            'email' => trim((string) $request->input('email', '')),
-            'name' => trim((string) $request->input('name', '')),
-            'metadata' => is_array($request->input('metadata')) ? $request->input('metadata') : null,
-            'linkId' => trim((string) ($request->input('linkId', $request->input('link_id', '')))),
+            ...($subjectId !== '' ? ['subjectId' => $subjectId] : []),
+            ...($type !== '' ? ['type' => $type] : []),
+            ...($identifier !== null ? ['identifier' => $identifier] : []),
+            ...($email !== '' ? ['email' => $email] : []),
+            ...($name !== '' ? ['name' => $name] : []),
+            ...($metadata !== null ? ['metadata' => $metadata] : []),
             'origin' => $this->publicBaseUrl(),
         ]);
 
