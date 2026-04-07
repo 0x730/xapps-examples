@@ -94,6 +94,10 @@ Source anchors:
 
 Default port: `3313`
 
+The local script starts the PHP CLI server with `PHP_CLI_SERVER_WORKERS=4` by default. Keep that
+concurrency in manual runs too, because gateway-driven widget requests can call back into this same
+tenant backend while `/api/widget-tool-request` is still waiting.
+
 ## Practical Rule
 
 Do not treat this backend as a separate product lane.

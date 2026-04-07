@@ -75,7 +75,7 @@ openssl genrsa -out storage/idp_private.pem 2048
 php artisan migrate:fresh --seed
 
 # Serve
-php artisan serve --host=127.0.0.1 --port=8001
+PHP_CLI_SERVER_WORKERS=4 php artisan serve --host=127.0.0.1 --port=8001
 ```
 
 Then open:
@@ -91,6 +91,10 @@ Then open:
 ```bash
 openssl genrsa -out storage/idp_private.pem 2048
 ```
+
+- Keep `PHP_CLI_SERVER_WORKERS` greater than `1` for local widget/profile refresh testing. The
+  gateway can call back into `/guard/subject-profiles/tenant-candidates` while the host request is
+  still waiting for the gateway result.
 
 - In the `partners-examples` deploy lane, the container startup now creates:
     - `database/database.sqlite`

@@ -96,7 +96,7 @@ touch database/database.sqlite
 php artisan migrate:fresh --seed
 
 # Serve
-php artisan serve --host=127.0.0.1 --port=8002
+PHP_CLI_SERVER_WORKERS=4 php artisan serve --host=127.0.0.1 --port=8002
 ```
 
 Then open:
@@ -106,6 +106,10 @@ Then open:
 - `http://127.0.0.1:8002/marketplace.html`
 
 #### Notes
+
+- Keep `PHP_CLI_SERVER_WORKERS` greater than `1` for local hosted-widget testing. The paired tenant
+  backend can receive gateway callbacks while the host request is still waiting for the gateway
+  result.
 
 - In the `partners-examples` deploy lane, the container startup now creates:
     - `database/database.sqlite`
