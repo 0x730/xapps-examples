@@ -1,0 +1,651 @@
+{
+  "name": "xplace-example • Certificates XMS (JSON Forms)",
+  "title": {
+    "en": "xplace-example • Certificates XMS (JSON Forms)",
+    "ro": "xplace-example • Certificate XMS (JSON Forms)"
+  },
+  "slug": "xplace-certs-xms-jsonforms",
+  "description": {
+    "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption.",
+    "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere."
+  },
+  "version": "1.0.6",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "visibility": "public",
+  "tags": [
+    "xplace-example",
+    "json-forms",
+    "certificates",
+    "xms",
+    "trial",
+    "subscription",
+    "credit-pack",
+    "hybrid-plan"
+  ],
+  "monetization": {
+    "products": [
+      {
+        "slug": "cert_single_unlock_access",
+        "title": {
+          "en": "Single Certificate Unlock",
+          "ro": "Deblocare certificat"
+        },
+        "description": {
+          "en": "One-time unlock for the certificate request lane.",
+          "ro": "Deblocare unică pentru fluxul de cerere certificat."
+        },
+        "product_family": "one_time_unlock",
+        "status": "active",
+        "metadata": {
+          "access_tier": "cert_single_unlock",
+          "access_scope": "subject",
+          "included_credits": 2
+        }
+      },
+      {
+        "slug": "cert_membership_access",
+        "title": {
+          "en": "Certificate Membership",
+          "ro": "Membership certificate"
+        },
+        "description": {
+          "en": "Recurring certificate membership. The trial price proves XMS free-trial finalization without a hosted payment session.",
+          "ro": "Membership recurent pentru certificate. Prețul cu trial demonstrează finalizarea XMS free-trial fără sesiune hosted de plată."
+        },
+        "product_family": "subscription_plan",
+        "status": "active",
+        "metadata": {
+          "access_tier": "cert_membership",
+          "access_scope": "subject",
+          "included_credits": 3
+        }
+      },
+      {
+        "slug": "cert_credit_wallet_access",
+        "title": {
+          "en": "Certificate Credits",
+          "ro": "Credite certificate"
+        },
+        "description": {
+          "en": "Wallet-backed credits for certificate requests.",
+          "ro": "Credite în portofel pentru cereri de certificate."
+        },
+        "product_family": "credit_pack",
+        "status": "active",
+        "metadata": {
+          "credits_unit": "certificate_request",
+          "credits": 10
+        }
+      },
+      {
+        "slug": "cert_hybrid_access",
+        "title": {
+          "en": "Certificate Hybrid",
+          "ro": "Certificate Hybrid"
+        },
+        "description": {
+          "en": "Recurring membership with bundled certificate credits.",
+          "ro": "Membership recurent cu credite incluse pentru certificate."
+        },
+        "product_family": "hybrid_plan",
+        "status": "active",
+        "metadata": {
+          "access_tier": "cert_hybrid",
+          "access_scope": "subject",
+          "included_credits": 20
+        }
+      }
+    ],
+    "offerings": [
+      {
+        "slug": "cert_default_paywall",
+        "title": {
+          "en": "Certificate Plans",
+          "ro": "Planuri certificate"
+        },
+        "placement": "paywall",
+        "status": "active"
+      },
+      {
+        "slug": "cert_credit_topups",
+        "title": {
+          "en": "Certificate Credit Top-ups",
+          "ro": "Top-up credite certificate"
+        },
+        "placement": "upgrade",
+        "status": "active"
+      }
+    ],
+    "packages": [
+      {
+        "slug": "cert_single_unlock",
+        "product_ref": "cert_single_unlock_access",
+        "offering_ref": "cert_default_paywall",
+        "package_kind": "one_time_unlock",
+        "display_order": 10,
+        "status": "active",
+        "metadata": {
+          "badge": "One request lane",
+          "included_credits": 2
+        }
+      },
+      {
+        "slug": "cert_trial_monthly",
+        "product_ref": "cert_membership_access",
+        "offering_ref": "cert_default_paywall",
+        "package_kind": "subscription",
+        "display_order": 20,
+        "status": "active",
+        "metadata": {
+          "badge": "7-day trial",
+          "included_credits": 3
+        }
+      },
+      {
+        "slug": "cert_credits_10",
+        "product_ref": "cert_credit_wallet_access",
+        "offering_ref": "cert_credit_topups",
+        "package_kind": "credit_pack",
+        "display_order": 30,
+        "status": "active",
+        "metadata": {
+          "credits": 10
+        }
+      },
+      {
+        "slug": "cert_hybrid_monthly",
+        "product_ref": "cert_hybrid_access",
+        "offering_ref": "cert_default_paywall",
+        "package_kind": "standard",
+        "display_order": 40,
+        "status": "active",
+        "metadata": {
+          "badge": "Membership + credits",
+          "included_credits": 20
+        }
+      }
+    ],
+    "prices": [
+      {
+        "slug": "cert_single_unlock_ron",
+        "package_ref": "cert_single_unlock",
+        "currency": "RON",
+        "amount": 19,
+        "status": "active",
+        "metadata": {
+          "included_credits": 2
+        }
+      },
+      {
+        "slug": "cert_trial_monthly_ron",
+        "package_ref": "cert_trial_monthly",
+        "currency": "RON",
+        "amount": 39,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "trial_policy": {
+          "kind": "free_trial",
+          "days": 7
+        },
+        "intro_policy": {
+          "kind": "discount",
+          "amount_off": 10,
+          "cycles": 1
+        },
+        "status": "active",
+        "metadata": {
+          "included_credits": 3
+        }
+      },
+      {
+        "slug": "cert_credits_10_ron",
+        "package_ref": "cert_credits_10",
+        "currency": "RON",
+        "amount": 49,
+        "status": "active",
+        "metadata": {
+          "credits": 10
+        }
+      },
+      {
+        "slug": "cert_hybrid_monthly_ron",
+        "package_ref": "cert_hybrid_monthly",
+        "currency": "RON",
+        "amount": 99,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active",
+        "metadata": {
+          "included_credits": 20
+        }
+      }
+    ],
+    "paywalls": [
+      {
+        "slug": "cert_main_paywall",
+        "title": {
+          "en": "Certificate access",
+          "ro": "Acces certificate"
+        },
+        "placement": "paywall",
+        "offering_refs": ["cert_default_paywall"],
+        "package_refs": ["cert_single_unlock", "cert_trial_monthly", "cert_hybrid_monthly"],
+        "default_package_ref": "cert_trial_monthly",
+        "status": "active"
+      },
+      {
+        "slug": "cert_credit_upgrade",
+        "title": {
+          "en": "Need more certificate credits?",
+          "ro": "Ai nevoie de mai multe credite?"
+        },
+        "placement": "upgrade",
+        "offering_refs": ["cert_credit_topups"],
+        "package_refs": ["cert_credits_10"],
+        "default_package_ref": "cert_credits_10",
+        "status": "active"
+      }
+    ],
+    "usage_policies": [
+      {
+        "tool_name": "submit_xms_certificate_request",
+        "unit": "certificate_request",
+        "credit_cost": 2,
+        "status": "active",
+        "metadata": {
+          "description": "Each submitted certificate request consumes two XMS credits from the active subject allowance when the selected reference mode permits request execution."
+        }
+      }
+    ],
+    "hooks": {
+      "after_payment_completed": {
+        "enabled": true,
+        "invoice_ref": "gateway_payment_invoice"
+      }
+    }
+  },
+  "tools": [
+    {
+      "tool_name": "submit_xms_certificate_request",
+      "title": {
+        "en": "Submit XMS Certificate Request",
+        "ro": "Trimite cerere certificat XMS"
+      },
+      "description": {
+        "en": "Submits a certificate request and enforces XMS access or credit consumption for the active subject.",
+        "ro": "Trimite o cerere de certificat și aplică accesul XMS sau consumul de credite pentru subiectul activ."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "companyCui": {
+            "type": "string",
+            "title": "CUI Firmă",
+            "description": "Introduceți CUI-ul firmei pentru verificare automată ANAF (ex: RO12345678).",
+            "pattern": "^(RO)?[0-9]{2,13}$"
+          },
+          "requestPurpose": {
+            "type": "string",
+            "title": "Motiv solicitare",
+            "oneOf": [
+              {
+                "const": "licitatie",
+                "title": "Licitație"
+              },
+              {
+                "const": "dosar",
+                "title": "Dosar"
+              },
+              {
+                "const": "contractare",
+                "title": "Contractare"
+              },
+              {
+                "const": "conformitate",
+                "title": "Conformitate"
+              }
+            ]
+          },
+          "requestDetails": {
+            "type": "string",
+            "title": "Detalii solicitare"
+          }
+        },
+        "required": ["companyCui", "requestPurpose"]
+      },
+      "input_ui_schema": {
+        "type": "Categorization",
+        "options": {
+          "variant": "stepper"
+        },
+        "elements": [
+          {
+            "type": "Category",
+            "label": "Companie",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/companyCui"
+              },
+              {
+                "type": "XAppsDisplayPanel",
+                "component": "data-view",
+                "label": "Date companie verificate",
+                "options": {
+                  "dataSource": {
+                    "kind": "publisher_preview",
+                    "endpointKey": "anaf_company_lookup_preview",
+                    "inputMapping": {
+                      "companyCui": "#/properties/companyCui"
+                    },
+                    "debounceMs": 250,
+                    "cacheTtlMs": 2000
+                  },
+                  "view": {
+                    "type": "key-value",
+                    "fields": [
+                      {
+                        "path": "#/status",
+                        "label": "Status"
+                      },
+                      {
+                        "path": "#/companyName",
+                        "label": "Denumire"
+                      },
+                      {
+                        "path": "#/companyCui",
+                        "label": "CUI"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "Category",
+            "label": "Solicitare",
+            "elements": [
+              {
+                "type": "Control",
+                "scope": "#/properties/requestPurpose"
+              },
+              {
+                "type": "Control",
+                "scope": "#/properties/requestDetails",
+                "options": {
+                  "multi": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "entitlement_state": {
+            "type": ["string", "null"]
+          },
+          "has_current_access": {
+            "type": "boolean"
+          },
+          "access_summary": {
+            "type": "string"
+          },
+          "companyCui": {
+            "type": "string"
+          },
+          "credit_cost": {
+            "type": ["number", "null"]
+          },
+          "credits_remaining": {
+            "type": ["string", "null"]
+          },
+          "subscriptionStatus": {
+            "type": ["string", "null"]
+          },
+          "requestRef": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "has_current_access",
+          "access_summary",
+          "companyCui",
+          "requestRef",
+          "summary"
+        ]
+      },
+      "output_ui_schema": {
+        "xapps": {
+          "manual_response": true,
+          "renderer": "json-forms",
+          "render": {
+            "kind": "kv",
+            "title": "XMS Certificate Result",
+            "fields": [
+              {
+                "label": "Status",
+                "path": "status"
+              },
+              {
+                "label": "Entitlement State",
+                "path": "entitlement_state"
+              },
+              {
+                "label": "Has Current Access",
+                "path": "has_current_access"
+              },
+              {
+                "label": "Access Summary",
+                "path": "access_summary"
+              },
+              {
+                "label": "Company CUI",
+                "path": "companyCui"
+              },
+              {
+                "label": "Credits Used",
+                "path": "credit_cost"
+              },
+              {
+                "label": "Credits Remaining",
+                "path": "credits_remaining"
+              },
+              {
+                "label": "Subscription Status",
+                "path": "subscriptionStatus"
+              },
+              {
+                "label": "Request Ref",
+                "path": "requestRef"
+              },
+              {
+                "label": "Summary",
+                "path": "summary"
+              }
+            ]
+          }
+        },
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/status"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/entitlement_state"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/has_current_access"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/access_summary"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/companyCui"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/credits_remaining"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/subscriptionStatus"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/requestRef"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/summary",
+            "options": {
+              "multi": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xplace_certs_xms_jsonforms_widget",
+      "title": {
+        "en": "XMS Certificate Request",
+        "ro": "Cerere certificat XMS"
+      },
+      "type": "write",
+      "renderer": "json-forms",
+      "bind_tool_name": "submit_xms_certificate_request",
+      "entry": {
+        "kind": "platform_template",
+        "template": "write_form"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "runtime_default"
+        }
+      },
+      "capabilities": ["requests:create", "requests:read", "ui:notification"]
+    }
+  ],
+  "guards": [
+    {
+      "slug": "xconect-tenant-subject-profile-policy",
+      "trigger": "before:tool_run",
+      "headless": false,
+      "config": {
+        "subject_profile_guard_ref": "xconect_tenant_billing_business",
+        "tools": ["submit_xms_certificate_request"],
+        "subject_profile_sources": {
+          "publisher": {
+            "provider_kind": "endpoint",
+            "endpoint_base_url": "__XPLACE_BACKEND_BASE_URL__/guard/subject-profiles/publisher-candidates",
+            "tool_payload": {
+              "xapp_slug": "xplace-certs-xms-jsonforms",
+              "tool_name": "submit_xms_certificate_request"
+            }
+          }
+        }
+      }
+    },
+    {
+      "slug": "xms-usage-credits-check",
+      "trigger": "before:tool_run",
+      "headless": true,
+      "order": 20,
+      "config": {
+        "tools": ["submit_xms_certificate_request"],
+        "required_credits_source": "manifest_usage_policy",
+        "policy": {
+          "kind": "credits",
+          "issuer": "xms",
+          "source_ref": "manifest:usage_policies"
+        },
+        "action": {
+          "kind": "open_monetization_plans",
+          "label": {
+            "en": "Open plans",
+            "ro": "Deschide planurile"
+          },
+          "title": {
+            "en": "XMS access required",
+            "ro": "Este necesar acces XMS"
+          },
+          "intent": "xms_access"
+        }
+      }
+    },
+    {
+      "slug": "platform-internal-invoice-handler",
+      "trigger": "after:payment_completed",
+      "headless": true,
+      "config": {
+        "invoice_ref": "gateway_payment_invoice"
+      }
+    },
+    {
+      "slug": "platform-internal-notification-handler",
+      "trigger": "after:response_finalized",
+      "headless": true,
+      "config": {
+        "notification_ref": "gateway_response_finalized_email"
+      }
+    }
+  ],
+  "guards_policy": {
+    "before:tool_run": "all",
+    "after:payment_completed": "all",
+    "after:response_finalized": "all"
+  },
+  "connectivity": {
+    "executor_mode": "PUBLIC_EXECUTOR",
+    "auth_mode": "PUBLISHER_APP",
+    "signing_policy": "none",
+    "webhooks": {
+      "enabled": true
+    },
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  },
+  "event_subscriptions": [
+    {
+      "event_type": "xapps.request.completed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.request.failed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    }
+  ],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XPLACE_BACKEND_BASE_URL__/xapps/requests",
+      "timeout_ms": 12000,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff": "exponential"
+      },
+      "labels": {
+        "profile": "xplace-certs-xms-jsonforms",
+        "env": "dev"
+      }
+    }
+  }
+}

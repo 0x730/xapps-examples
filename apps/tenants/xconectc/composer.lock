@@ -6069,16 +6069,16 @@
         },
         {
             "name": "xapps-platform/xapps-backend-kit",
-            "version": "0.2.6",
+            "version": "0.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/0x730/xapps-backend-kit-php.git",
-                "reference": "05d2591c3ebda25c9d5601b9dd9be12a976ae746"
+                "reference": "db320d77f8618a42df54a5fcda6ad8c7d49780c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/05d2591c3ebda25c9d5601b9dd9be12a976ae746",
-                "reference": "05d2591c3ebda25c9d5601b9dd9be12a976ae746",
+                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/db320d77f8618a42df54a5fcda6ad8c7d49780c8",
+                "reference": "db320d77f8618a42df54a5fcda6ad8c7d49780c8",
                 "shasum": ""
             },
             "require": {
@@ -6110,20 +6110,20 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-backend-kit-php"
             },
-            "time": "2026-04-07T05:34:49+00:00"
+            "time": "2026-04-07T14:02:23+00:00"
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.2.5",
+            "version": "0.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/0x730/xapps-php.git",
-                "reference": "6e94401ba38e9818bb1035ba8fa6c08335e90420"
+                "reference": "7aff771566416af09ebd26c2bf48f71a6be44e26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/6e94401ba38e9818bb1035ba8fa6c08335e90420",
-                "reference": "6e94401ba38e9818bb1035ba8fa6c08335e90420",
+                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/7aff771566416af09ebd26c2bf48f71a6be44e26",
+                "reference": "7aff771566416af09ebd26c2bf48f71a6be44e26",
                 "shasum": ""
             },
             "require": {
@@ -6151,7 +6151,7 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
             },
-            "time": "2026-04-07T04:51:58+00:00"
+            "time": "2026-04-07T14:01:53+00:00"
         }
     ],
     "packages-dev": [

@@ -9,7 +9,7 @@
     "en": "Reference JSON Forms xapp in xplace-example for exercising one-time unlock, subscription, credit-pack, and hybrid monetization families on the current XPO rail.",
     "ro": "Xapp de referință JSON Forms în xplace-example pentru exercitarea familiilor de monetizare one-time unlock, subscription, credit-pack și hybrid pe rail-ul XPO curent."
   },
-  "version": "1.0.68",
+  "version": "1.0.74",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -212,13 +212,8 @@
           "ro": "Planuri workspace"
         },
         "placement": "paywall",
-        "offering_refs": [
-          "default_paywall"
-        ],
-        "package_refs": [
-          "starter_unlock",
-          "pro_monthly"
-        ],
+        "offering_refs": ["default_paywall"],
+        "package_refs": ["starter_unlock", "pro_monthly"],
         "default_package_ref": "pro_monthly",
         "status": "active"
       },
@@ -229,12 +224,8 @@
           "ro": "Upgrade-uri workspace"
         },
         "placement": "upgrade",
-        "offering_refs": [
-          "upgrade_path"
-        ],
-        "package_refs": [
-          "credits_500"
-        ],
+        "offering_refs": ["upgrade_path"],
+        "package_refs": ["credits_500"],
         "default_package_ref": "credits_500",
         "status": "active"
       },
@@ -245,12 +236,8 @@
           "ro": "Oferte de retenție"
         },
         "placement": "retention",
-        "offering_refs": [
-          "retention_path"
-        ],
-        "package_refs": [
-          "team_hybrid"
-        ],
+        "offering_refs": ["retention_path"],
+        "package_refs": ["team_hybrid"],
         "default_package_ref": "team_hybrid",
         "status": "active"
       }
@@ -280,11 +267,7 @@
           "scopeKind": {
             "type": "string",
             "title": "Activation Scope",
-            "enum": [
-              "subject",
-              "installation",
-              "realm"
-            ],
+            "enum": ["subject", "installation", "realm"],
             "default": "subject"
           },
           "realmRef": {
@@ -386,31 +369,19 @@
             "type": "string"
           },
           "requestedPackage": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "requestedPackageLabel": {
             "type": "string"
           },
           "realmRef": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "contactEmail": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "notes": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "summary": {
             "type": "string"
@@ -419,13 +390,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "status",
-          "activationScope",
-          "requestedPackageLabel",
-          "summary",
-          "checkedAt"
-        ]
+        "required": ["status", "activationScope", "requestedPackageLabel", "summary", "checkedAt"]
       },
       "output_ui_schema": {
         "xapps": {

@@ -81,7 +81,10 @@ Current landed starting point:
 
 1. first JSON Forms monetization app scaffold:
    - [xplace-monetization-lab-jsonforms](../xapps/xplace-monetization-lab-jsonforms/README.md)
-2. first publisher-rendered React monetization playground:
+2. JSON Forms XMS certificate reference app:
+   - [xplace-certs-xms-jsonforms](../xapps/xplace-certs-xms-jsonforms/README.md)
+   - proves catalog purchase, trial subscription, one-time unlock, credit-pack consumption, hybrid bundled credits, invoice, notification, and manifest-owned per-tool usage policy
+3. first publisher-rendered React monetization playground:
    - [xplace-creator-club-publisher-rendered](../xapps/xplace-creator-club-publisher-rendered/README.md)
    - current proving scope:
      - local login/register/link flow

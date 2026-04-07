@@ -134,6 +134,7 @@ Immediate proving rule for that app:
        - `offerings`
        - `packages`
        - `prices`
+       - `usage_policies`
      - structured fields now cover:
        - titles / descriptions
        - status
@@ -170,6 +171,7 @@ Immediate proving rule for that app:
            - `offerings`
            - `packages`
            - `prices`
+           - `usage_policies`
            - `subscriptions`
            - `entitlements`
            - `wallet_accounts`
@@ -366,11 +368,15 @@ Current deployment split:
 - private production `xplace` keeps the two Stripe cert families:
   - `xplace-certs-gateway-stripe`
   - `xplace-certs-tenant-delegated-stripe`
-- public `xplace-example` carries the full current four-xapp set:
-  - `xplace-certs`
+- public `xplace-example` carries the current broader example fleet:
   - `xplace-certs-gateway-stripe`
   - `xplace-certs-tenant-delegated-stripe`
-  - `xplace-weather-now-gateway-stripe`
+  - `xplace-bonbun-public-iframe-publisher-rendered`
+  - `xplace-bridge-session-publisher-rendered`
+  - `xplace-certs-gateway-stripe-publisher-rendered`
+  - `xplace-certs-xms-jsonforms`
+  - `xplace-creator-club-publisher-rendered`
+  - `xplace-monetization-lab-jsonforms`
 
 Current tenant mapping:
 
@@ -394,7 +400,7 @@ Near-term rule:
 - move deployment ownership first, then split the xapp families physically only when the example lane needs its own manifest/version cadence
 - the command split is now explicit:
   - `npm run xplace:prepare-republish` -> narrow private production pair
-  - `npm run xplace-example:prepare-republish` -> full four-xapp example fleet
+  - `npm run xplace-example:prepare-republish` -> current broader example fleet
 
 ## Deploy rule
 

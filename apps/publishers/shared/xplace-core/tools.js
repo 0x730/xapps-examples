@@ -73,6 +73,10 @@ function getPackageLabel(packageSlug) {
     pro_monthly: "Pro Monthly",
     credits_500: "Credits 500",
     team_hybrid: "Team Hybrid",
+    cert_single_unlock: "Single Certificate Unlock",
+    cert_trial_monthly: "Trial Certificate Membership",
+    cert_credits_10: "Certificate Credits 10",
+    cert_hybrid_monthly: "Certificate Hybrid Monthly",
   };
   return (
     packageLabelMap[
@@ -83,6 +87,78 @@ function getPackageLabel(packageSlug) {
     packageSlug ||
     "Unknown package"
   );
+}
+
+function readCreditsRemainingNumber(accessProjection) {
+  const parsed = Number(String(accessProjection?.credits_remaining ?? "").trim());
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
+
+function readSubscriptionStatus(currentSubscription) {
+  return String(currentSubscription?.status ?? "")
+    .trim()
+    .toLowerCase();
+}
+
+function summarizeCertificateXmsState({ accessProjection, currentSubscription }) {
+  const entitlementState = String(accessProjection?.entitlement_state ?? "")
+    .trim()
+    .toLowerCase();
+  const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
+  const creditsRemaining = readCreditsRemainingNumber(accessProjection);
+  const subscriptionStatus = readSubscriptionStatus(currentSubscription);
+
+  if ((subscriptionStatus === "active" || subscriptionStatus === "grace") && creditsRemaining > 0) {
+    return "Active subscription with usable certificate credits";
+  }
+  if (subscriptionStatus === "active" || subscriptionStatus === "grace") {
+    return "Active subscription";
+  }
+  if (creditsRemaining > 0 && hasCurrentAccess) {
+    return "Current subject access with usable certificate credits";
+  }
+  if (creditsRemaining > 0) {
+    return "Usable certificate credits";
+  }
+  if (hasCurrentAccess || entitlementState === "active" || entitlementState === "grace_period") {
+    return "Current subject access";
+  }
+  return "No usable XMS access";
+}
+
+function readPositiveNumber(value, fallback) {
+  const parsed = Number(String(value ?? "").trim());
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function readNonNegativeNumber(value, fallback) {
+  const parsed = Number(String(value ?? "").trim());
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
+function readXmsUsagePolicyCreditCost(policy, fallback) {
+  const usagePolicy = policy && typeof policy === "object" ? policy : {};
+  return readNonNegativeNumber(usagePolicy.credit_cost, fallback);
+}
+
+function readBooleanLoose(value) {
+  if (value === true) return true;
+  if (typeof value === "number") return value === 1;
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase();
+  return normalized === "true" || normalized === "1" || normalized === "yes";
+}
+
+function readActiveWallet(items, requiredAmount) {
+  const wallets = Array.isArray(items) ? items : [];
+  for (const wallet of wallets) {
+    if (!wallet || typeof wallet !== "object") continue;
+    if (String(wallet.status || "").trim() !== "active") continue;
+    const balance = Number(String(wallet.balance_remaining ?? "").trim());
+    if (Number.isFinite(balance) && balance >= requiredAmount) return wallet;
+  }
+  return null;
 }
 
 async function readJsonSafe(response) {
@@ -169,11 +245,19 @@ function buildWeatherPreviewFallbackBody({ fallback, message }) {
       fetchedAt: fallback.checkedAt,
       provider: fallback.provider,
     },
-    tags: ["weather", fallback.latitude >= 0 ? "northern-hemisphere" : "southern-hemisphere", "publisher-preview", "offline-demo"],
+    tags: [
+      "weather",
+      fallback.latitude >= 0 ? "northern-hemisphere" : "southern-hemisphere",
+      "publisher-preview",
+      "offline-demo",
+    ],
     badges: [
       { label: "Offline demo", tone: "warning" },
       { label: "Publisher API", tone: "success" },
-      { label: fallback.elevation > 500 ? "High Elevation" : "Low Elevation", tone: fallback.elevation > 500 ? "warning" : "neutral" },
+      {
+        label: fallback.elevation > 500 ? "High Elevation" : "Low Elevation",
+        tone: fallback.elevation > 500 ? "warning" : "neutral",
+      },
     ],
     stations: [
       { name: "Selected Coordinates", distanceKm: 0, kind: "target" },
@@ -348,6 +432,204 @@ export function createXplaceToolRegistry({
             windSpeedKmh: wind,
             provider: "open-meteo",
             summary: `Current weather for ${label}: ${temp}${unitLabel}, code ${code}, wind ${wind} km/h`,
+            checkedAt: nowIso(),
+          },
+        };
+      },
+    },
+    submit_xms_certificate_request: {
+      key: "submit_xms_certificate_request",
+      mode: XPLACE_REQUEST_MODES.AUTO,
+      xapp: "xplace-certs-xms-jsonforms",
+      title: "Submit XMS Certificate Request (automatic reference response)",
+      validate(payload) {
+        const missing = requireFields(payload, ["companyCui", "requestPurpose"]);
+        if (missing.length) return { ok: false, message: `${missing.join(" and ")} are required` };
+        return { ok: true };
+      },
+      async handle({
+        payload,
+        requestId,
+        xappId,
+        clientId,
+        installationId,
+        subjectId,
+        requestLog,
+      }) {
+        const toolName = "submit_xms_certificate_request";
+        const company = normalizeCui(payload.companyCui);
+        if (!String(gatewayBaseUrl || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Gateway base URL is not configured for XMS certificate requests" },
+          };
+        }
+        if (!String(gatewayClientApiKey || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Target client API key is not configured for XMS certificate requests",
+            },
+          };
+        }
+        if (!String(xappId || "").trim() || !String(clientId || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Xapp and client context are required for XMS certificate requests",
+            },
+          };
+        }
+        if (!String(subjectId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Subject context is required for XMS certificate requests" },
+          };
+        }
+
+        const scopeQuery = `subject_id=${encodeURIComponent(String(subjectId || "").trim())}`;
+        let accessProjection = null;
+        let currentSubscription = null;
+        let walletAccount = null;
+        let walletLedger = null;
+        let creditCost = 0;
+        try {
+          const usagePolicyRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/usage-policies/${encodeURIComponent(toolName)}`,
+            requestLog,
+          });
+          const usagePolicy = usagePolicyRes?.usage_policy ?? null;
+          creditCost = readXmsUsagePolicyCreditCost(usagePolicy, 1);
+
+          const accessRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
+            requestLog,
+          });
+          accessProjection = accessRes?.access_projection ?? null;
+
+          const subscriptionRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/current-subscription?${scopeQuery}`,
+            requestLog,
+          });
+          currentSubscription = subscriptionRes?.current_subscription ?? null;
+
+          const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
+          const entitlementState = String(accessProjection?.entitlement_state || "")
+            .trim()
+            .toLowerCase();
+          const creditsRemaining = readCreditsRemainingNumber(accessProjection);
+
+          if (
+            !hasCurrentAccess &&
+            entitlementState !== "active" &&
+            entitlementState !== "grace_period" &&
+            creditsRemaining <= 0
+          ) {
+            return {
+              status: "error",
+              result: {
+                message:
+                  "An active XMS entitlement or certificate credits are required for this request",
+                entitlement_state: entitlementState || "inactive",
+                has_current_access: hasCurrentAccess,
+                credits_remaining: accessProjection?.credits_remaining ?? null,
+                subscriptionStatus: currentSubscription?.status ?? null,
+              },
+            };
+          }
+
+          if (creditCost > 0) {
+            const walletAccountsRes = await fetchGatewayJson({
+              gatewayBaseUrl,
+              gatewayClientApiKey,
+              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts?${scopeQuery}`,
+              requestLog,
+            });
+            const wallet = readActiveWallet(walletAccountsRes?.items, creditCost);
+            if (!wallet) {
+              return {
+                status: "error",
+                result: {
+                  message: "Insufficient certificate credits for this request",
+                  entitlement_state: accessProjection?.entitlement_state ?? null,
+                  has_current_access: hasCurrentAccess,
+                  subscriptionStatus: currentSubscription?.status ?? null,
+                  requiredCredits: creditCost,
+                  credits_remaining: accessProjection?.credits_remaining ?? null,
+                },
+              };
+            }
+            const consumed = await fetchGatewayJson({
+              gatewayBaseUrl,
+              gatewayClientApiKey,
+              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts/${encodeURIComponent(String(wallet.id))}/consume`,
+              method: "POST",
+              body: {
+                amount: String(creditCost),
+                source_ref: requestId
+                  ? `xplace-certs-xms-jsonforms:${requestId}`
+                  : "xplace-certs-xms-jsonforms",
+                metadata: {
+                  tool_name: toolName,
+                  company_cui: company.raw,
+                  credit_cost: String(creditCost),
+                  installation_id: installationId || null,
+                },
+              },
+              requestLog,
+            });
+            walletAccount = consumed?.wallet_account ?? null;
+            walletLedger = consumed?.wallet_ledger ?? null;
+            accessProjection =
+              consumed?.access_projection && typeof consumed.access_projection === "object"
+                ? {
+                    ...(accessProjection && typeof accessProjection === "object"
+                      ? accessProjection
+                      : {}),
+                    ...consumed.access_projection,
+                  }
+                : accessProjection;
+          }
+        } catch (err) {
+          return {
+            status: "error",
+            result: {
+              message: err?.message || String(err),
+            },
+          };
+        }
+
+        const entitlementState = String(accessProjection?.entitlement_state ?? "").trim() || null;
+        const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
+        const accessSummary = summarizeCertificateXmsState({
+          accessProjection,
+          currentSubscription,
+        });
+
+        return {
+          status: "success",
+          result: {
+            status: "accepted",
+            entitlement_state: entitlementState,
+            has_current_access: hasCurrentAccess,
+            access_summary: accessSummary,
+            companyCui: company.raw,
+            companyCuiNormalized: company.digits,
+            requestPurpose: String(payload.requestPurpose || "").trim(),
+            requestDetails: String(payload.requestDetails || "").trim() || null,
+            credit_cost: creditCost,
+            credits_remaining: accessProjection?.credits_remaining ?? null,
+            subscriptionStatus: currentSubscription?.status ?? null,
+            walletAccountId: walletAccount?.id ?? null,
+            walletLedgerId: walletLedger?.id ?? null,
+            requestRef: `XMS-CERT-${Date.now()}`,
+            summary: `Certificate request accepted for ${company.raw}. ${accessSummary}.`,
             checkedAt: nowIso(),
           },
         };
@@ -808,7 +1090,8 @@ export function createXplacePreviewRegistry({ weatherApiBaseUrl, anafApiBaseUrl,
             status: 200,
             body: buildWeatherPreviewFallbackBody({
               fallback,
-              message: "Open-Meteo preview returned an invalid response; showing offline demo data.",
+              message:
+                "Open-Meteo preview returned an invalid response; showing offline demo data.",
             }),
           };
         }

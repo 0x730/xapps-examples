@@ -41,7 +41,7 @@ Near-term intent:
 Current deployment rule:
 
 - `xplace-example` is the broader public/example publisher fleet
-- it should carry the full current four-xapp set from `xplace`
+- it should carry the current example fleet resolved by `scripts/lib/xplace-publisher-xapps.mjs`
 - it is the intended publisher side for:
   - `xconecta` when you are exercising the public example/reference lane
   - `xconectb`
@@ -74,6 +74,12 @@ Current workspace pieces:
 - isolated publisher-rendered bridge-session reference lane:
   - [xapps/xplace-bridge-session-publisher-rendered/manifest.json](./xapps/xplace-bridge-session-publisher-rendered/manifest.json)
   - [xapps/xplace-bridge-session-publisher-rendered/README.md](./xapps/xplace-bridge-session-publisher-rendered/README.md)
+- isolated JSON Forms XMS certificate reference lane:
+  - [xapps/xplace-certs-xms-jsonforms/manifest.json](./xapps/xplace-certs-xms-jsonforms/manifest.json)
+  - [xapps/xplace-certs-xms-jsonforms/README.md](./xapps/xplace-certs-xms-jsonforms/README.md)
+- isolated publisher-rendered XMS playground:
+  - [xapps/xplace-creator-club-publisher-rendered/manifest.json](./xapps/xplace-creator-club-publisher-rendered/manifest.json)
+  - [xapps/xplace-creator-club-publisher-rendered/README.md](./xapps/xplace-creator-club-publisher-rendered/README.md)
 - isolated BonBun exploratory publisher-rendered lane:
   - [xapps/xplace-bonbun-public-iframe-publisher-rendered/manifest.json](./xapps/xplace-bonbun-public-iframe-publisher-rendered/manifest.json)
   - [xapps/xplace-bonbun-public-iframe-publisher-rendered/README.md](./xapps/xplace-bonbun-public-iframe-publisher-rendered/README.md)
@@ -172,12 +178,15 @@ Local dev note:
 
 Default republish behavior:
 
-- `npm run xplace-example:prepare-republish` defaults to the full current five-xapp fleet:
-  - `xplace-certs`
+- `npm run xplace-example:prepare-republish` defaults to the current broader example fleet:
   - `xplace-certs-gateway-stripe`
   - `xplace-certs-tenant-delegated-stripe`
-  - `xplace-weather-now-gateway-stripe`
+  - `xplace-bonbun-public-iframe-publisher-rendered`
   - `xplace-bridge-session-publisher-rendered`
+  - `xplace-certs-gateway-stripe-publisher-rendered`
+  - `xplace-certs-xms-jsonforms`
+  - `xplace-creator-club-publisher-rendered`
+  - `xplace-monetization-lab-jsonforms`
 - `npm run xplace:prepare-republish` remains the narrow private production publisher path
 - grouped example-lane publish:
 

@@ -113,10 +113,7 @@ function syncIdentityAdvancedVisibility(override = null) {
     override ||
     mergeIdentityOverrides(readIdentityOverrideFromForm(), readIdentityOverrideFromQuery());
   advanced.open = Boolean(
-    current?.subjectId ||
-    current?.type ||
-    current?.identifier ||
-    current?.metadata,
+    current?.subjectId || current?.type || current?.identifier || current?.metadata,
   );
 }
 

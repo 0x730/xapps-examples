@@ -452,10 +452,7 @@
             override ||
             mergeIdentityOverrides(readIdentityOverrideFromForm(), readIdentityOverrideFromQuery());
           identityAdvancedEl.open = Boolean(
-            current?.subjectId ||
-            current?.type ||
-            current?.identifier ||
-            current?.metadata,
+            current?.subjectId || current?.type || current?.identifier || current?.metadata,
           );
         }
 

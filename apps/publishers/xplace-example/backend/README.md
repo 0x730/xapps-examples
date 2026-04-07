@@ -139,7 +139,7 @@ npm run publish:xconect-xplace-example -- --reference-tenant-profile xconectb --
 
 Default republish scope:
 
-- full current five-xapp `xplace-example` fleet
+- full current `xplace-example` fleet resolved by `scripts/lib/xplace-publisher-xapps.mjs`
 - use `--manifests` only when you want to narrow it manually
 
 Local PostgreSQL baseline:

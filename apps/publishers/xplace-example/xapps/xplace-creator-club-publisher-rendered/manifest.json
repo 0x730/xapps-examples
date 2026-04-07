@@ -9,7 +9,7 @@
     "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
     "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
   },
-  "version": "1.0.71",
+  "version": "1.0.77",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "linking": {
@@ -95,9 +95,7 @@
       "name": "creator_club_gateway_managed_hosted",
       "payment_issuer_mode": "gateway_managed",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": [
-        "gateway"
-      ],
+      "payment_allowed_issuers": ["gateway"],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -152,9 +150,7 @@
       "name": "creator_club_tenant_delegated_hosted",
       "payment_issuer_mode": "tenant_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": [
-        "tenant_delegated"
-      ],
+      "payment_allowed_issuers": ["tenant_delegated"],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -211,9 +207,7 @@
       "name": "creator_club_publisher_delegated_hosted",
       "payment_issuer_mode": "publisher_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": [
-        "publisher_delegated"
-      ],
+      "payment_allowed_issuers": ["publisher_delegated"],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -462,13 +456,8 @@
           "ro": "Paywall-ul implicit pentru fluxul principal de planuri."
         },
         "placement": "paywall",
-        "offering_refs": [
-          "creator_default_paywall"
-        ],
-        "package_refs": [
-          "creator_starter_unlock",
-          "creator_pro_monthly"
-        ],
+        "offering_refs": ["creator_default_paywall"],
+        "package_refs": ["creator_starter_unlock", "creator_pro_monthly"],
         "default_package_ref": "creator_pro_monthly",
         "status": "active"
       },
@@ -479,12 +468,8 @@
           "ro": "Upgrade-uri workspace"
         },
         "placement": "upgrade",
-        "offering_refs": [
-          "creator_workspace_upgrade"
-        ],
-        "package_refs": [
-          "creator_credits_500"
-        ],
+        "offering_refs": ["creator_workspace_upgrade"],
+        "package_refs": ["creator_credits_500"],
         "default_package_ref": "creator_credits_500",
         "status": "active"
       },
@@ -495,12 +480,8 @@
           "ro": "Oferte de retenție"
         },
         "placement": "retention",
-        "offering_refs": [
-          "creator_retention_path"
-        ],
-        "package_refs": [
-          "creator_team_hybrid"
-        ],
+        "offering_refs": ["creator_retention_path"],
+        "package_refs": ["creator_team_hybrid"],
         "default_package_ref": "creator_team_hybrid",
         "status": "active"
       }
@@ -612,9 +593,7 @@
         "kind": "iframe_url",
         "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-creator-club-publisher-rendered.html"
       },
-      "capabilities": [
-        "ui:notification"
-      ],
+      "capabilities": ["ui:notification"],
       "config": {
         "xapps": {
           "bootstrap_transport": "signed_ticket"
