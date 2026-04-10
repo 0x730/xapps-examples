@@ -3,7 +3,7 @@ import {
   buildMonetizationPaywallHtml,
   buildMonetizationPaywallRenderModel,
   monetizationPaywallRendererStyles,
-} from "../../../../../../packages/browser-host/dist/index.js";
+} from "@xapps-platform/browser-host/xms";
 import { buildFeatureCopyModel } from "../lib/featureCopy.js";
 
 export function PaywallGalleryPanel({

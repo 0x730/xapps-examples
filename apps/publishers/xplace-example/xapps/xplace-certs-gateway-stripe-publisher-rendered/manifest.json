@@ -9,7 +9,7 @@
     "en": "Publisher-rendered certificate request app in xplace-example using the request-owned after:request_created payment lifecycle.",
     "ro": "Aplicație publisher-rendered pentru cereri de certificate în xplace-example, folosind ciclul de plată deținut de cerere pe after:request_created."
   },
-  "version": "1.0.83",
+  "version": "1.0.106",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

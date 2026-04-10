@@ -2,7 +2,7 @@ import React from "react";
 import {
   buildMonetizationPaywallRenderModel,
   resolveMonetizationPackagePurchasePolicy,
-} from "../../../../../../packages/browser-host/dist/index.js";
+} from "@xapps-platform/browser-host/xms";
 import { StatusBox } from "./StatusBox.jsx";
 import { buildPackageCopy } from "../lib/packageCopy.js";
 import {

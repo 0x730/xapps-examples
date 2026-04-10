@@ -1,4 +1,4 @@
-import { summarizeXappMonetizationSnapshot } from "../../../../../../node_modules/@xapps-platform/browser-host/dist/index.js";
+import { summarizeXappMonetizationSnapshot } from "@xapps-platform/browser-host/xms";
 import { readArrayRecords, readObjectRecord, readString } from "./shared.js";
 
 export function formatDateTime(value) {

@@ -9,7 +9,7 @@ import {
   listXappMonetizationPaywalls,
   resolveXmsModeForPackage,
   selectXappMonetizationPaywall,
-} from "../../../../../../node_modules/@xapps-platform/browser-host/dist/index.js";
+} from "@xapps-platform/browser-host/xms";
 import { buildFeatureCopyModel } from "../lib/featureCopy.js";
 import {
   apiRequest,
