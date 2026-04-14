@@ -84,7 +84,10 @@ Current landed starting point:
 2. JSON Forms XMS certificate reference app:
    - [xplace-certs-xms-jsonforms](../xapps/xplace-certs-xms-jsonforms/README.md)
    - proves catalog purchase, trial subscription, one-time unlock, credit-pack consumption, hybrid bundled credits, invoice, notification, and manifest-owned per-tool usage policy
-3. first publisher-rendered React monetization playground:
+3. JSON Forms XMS virtual-currency certificate reference app:
+   - [xplace-certs-xms-jsonforms-vc](../xapps/xplace-certs-xms-jsonforms-vc/README.md)
+   - proves the same certificate UX on a named `CERT_CREDITS` virtual-currency rail without mutating the older cert app
+4. first publisher-rendered React monetization playground:
    - [xplace-creator-club-publisher-rendered](../xapps/xplace-creator-club-publisher-rendered/README.md)
    - current proving scope:
      - local login/register/link flow

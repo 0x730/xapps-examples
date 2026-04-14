@@ -238,7 +238,12 @@ export function MonetizationStatePanel({ statePayload }) {
                   <div className="creator-detail-head">
                     <div className="creator-detail-title">
                       <strong>
-                        {String(account?.product_slug || account?.product_id || "wallet account")}
+                        {String(
+                          account?.virtual_currency?.code ||
+                            account?.product_slug ||
+                            account?.product_id ||
+                            "wallet account",
+                        )}
                       </strong>
                       <span>{String(account?.id || "").trim() || "wallet id unavailable"}</span>
                     </div>
@@ -251,6 +256,9 @@ export function MonetizationStatePanel({ statePayload }) {
                       balance {String(account?.balance_remaining || "0")}{" "}
                       {String(account?.currency || "").trim() || "credits"}
                     </span>
+                    {account?.virtual_currency?.name ? (
+                      <span className="creator-badge">{String(account.virtual_currency.name)}</span>
+                    ) : null}
                     <span className="creator-badge">
                       {formatScopeReference(
                         account?.subject_id,
@@ -295,6 +303,11 @@ export function MonetizationStatePanel({ statePayload }) {
                     </span>
                   </div>
                   <div className="creator-badge-row">
+                    {entry?.virtual_currency?.code ? (
+                      <span className="creator-badge">
+                        currency {String(entry.virtual_currency.code)}
+                      </span>
+                    ) : null}
                     <span className="creator-badge">
                       wallet {String(entry?.wallet_product_slug || entry?.wallet_account_id || "—")}
                     </span>

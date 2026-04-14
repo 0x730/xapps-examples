@@ -1,15 +1,15 @@
 {
-  "name": "xplace-example • Certificates XMS (JSON Forms)",
+  "name": "xplace-example • Certificates XMS VC (JSON Forms)",
   "title": {
-    "en": "xplace-example • Certificates XMS (JSON Forms)",
-    "ro": "xplace-example • Certificate XMS (JSON Forms)"
+    "en": "xplace-example • Certificates XMS VC (JSON Forms)",
+    "ro": "xplace-example • Certificate XMS VC (JSON Forms)"
   },
-  "slug": "xplace-certs-xms-jsonforms",
+  "slug": "xplace-certs-xms-jsonforms-vc",
   "description": {
-    "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption.",
-    "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere."
+    "en": "Platform-rendered JSON Forms certificate request app proving XMS virtual currencies across one-time unlock, subscriptions, credit packs, and hybrid request consumption.",
+    "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând monede virtuale XMS pentru one-time unlock, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.54",
+  "version": "1.0.8",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -17,7 +17,7 @@
     "json-forms",
     "certificates",
     "xms",
-    "trial",
+    "virtual-currency",
     "subscription",
     "credit-pack",
     "hybrid-plan"
@@ -42,8 +42,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS checkout",
-            "ro": "Checkout certificate XMS"
+            "en": "Certificates XMS VC checkout",
+            "ro": "Checkout certificate XMS VC"
           },
           "subtitle": {
             "en": "Gateway-managed hosted redirect",
@@ -86,8 +86,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS checkout",
-            "ro": "Checkout certificate XMS"
+            "en": "Certificates XMS VC checkout",
+            "ro": "Checkout certificate XMS VC"
           },
           "subtitle": {
             "en": "Tenant-delegated hosted redirect",
@@ -130,8 +130,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS checkout",
-            "ro": "Checkout certificate XMS"
+            "en": "Certificates XMS VC checkout",
+            "ro": "Checkout certificate XMS VC"
           },
           "subtitle": {
             "en": "Publisher-delegated hosted redirect",
@@ -155,54 +155,70 @@
     }
   ],
   "monetization": {
+    "virtual_currencies": [
+      {
+        "code": "CERT_CREDITS",
+        "name": "Certificate Credits",
+        "status": "active"
+      }
+    ],
     "products": [
       {
-        "slug": "cert_single_unlock_access",
+        "slug": "cert_single_unlock_access_vc",
         "title": {
-          "en": "Single Certificate Unlock",
-          "ro": "Deblocare certificat"
+          "en": "Single Certificate Unlock VC",
+          "ro": "Deblocare certificat VC"
         },
         "description": {
-          "en": "One-time unlock for the certificate request lane.",
-          "ro": "Deblocare unică pentru fluxul de cerere certificat."
+          "en": "One-time unlock for the certificate request lane with bundled Certificate Credits.",
+          "ro": "Deblocare unică pentru fluxul de cerere certificat, cu Certificate Credits incluse."
         },
         "product_family": "one_time_unlock",
+        "virtual_currency": {
+          "code": "CERT_CREDITS"
+        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_single_unlock",
+          "access_tier": "cert_single_unlock_vc",
           "access_scope": "subject",
           "included_credits": 2
         }
       },
       {
-        "slug": "cert_membership_access",
+        "slug": "cert_membership_access_vc",
         "title": {
-          "en": "Certificate Membership",
-          "ro": "Membership certificate"
+          "en": "Certificate Membership VC",
+          "ro": "Membership certificate VC"
         },
         "description": {
-          "en": "Recurring certificate membership. The trial price proves XMS free-trial finalization without a hosted payment session.",
-          "ro": "Membership recurent pentru certificate. Prețul cu trial demonstrează finalizarea XMS free-trial fără sesiune hosted de plată."
+          "en": "Recurring certificate membership with bundled Certificate Credits. The trial price proves XMS free-trial finalization without a hosted payment session.",
+          "ro": "Membership recurent pentru certificate, cu Certificate Credits incluse. Prețul cu trial demonstrează finalizarea XMS free-trial fără sesiune hosted de plată."
         },
         "product_family": "subscription_plan",
+        "virtual_currency": {
+          "code": "CERT_CREDITS"
+        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_membership",
+          "access_tier": "cert_membership_vc",
           "access_scope": "subject",
           "included_credits": 4
         }
       },
       {
-        "slug": "cert_credit_wallet_access",
+        "slug": "cert_credit_wallet_access_vc",
         "title": {
-          "en": "Certificate Credits",
-          "ro": "Credite certificate"
+          "en": "Certificate Credits VC",
+          "ro": "Certificate Credits VC"
         },
         "description": {
-          "en": "Wallet-backed credits for certificate requests.",
-          "ro": "Credite în portofel pentru cereri de certificate."
+          "en": "Wallet-backed Certificate Credits for certificate requests.",
+          "ro": "Certificate Credits în portofel pentru cereri de certificate."
         },
         "product_family": "credit_pack",
+        "virtual_currency": {
+          "code": "CERT_CREDITS"
+        },
         "status": "active",
         "metadata": {
           "credits_unit": "certificate_request",
@@ -210,19 +226,22 @@
         }
       },
       {
-        "slug": "cert_hybrid_access",
+        "slug": "cert_hybrid_access_vc",
         "title": {
-          "en": "Certificate Hybrid",
-          "ro": "Certificate Hybrid"
+          "en": "Certificate Hybrid VC",
+          "ro": "Certificate Hybrid VC"
         },
         "description": {
-          "en": "Recurring membership with bundled certificate credits.",
-          "ro": "Membership recurent cu credite incluse pentru certificate."
+          "en": "Recurring membership with bundled Certificate Credits.",
+          "ro": "Membership recurent cu Certificate Credits incluse."
         },
         "product_family": "hybrid_plan",
+        "virtual_currency": {
+          "code": "CERT_CREDITS"
+        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_hybrid",
+          "access_tier": "cert_hybrid_vc",
           "access_scope": "subject",
           "included_credits": 20
         }
@@ -230,19 +249,19 @@
     ],
     "offerings": [
       {
-        "slug": "cert_default_paywall",
+        "slug": "cert_default_paywall_vc",
         "title": {
-          "en": "Certificate Plans",
-          "ro": "Planuri certificate"
+          "en": "Certificate VC Plans",
+          "ro": "Planuri certificate VC"
         },
         "placement": "paywall",
         "status": "active"
       },
       {
-        "slug": "cert_credit_topups",
+        "slug": "cert_credit_topups_vc",
         "title": {
-          "en": "Certificate Credit Top-ups",
-          "ro": "Top-up credite certificate"
+          "en": "Certificate VC Top-ups",
+          "ro": "Top-up Certificate VC"
         },
         "placement": "upgrade",
         "status": "active"
@@ -250,9 +269,9 @@
     ],
     "packages": [
       {
-        "slug": "cert_single_unlock",
-        "product_ref": "cert_single_unlock_access",
-        "offering_ref": "cert_default_paywall",
+        "slug": "cert_single_unlock_vc",
+        "product_ref": "cert_single_unlock_access_vc",
+        "offering_ref": "cert_default_paywall_vc",
         "package_kind": "one_time_unlock",
         "display_order": 10,
         "status": "active",
@@ -262,9 +281,9 @@
         }
       },
       {
-        "slug": "cert_trial_monthly",
-        "product_ref": "cert_membership_access",
-        "offering_ref": "cert_default_paywall",
+        "slug": "cert_trial_monthly_vc",
+        "product_ref": "cert_membership_access_vc",
+        "offering_ref": "cert_default_paywall_vc",
         "package_kind": "subscription",
         "display_order": 20,
         "status": "active",
@@ -274,9 +293,9 @@
         }
       },
       {
-        "slug": "cert_credits_10",
-        "product_ref": "cert_credit_wallet_access",
-        "offering_ref": "cert_credit_topups",
+        "slug": "cert_credits_10_vc",
+        "product_ref": "cert_credit_wallet_access_vc",
+        "offering_ref": "cert_credit_topups_vc",
         "package_kind": "credit_pack",
         "display_order": 30,
         "status": "active",
@@ -285,9 +304,9 @@
         }
       },
       {
-        "slug": "cert_hybrid_monthly",
-        "product_ref": "cert_hybrid_access",
-        "offering_ref": "cert_default_paywall",
+        "slug": "cert_hybrid_monthly_vc",
+        "product_ref": "cert_hybrid_access_vc",
+        "offering_ref": "cert_default_paywall_vc",
         "package_kind": "standard",
         "display_order": 40,
         "status": "active",
@@ -299,8 +318,8 @@
     ],
     "prices": [
       {
-        "slug": "cert_single_unlock_ron",
-        "package_ref": "cert_single_unlock",
+        "slug": "cert_single_unlock_vc_ron",
+        "package_ref": "cert_single_unlock_vc",
         "currency": "RON",
         "amount": 19,
         "status": "active",
@@ -309,8 +328,8 @@
         }
       },
       {
-        "slug": "cert_trial_monthly_ron",
-        "package_ref": "cert_trial_monthly",
+        "slug": "cert_trial_monthly_vc_ron",
+        "package_ref": "cert_trial_monthly_vc",
         "currency": "RON",
         "amount": 39,
         "billing_period": "month",
@@ -330,8 +349,8 @@
         }
       },
       {
-        "slug": "cert_credits_10_ron",
-        "package_ref": "cert_credits_10",
+        "slug": "cert_credits_10_vc_ron",
+        "package_ref": "cert_credits_10_vc",
         "currency": "RON",
         "amount": 49,
         "status": "active",
@@ -340,8 +359,8 @@
         }
       },
       {
-        "slug": "cert_hybrid_monthly_ron",
-        "package_ref": "cert_hybrid_monthly",
+        "slug": "cert_hybrid_monthly_vc_ron",
+        "package_ref": "cert_hybrid_monthly_vc",
         "currency": "RON",
         "amount": 99,
         "billing_period": "month",
@@ -354,38 +373,43 @@
     ],
     "paywalls": [
       {
-        "slug": "cert_main_paywall",
+        "slug": "cert_main_paywall_vc",
         "title": {
-          "en": "Certificate access",
-          "ro": "Acces certificate"
+          "en": "Certificate VC access",
+          "ro": "Acces certificate VC"
         },
         "placement": "paywall",
-        "offering_refs": ["cert_default_paywall"],
-        "package_refs": ["cert_single_unlock", "cert_trial_monthly", "cert_hybrid_monthly"],
-        "default_package_ref": "cert_single_unlock",
+        "offering_refs": ["cert_default_paywall_vc"],
+        "package_refs": [
+          "cert_single_unlock_vc",
+          "cert_trial_monthly_vc",
+          "cert_hybrid_monthly_vc"
+        ],
+        "default_package_ref": "cert_single_unlock_vc",
         "status": "active"
       },
       {
-        "slug": "cert_credit_upgrade",
+        "slug": "cert_credit_upgrade_vc",
         "title": {
-          "en": "Need more certificate credits?",
-          "ro": "Ai nevoie de mai multe credite?"
+          "en": "Need more Certificate Credits?",
+          "ro": "Ai nevoie de mai multe Certificate Credits?"
         },
         "placement": "upgrade",
-        "offering_refs": ["cert_credit_topups"],
-        "package_refs": ["cert_credits_10"],
-        "default_package_ref": "cert_credits_10",
+        "offering_refs": ["cert_credit_topups_vc"],
+        "package_refs": ["cert_credits_10_vc"],
+        "default_package_ref": "cert_credits_10_vc",
         "status": "active"
       }
     ],
     "usage_policies": [
       {
-        "tool_name": "submit_xms_certificate_request",
+        "tool_name": "submit_xms_certificate_request_vc",
         "unit": "certificate_request",
         "credit_cost": 2,
+        "virtual_currency_code": "CERT_CREDITS",
         "status": "active",
         "metadata": {
-          "description": "Each submitted certificate request consumes two XMS credits from the active subject allowance when the selected reference mode permits request execution."
+          "description": "Each submitted certificate request consumes two Certificate Credits from the active subject allowance."
         }
       }
     ],
@@ -409,14 +433,14 @@
   },
   "tools": [
     {
-      "tool_name": "submit_xms_certificate_request",
+      "tool_name": "submit_xms_certificate_request_vc",
       "title": {
-        "en": "Submit XMS Certificate Request",
-        "ro": "Trimite cerere certificat XMS"
+        "en": "Submit XMS Certificate Request VC",
+        "ro": "Trimite cerere certificat XMS VC"
       },
       "description": {
-        "en": "Submits a certificate request and enforces XMS access or credit consumption for the active subject.",
-        "ro": "Trimite o cerere de certificat și aplică accesul XMS sau consumul de credite pentru subiectul activ."
+        "en": "Submits a certificate request and enforces XMS virtual-currency access for the active subject.",
+        "ro": "Trimite o cerere de certificat și aplică accesul XMS cu monedă virtuală pentru subiectul activ."
       },
       "input_schema": {
         "type": "object",
@@ -553,6 +577,12 @@
           "subscriptionStatus": {
             "type": ["string", "null"]
           },
+          "virtualCurrencyCode": {
+            "type": ["string", "null"]
+          },
+          "virtualCurrencyName": {
+            "type": ["string", "null"]
+          },
           "requestRef": {
             "type": "string"
           },
@@ -575,7 +605,7 @@
           "renderer": "json-forms",
           "render": {
             "kind": "kv",
-            "title": "XMS Certificate Result",
+            "title": "XMS Certificate VC Result",
             "fields": [
               {
                 "label": "Status",
@@ -604,6 +634,14 @@
               {
                 "label": "Credits Remaining",
                 "path": "credits_remaining"
+              },
+              {
+                "label": "Virtual Currency Code",
+                "path": "virtualCurrencyCode"
+              },
+              {
+                "label": "Virtual Currency Name",
+                "path": "virtualCurrencyName"
               },
               {
                 "label": "Subscription Status",
@@ -648,6 +686,14 @@
           },
           {
             "type": "Control",
+            "scope": "#/properties/virtualCurrencyCode"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/virtualCurrencyName"
+          },
+          {
+            "type": "Control",
             "scope": "#/properties/subscriptionStatus"
           },
           {
@@ -667,14 +713,14 @@
   ],
   "widgets": [
     {
-      "widget_name": "xplace_certs_xms_jsonforms_widget",
+      "widget_name": "xplace_certs_xms_jsonforms_vc_widget",
       "title": {
-        "en": "XMS Certificate Request",
-        "ro": "Cerere certificat XMS"
+        "en": "XMS Certificate Request VC",
+        "ro": "Cerere certificat XMS VC"
       },
       "type": "write",
       "renderer": "json-forms",
-      "bind_tool_name": "submit_xms_certificate_request",
+      "bind_tool_name": "submit_xms_certificate_request_vc",
       "entry": {
         "kind": "platform_template",
         "template": "write_form"
@@ -694,14 +740,14 @@
       "headless": false,
       "config": {
         "subject_profile_guard_ref": "xconect_tenant_billing_business",
-        "tools": ["submit_xms_certificate_request"],
+        "tools": ["submit_xms_certificate_request_vc"],
         "subject_profile_sources": {
           "publisher": {
             "provider_kind": "endpoint",
             "endpoint_base_url": "__XPLACE_BACKEND_BASE_URL__/guard/subject-profiles/publisher-candidates",
             "tool_payload": {
-              "xapp_slug": "xplace-certs-xms-jsonforms",
-              "tool_name": "submit_xms_certificate_request"
+              "xapp_slug": "xplace-certs-xms-jsonforms-vc",
+              "tool_name": "submit_xms_certificate_request_vc"
             }
           }
         }
@@ -713,7 +759,7 @@
       "headless": true,
       "order": 20,
       "config": {
-        "tools": ["submit_xms_certificate_request"],
+        "tools": ["submit_xms_certificate_request_vc"],
         "required_credits_source": "manifest_usage_policy",
         "policy": {
           "kind": "credits",
@@ -786,7 +832,7 @@
         "backoff": "exponential"
       },
       "labels": {
-        "profile": "xplace-certs-xms-jsonforms",
+        "profile": "xplace-certs-xms-jsonforms-vc",
         "env": "dev"
       }
     }

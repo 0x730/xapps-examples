@@ -55,6 +55,22 @@ const XPLACE_EXAMPLE_XAPP_INGEST_API_KEY = String(
 const XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY = String(
   process.env.XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY || "",
 ).trim();
+const XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP = (() => {
+  const raw = String(process.env.XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP || "").trim();
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).map(([key, value]) => [
+        String(key).trim(),
+        String(value ?? "").trim(),
+      ]),
+    );
+  } catch {
+    return {};
+  }
+})();
 const XPLACE_EXAMPLE_ADMIN_KEY = String(
   process.env.XPLACE_EXAMPLE_ADMIN_KEY || "xplace-example-dev-admin-key",
 );
@@ -159,7 +175,9 @@ const XPLACE_EXAMPLE_TOOL_REGISTRY = createXplaceToolRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,
   nowIso,
   gatewayBaseUrl: GATEWAY_BASE_URL,
-  gatewayClientApiKey: XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
+  gatewayClientApiKey: ({ clientId }) =>
+    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP[String(clientId || "").trim()] ||
+    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
 });
 const XPLACE_EXAMPLE_PREVIEW_REGISTRY = createXplacePreviewRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,

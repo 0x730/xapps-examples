@@ -375,6 +375,7 @@ Current deployment split:
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
   - `xplace-certs-xms-jsonforms`
+  - `xplace-certs-xms-jsonforms-vc`
   - `xplace-creator-club-publisher-rendered`
   - `xplace-monetization-lab-jsonforms`
 
@@ -419,7 +420,7 @@ Current implication:
 Current acceptance note:
 
 - `deploy/modes/partners-examples/` is now the active second-server public reference lane
-- the public GitHub-only examples export is released as `xapps-examples@v0.1.7`
+- the public GitHub-only examples export is released as `xapps-examples@v0.1.22`
 
 ## Non-goals
 

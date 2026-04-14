@@ -9,7 +9,7 @@
     "en": "Reference JSON Forms xapp in xplace-example for exercising one-time unlock, subscription, credit-pack, and hybrid monetization families on the current XPO rail.",
     "ro": "Xapp de referință JSON Forms în xplace-example pentru exercitarea familiilor de monetizare one-time unlock, subscription, credit-pack și hybrid pe rail-ul XPO curent."
   },
-  "version": "1.0.104",
+  "version": "1.0.121",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -22,6 +22,13 @@
     "hybrid-plan"
   ],
   "monetization": {
+    "virtual_currencies": [
+      {
+        "code": "LAB_CREDITS",
+        "name": "Lab Credits",
+        "status": "active"
+      }
+    ],
     "products": [
       {
         "slug": "starter_unlock_access",
@@ -58,6 +65,27 @@
         }
       },
       {
+        "slug": "pro_subscription_plus_credits",
+        "title": {
+          "en": "Pro Subscription + Credits",
+          "ro": "Abonament Pro + credite"
+        },
+        "description": {
+          "en": "Recurring Pro access with bundled lab credits on the same subscription.",
+          "ro": "Acces Pro recurent cu credite de laborator incluse în același abonament."
+        },
+        "product_family": "subscription_plan",
+        "virtual_currency": {
+          "code": "LAB_CREDITS"
+        },
+        "status": "active",
+        "metadata": {
+          "tier": "pro_plus",
+          "access_scope": "subject_or_realm",
+          "included_credits": 250
+        }
+      },
+      {
         "slug": "credits_wallet_access",
         "title": {
           "en": "Credits Wallet",
@@ -68,6 +96,10 @@
           "ro": "Top-up de tip credit-pack pentru fluxuri bazate pe portofel."
         },
         "product_family": "credit_pack",
+        "virtual_currency": {
+          "code": "LAB_CREDITS",
+          "name": "Lab Credits"
+        },
         "status": "active",
         "metadata": {
           "credits_unit": "usage_credit"
@@ -84,6 +116,10 @@
           "ro": "Plan hibrid care combină acces recurent cu credite incluse pentru workspace."
         },
         "product_family": "hybrid_plan",
+        "virtual_currency": {
+          "code": "LAB_CREDITS",
+          "name": "Lab Credits"
+        },
         "status": "active",
         "metadata": {
           "tier": "team",
@@ -144,6 +180,18 @@
         }
       },
       {
+        "slug": "pro_plus_monthly",
+        "product_ref": "pro_subscription_plus_credits",
+        "offering_ref": "default_paywall",
+        "package_kind": "subscription",
+        "display_order": 25,
+        "status": "active",
+        "metadata": {
+          "badge": "Credits included",
+          "included_credits": 250
+        }
+      },
+      {
         "slug": "credits_500",
         "product_ref": "credits_wallet_access",
         "offering_ref": "upgrade_path",
@@ -185,6 +233,18 @@
         "status": "active"
       },
       {
+        "slug": "pro_plus_monthly_ron",
+        "package_ref": "pro_plus_monthly",
+        "currency": "RON",
+        "amount": 69,
+        "billing_period": "month",
+        "billing_period_count": 1,
+        "status": "active",
+        "metadata": {
+          "included_credits": 250
+        }
+      },
+      {
         "slug": "credits_500_ron",
         "package_ref": "credits_500",
         "currency": "RON",
@@ -213,7 +273,7 @@
         },
         "placement": "paywall",
         "offering_refs": ["default_paywall"],
-        "package_refs": ["starter_unlock", "pro_monthly"],
+        "package_refs": ["starter_unlock", "pro_monthly", "pro_plus_monthly"],
         "default_package_ref": "pro_monthly",
         "status": "active"
       },
@@ -247,7 +307,19 @@
         "enabled": true,
         "invoice_ref": "gateway_payment_invoice"
       }
-    }
+    },
+    "usage_policies": [
+      {
+        "tool_name": "spend_lab_credits",
+        "unit": "lab_operation",
+        "credit_cost": 25,
+        "virtual_currency_code": "LAB_CREDITS",
+        "status": "active",
+        "metadata": {
+          "description": "Each spend_lab_credits operation consumes twenty-five LAB_CREDITS from the active wallet balance on the selected scope."
+        }
+      }
+    ]
   },
   "tools": [
     {
@@ -475,6 +547,163 @@
           }
         ]
       }
+    },
+    {
+      "tool_name": "spend_lab_credits",
+      "title": {
+        "en": "Spend Lab Credits",
+        "ro": "Consumă credite Lab"
+      },
+      "description": {
+        "en": "Reference tool for spending named virtual currency on the monetization lab lane.",
+        "ro": "Tool de referință pentru consumul unei monede virtuale denumite pe fluxul laboratorului de monetizare."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "scopeKind": {
+            "type": "string",
+            "title": "Spend Scope",
+            "enum": ["subject", "installation", "realm"],
+            "default": "subject"
+          },
+          "realmRef": {
+            "type": "string",
+            "title": "Workspace / Realm Ref",
+            "description": "Required when testing realm-scoped LAB_CREDITS spending."
+          },
+          "actionLabel": {
+            "type": "string",
+            "title": "Action Label",
+            "default": "Reference lab spend operation"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        }
+      },
+      "input_ui_schema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/scopeKind"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/realmRef"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/actionLabel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/notes",
+            "options": {
+              "multi": true
+            }
+          }
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "activationScope": {
+            "type": "string"
+          },
+          "realmRef": {
+            "type": ["string", "null"]
+          },
+          "actionLabel": {
+            "type": "string"
+          },
+          "notes": {
+            "type": ["string", "null"]
+          },
+          "spendAmount": {
+            "type": "number"
+          },
+          "virtualCurrencyCode": {
+            "type": ["string", "null"]
+          },
+          "credits_remaining": {
+            "type": ["string", "null"]
+          },
+          "subscriptionStatus": {
+            "type": ["string", "null"]
+          },
+          "walletAccountId": {
+            "type": ["string", "null"]
+          },
+          "walletLedgerId": {
+            "type": ["string", "null"]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "checkedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "output_ui_schema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/status"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/activationScope"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/actionLabel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/spendAmount"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/virtualCurrencyCode"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/credits_remaining"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/subscriptionStatus"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/walletAccountId"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/walletLedgerId"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/summary",
+            "options": {
+              "multi": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/checkedAt"
+          }
+        ]
+      }
     }
   ],
   "widgets": [
@@ -487,6 +716,25 @@
       "type": "write",
       "renderer": "json-forms",
       "bind_tool_name": "open_monetization_lab",
+      "entry": {
+        "kind": "platform_template",
+        "template": "write_form"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "runtime_default"
+        }
+      }
+    },
+    {
+      "widget_name": "xplace_monetization_lab_spend_form",
+      "title": {
+        "en": "Spend Lab Credits",
+        "ro": "Consumă credite Lab"
+      },
+      "type": "write",
+      "renderer": "json-forms",
+      "bind_tool_name": "spend_lab_credits",
       "entry": {
         "kind": "platform_template",
         "template": "write_form"

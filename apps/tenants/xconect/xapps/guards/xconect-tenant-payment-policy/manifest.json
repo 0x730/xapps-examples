@@ -9,7 +9,7 @@
     "en": "Tenant-owned tenant-managed payment guard xapp for xconect pay-per-request policy orchestration.",
     "ro": "Xapp de gardă de plată deținut de tenant pentru orchestrarea politicii xconect pay-per-request în regim gestionat de tenant."
   },
-  "version": "1.1.470",
+  "version": "1.1.491",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {

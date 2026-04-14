@@ -53,7 +53,7 @@ Current deployment rule:
 
 Current public-release note:
 
-- the public starter/reference export is now released as `xapps-examples@v0.1.11`
+- the public starter/reference export is now released as `xapps-examples@v0.1.22`
 - deploy-time example naming uses:
   - `xconecta-example`
   - `xconecta-example-host`
@@ -77,6 +77,9 @@ Current workspace pieces:
 - isolated JSON Forms XMS certificate reference lane:
   - [xapps/xplace-certs-xms-jsonforms/manifest.json](./xapps/xplace-certs-xms-jsonforms/manifest.json)
   - [xapps/xplace-certs-xms-jsonforms/README.md](./xapps/xplace-certs-xms-jsonforms/README.md)
+- isolated JSON Forms XMS virtual-currency certificate reference lane:
+  - [xapps/xplace-certs-xms-jsonforms-vc/manifest.json](./xapps/xplace-certs-xms-jsonforms-vc/manifest.json)
+  - [xapps/xplace-certs-xms-jsonforms-vc/README.md](./xapps/xplace-certs-xms-jsonforms-vc/README.md)
 - isolated publisher-rendered XMS playground:
   - [xapps/xplace-creator-club-publisher-rendered/manifest.json](./xapps/xplace-creator-club-publisher-rendered/manifest.json)
   - [xapps/xplace-creator-club-publisher-rendered/README.md](./xapps/xplace-creator-club-publisher-rendered/README.md)
@@ -185,6 +188,7 @@ Default republish behavior:
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
   - `xplace-certs-xms-jsonforms`
+  - `xplace-certs-xms-jsonforms-vc`
   - `xplace-creator-club-publisher-rendered`
   - `xplace-monetization-lab-jsonforms`
 - `npm run xplace:prepare-republish` remains the narrow private production publisher path

@@ -67,6 +67,16 @@ function readNormalizedScopeSelection(input) {
   };
 }
 
+function buildMonetizationScopeQuery({ activationScope, subjectId, installationId, realmRef }) {
+  if (activationScope === "installation") {
+    return `installation_id=${encodeURIComponent(String(installationId || "").trim())}`;
+  }
+  if (activationScope === "realm") {
+    return `realm_ref=${encodeURIComponent(String(realmRef || "").trim())}`;
+  }
+  return `subject_id=${encodeURIComponent(String(subjectId || "").trim())}`;
+}
+
 function getPackageLabel(packageSlug) {
   const packageLabelMap = {
     starter_unlock: "Starter Unlock",
@@ -126,6 +136,24 @@ function summarizeCertificateXmsState({ accessProjection, currentSubscription })
   return "No usable XMS access";
 }
 
+function readVirtualCurrencySummary(value) {
+  const currency =
+    value &&
+    typeof value === "object" &&
+    value.virtual_currency &&
+    typeof value.virtual_currency === "object"
+      ? value.virtual_currency
+      : null;
+  const code = String(currency?.code || "")
+    .trim()
+    .toUpperCase();
+  const name = String(currency?.name || "").trim();
+  return {
+    code: code || null,
+    name: name || null,
+  };
+}
+
 function readPositiveNumber(value, fallback) {
   const parsed = Number(String(value ?? "").trim());
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
@@ -150,11 +178,21 @@ function readBooleanLoose(value) {
   return normalized === "true" || normalized === "1" || normalized === "yes";
 }
 
-function readActiveWallet(items, requiredAmount) {
+function readActiveWallet(items, requiredAmount, requiredVirtualCurrencyCode = "") {
   const wallets = Array.isArray(items) ? items : [];
+  const normalizedRequiredCode = String(requiredVirtualCurrencyCode || "")
+    .trim()
+    .toUpperCase();
   for (const wallet of wallets) {
     if (!wallet || typeof wallet !== "object") continue;
     if (String(wallet.status || "").trim() !== "active") continue;
+    const walletVirtualCurrencyCode =
+      wallet.virtual_currency && typeof wallet.virtual_currency === "object"
+        ? String(wallet.virtual_currency.code || "")
+            .trim()
+            .toUpperCase()
+        : "";
+    if (normalizedRequiredCode && walletVirtualCurrencyCode !== normalizedRequiredCode) continue;
     const balance = Number(String(wallet.balance_remaining ?? "").trim());
     if (Number.isFinite(balance) && balance >= requiredAmount) return wallet;
   }
@@ -208,6 +246,14 @@ async function fetchGatewayJson({
     throw new Error(message);
   }
   return json;
+}
+
+function resolveGatewayClientApiKey({ gatewayClientApiKey, clientId, xappId, toolName }) {
+  const resolved =
+    typeof gatewayClientApiKey === "function"
+      ? gatewayClientApiKey({ clientId, xappId, toolName })
+      : gatewayClientApiKey;
+  return String(resolved ?? "").trim();
 }
 
 function buildWeatherFallbackSnapshot({ latitude, longitude, units = "celsius", label, nowIso }) {
@@ -293,6 +339,230 @@ export function createXplaceToolRegistry({
   gatewayBaseUrl = "",
   gatewayClientApiKey = "",
 }) {
+  function buildCertificateRequestTool({ key, xapp, title, sourceRefPrefix }) {
+    return {
+      key,
+      mode: XPLACE_REQUEST_MODES.AUTO,
+      xapp,
+      title,
+      validate(payload) {
+        const missing = requireFields(payload, ["companyCui", "requestPurpose"]);
+        if (missing.length) return { ok: false, message: `${missing.join(" and ")} are required` };
+        return { ok: true };
+      },
+      async handle({
+        payload,
+        requestId,
+        xappId,
+        clientId,
+        installationId,
+        subjectId,
+        requestLog,
+      }) {
+        const toolName = key;
+        const resolvedGatewayClientApiKey = resolveGatewayClientApiKey({
+          gatewayClientApiKey,
+          clientId,
+          xappId,
+          toolName,
+        });
+        const company = normalizeCui(payload.companyCui);
+        if (!String(gatewayBaseUrl || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Gateway base URL is not configured for XMS certificate requests" },
+          };
+        }
+        if (!resolvedGatewayClientApiKey) {
+          return {
+            status: "error",
+            result: {
+              message: "Target client API key is not configured for XMS certificate requests",
+            },
+          };
+        }
+        if (!String(xappId || "").trim() || !String(clientId || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Xapp and client context are required for XMS certificate requests",
+            },
+          };
+        }
+        if (!String(subjectId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Subject context is required for XMS certificate requests" },
+          };
+        }
+
+        const scopeQuery = `subject_id=${encodeURIComponent(String(subjectId || "").trim())}`;
+        let accessProjection = null;
+        let currentSubscription = null;
+        let walletAccount = null;
+        let walletLedger = null;
+        let creditCost = 0;
+        let requiredVirtualCurrencyCode = "";
+        try {
+          const usagePolicyRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/usage-policies/${encodeURIComponent(toolName)}`,
+            requestLog,
+          });
+          const usagePolicy = usagePolicyRes?.usage_policy ?? null;
+          creditCost = readXmsUsagePolicyCreditCost(usagePolicy, 1);
+          requiredVirtualCurrencyCode = String(usagePolicy?.virtual_currency_code || "")
+            .trim()
+            .toUpperCase();
+
+          const accessRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
+            requestLog,
+          });
+          accessProjection = accessRes?.access_projection ?? null;
+
+          const subscriptionRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/current-subscription?${scopeQuery}`,
+            requestLog,
+          });
+          currentSubscription = subscriptionRes?.current_subscription ?? null;
+
+          const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
+          const entitlementState = String(accessProjection?.entitlement_state || "")
+            .trim()
+            .toLowerCase();
+          const creditsRemaining = readCreditsRemainingNumber(accessProjection);
+
+          if (
+            !hasCurrentAccess &&
+            entitlementState !== "active" &&
+            entitlementState !== "grace_period" &&
+            creditsRemaining <= 0
+          ) {
+            return {
+              status: "error",
+              result: {
+                message:
+                  "An active XMS entitlement or certificate credits are required for this request",
+                entitlement_state: entitlementState || "inactive",
+                has_current_access: hasCurrentAccess,
+                credits_remaining: accessProjection?.credits_remaining ?? null,
+                subscriptionStatus: currentSubscription?.status ?? null,
+              },
+            };
+          }
+
+          if (creditCost > 0) {
+            const walletAccountsRes = await fetchGatewayJson({
+              gatewayBaseUrl,
+              gatewayClientApiKey: resolvedGatewayClientApiKey,
+              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts?${scopeQuery}`,
+              requestLog,
+            });
+            const wallet = readActiveWallet(
+              walletAccountsRes?.items,
+              creditCost,
+              requiredVirtualCurrencyCode,
+            );
+            if (!wallet) {
+              return {
+                status: "error",
+                result: {
+                  message: requiredVirtualCurrencyCode
+                    ? `Insufficient ${requiredVirtualCurrencyCode} balance for this request`
+                    : "Insufficient certificate credits for this request",
+                  entitlement_state: accessProjection?.entitlement_state ?? null,
+                  has_current_access: hasCurrentAccess,
+                  subscriptionStatus: currentSubscription?.status ?? null,
+                  requiredCredits: creditCost,
+                  requiredVirtualCurrencyCode: requiredVirtualCurrencyCode || null,
+                  credits_remaining: accessProjection?.credits_remaining ?? null,
+                },
+              };
+            }
+            const consumed = await fetchGatewayJson({
+              gatewayBaseUrl,
+              gatewayClientApiKey: resolvedGatewayClientApiKey,
+              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts/${encodeURIComponent(String(wallet.id))}/consume`,
+              method: "POST",
+              body: {
+                amount: String(creditCost),
+                source_ref: requestId ? `${sourceRefPrefix}:${requestId}` : sourceRefPrefix,
+                metadata: {
+                  tool_name: toolName,
+                  company_cui: company.raw,
+                  credit_cost: String(creditCost),
+                  virtual_currency_code: requiredVirtualCurrencyCode || null,
+                  installation_id: installationId || null,
+                },
+              },
+              requestLog,
+            });
+            walletAccount = consumed?.wallet_account ?? null;
+            walletLedger = consumed?.wallet_ledger ?? null;
+            accessProjection =
+              consumed?.access_projection && typeof consumed.access_projection === "object"
+                ? {
+                    ...(accessProjection && typeof accessProjection === "object"
+                      ? accessProjection
+                      : {}),
+                    ...consumed.access_projection,
+                  }
+                : accessProjection;
+          }
+        } catch (err) {
+          return {
+            status: "error",
+            result: {
+              message: err?.message || String(err),
+            },
+          };
+        }
+
+        const entitlementState = String(accessProjection?.entitlement_state ?? "").trim() || null;
+        const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
+        const accessSummary = summarizeCertificateXmsState({
+          accessProjection,
+          currentSubscription,
+        });
+        const walletCurrency = readVirtualCurrencySummary(walletAccount);
+        const ledgerCurrency = readVirtualCurrencySummary(walletLedger);
+        const accessCurrency = readVirtualCurrencySummary(accessProjection);
+
+        return {
+          status: "success",
+          result: {
+            status: "accepted",
+            entitlement_state: entitlementState,
+            has_current_access: hasCurrentAccess,
+            access_summary: accessSummary,
+            companyCui: company.raw,
+            companyCuiNormalized: company.digits,
+            requestPurpose: String(payload.requestPurpose || "").trim(),
+            requestDetails: String(payload.requestDetails || "").trim() || null,
+            credit_cost: creditCost,
+            credits_remaining: accessProjection?.credits_remaining ?? null,
+            subscriptionStatus: currentSubscription?.status ?? null,
+            virtualCurrencyCode:
+              walletCurrency.code || ledgerCurrency.code || accessCurrency.code || null,
+            virtualCurrencyName:
+              walletCurrency.name || ledgerCurrency.name || accessCurrency.name || null,
+            walletAccountId: walletAccount?.id ?? null,
+            walletLedgerId: walletLedger?.id ?? null,
+            requestRef: `XMS-CERT-${Date.now()}`,
+            summary: `Certificate request accepted for ${company.raw}. ${accessSummary}.`,
+            checkedAt: nowIso(),
+          },
+        };
+      },
+    };
+  }
+
   return {
     submit_certificate_request: {
       key: "submit_certificate_request",
@@ -437,204 +707,18 @@ export function createXplaceToolRegistry({
         };
       },
     },
-    submit_xms_certificate_request: {
+    submit_xms_certificate_request: buildCertificateRequestTool({
       key: "submit_xms_certificate_request",
-      mode: XPLACE_REQUEST_MODES.AUTO,
       xapp: "xplace-certs-xms-jsonforms",
       title: "Submit XMS Certificate Request (automatic reference response)",
-      validate(payload) {
-        const missing = requireFields(payload, ["companyCui", "requestPurpose"]);
-        if (missing.length) return { ok: false, message: `${missing.join(" and ")} are required` };
-        return { ok: true };
-      },
-      async handle({
-        payload,
-        requestId,
-        xappId,
-        clientId,
-        installationId,
-        subjectId,
-        requestLog,
-      }) {
-        const toolName = "submit_xms_certificate_request";
-        const company = normalizeCui(payload.companyCui);
-        if (!String(gatewayBaseUrl || "").trim()) {
-          return {
-            status: "error",
-            result: { message: "Gateway base URL is not configured for XMS certificate requests" },
-          };
-        }
-        if (!String(gatewayClientApiKey || "").trim()) {
-          return {
-            status: "error",
-            result: {
-              message: "Target client API key is not configured for XMS certificate requests",
-            },
-          };
-        }
-        if (!String(xappId || "").trim() || !String(clientId || "").trim()) {
-          return {
-            status: "error",
-            result: {
-              message: "Xapp and client context are required for XMS certificate requests",
-            },
-          };
-        }
-        if (!String(subjectId || "").trim()) {
-          return {
-            status: "error",
-            result: { message: "Subject context is required for XMS certificate requests" },
-          };
-        }
-
-        const scopeQuery = `subject_id=${encodeURIComponent(String(subjectId || "").trim())}`;
-        let accessProjection = null;
-        let currentSubscription = null;
-        let walletAccount = null;
-        let walletLedger = null;
-        let creditCost = 0;
-        try {
-          const usagePolicyRes = await fetchGatewayJson({
-            gatewayBaseUrl,
-            gatewayClientApiKey,
-            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/usage-policies/${encodeURIComponent(toolName)}`,
-            requestLog,
-          });
-          const usagePolicy = usagePolicyRes?.usage_policy ?? null;
-          creditCost = readXmsUsagePolicyCreditCost(usagePolicy, 1);
-
-          const accessRes = await fetchGatewayJson({
-            gatewayBaseUrl,
-            gatewayClientApiKey,
-            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
-            requestLog,
-          });
-          accessProjection = accessRes?.access_projection ?? null;
-
-          const subscriptionRes = await fetchGatewayJson({
-            gatewayBaseUrl,
-            gatewayClientApiKey,
-            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/current-subscription?${scopeQuery}`,
-            requestLog,
-          });
-          currentSubscription = subscriptionRes?.current_subscription ?? null;
-
-          const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
-          const entitlementState = String(accessProjection?.entitlement_state || "")
-            .trim()
-            .toLowerCase();
-          const creditsRemaining = readCreditsRemainingNumber(accessProjection);
-
-          if (
-            !hasCurrentAccess &&
-            entitlementState !== "active" &&
-            entitlementState !== "grace_period" &&
-            creditsRemaining <= 0
-          ) {
-            return {
-              status: "error",
-              result: {
-                message:
-                  "An active XMS entitlement or certificate credits are required for this request",
-                entitlement_state: entitlementState || "inactive",
-                has_current_access: hasCurrentAccess,
-                credits_remaining: accessProjection?.credits_remaining ?? null,
-                subscriptionStatus: currentSubscription?.status ?? null,
-              },
-            };
-          }
-
-          if (creditCost > 0) {
-            const walletAccountsRes = await fetchGatewayJson({
-              gatewayBaseUrl,
-              gatewayClientApiKey,
-              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts?${scopeQuery}`,
-              requestLog,
-            });
-            const wallet = readActiveWallet(walletAccountsRes?.items, creditCost);
-            if (!wallet) {
-              return {
-                status: "error",
-                result: {
-                  message: "Insufficient certificate credits for this request",
-                  entitlement_state: accessProjection?.entitlement_state ?? null,
-                  has_current_access: hasCurrentAccess,
-                  subscriptionStatus: currentSubscription?.status ?? null,
-                  requiredCredits: creditCost,
-                  credits_remaining: accessProjection?.credits_remaining ?? null,
-                },
-              };
-            }
-            const consumed = await fetchGatewayJson({
-              gatewayBaseUrl,
-              gatewayClientApiKey,
-              path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts/${encodeURIComponent(String(wallet.id))}/consume`,
-              method: "POST",
-              body: {
-                amount: String(creditCost),
-                source_ref: requestId
-                  ? `xplace-certs-xms-jsonforms:${requestId}`
-                  : "xplace-certs-xms-jsonforms",
-                metadata: {
-                  tool_name: toolName,
-                  company_cui: company.raw,
-                  credit_cost: String(creditCost),
-                  installation_id: installationId || null,
-                },
-              },
-              requestLog,
-            });
-            walletAccount = consumed?.wallet_account ?? null;
-            walletLedger = consumed?.wallet_ledger ?? null;
-            accessProjection =
-              consumed?.access_projection && typeof consumed.access_projection === "object"
-                ? {
-                    ...(accessProjection && typeof accessProjection === "object"
-                      ? accessProjection
-                      : {}),
-                    ...consumed.access_projection,
-                  }
-                : accessProjection;
-          }
-        } catch (err) {
-          return {
-            status: "error",
-            result: {
-              message: err?.message || String(err),
-            },
-          };
-        }
-
-        const entitlementState = String(accessProjection?.entitlement_state ?? "").trim() || null;
-        const hasCurrentAccess = readBooleanLoose(accessProjection?.has_current_access);
-        const accessSummary = summarizeCertificateXmsState({
-          accessProjection,
-          currentSubscription,
-        });
-
-        return {
-          status: "success",
-          result: {
-            status: "accepted",
-            entitlement_state: entitlementState,
-            has_current_access: hasCurrentAccess,
-            access_summary: accessSummary,
-            companyCui: company.raw,
-            companyCuiNormalized: company.digits,
-            requestPurpose: String(payload.requestPurpose || "").trim(),
-            requestDetails: String(payload.requestDetails || "").trim() || null,
-            credit_cost: creditCost,
-            credits_remaining: accessProjection?.credits_remaining ?? null,
-            subscriptionStatus: currentSubscription?.status ?? null,
-            walletAccountId: walletAccount?.id ?? null,
-            walletLedgerId: walletLedger?.id ?? null,
-            requestRef: `XMS-CERT-${Date.now()}`,
-            summary: `Certificate request accepted for ${company.raw}. ${accessSummary}.`,
-            checkedAt: nowIso(),
-          },
-        };
-      },
-    },
+      sourceRefPrefix: "xplace-certs-xms-jsonforms",
+    }),
+    submit_xms_certificate_request_vc: buildCertificateRequestTool({
+      key: "submit_xms_certificate_request_vc",
+      xapp: "xplace-certs-xms-jsonforms-vc",
+      title: "Submit XMS Certificate Request VC (automatic reference response)",
+      sourceRefPrefix: "xplace-certs-xms-jsonforms-vc",
+    }),
     open_monetization_lab: {
       key: "open_monetization_lab",
       mode: XPLACE_REQUEST_MODES.AUTO,
@@ -666,6 +750,12 @@ export function createXplaceToolRegistry({
         subjectId,
         requestLog,
       }) {
+        const resolvedGatewayClientApiKey = resolveGatewayClientApiKey({
+          gatewayClientApiKey,
+          clientId,
+          xappId,
+          toolName: "open_monetization_lab",
+        });
         const { activationScope, requestedPackage, realmRef, contactEmail, notes } =
           readNormalizedScopeSelection(payload);
         const selectedPackageLabel = getPackageLabel(requestedPackage);
@@ -676,7 +766,7 @@ export function createXplaceToolRegistry({
             result: { message: "Gateway base URL is not configured for the monetization lab" },
           };
         }
-        if (!String(gatewayClientApiKey || "").trim()) {
+        if (!resolvedGatewayClientApiKey) {
           return {
             status: "error",
             result: {
@@ -725,7 +815,7 @@ export function createXplaceToolRegistry({
         try {
           const catalog = await fetchGatewayJson({
             gatewayBaseUrl,
-            gatewayClientApiKey,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
             path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization`,
             requestLog,
           });
@@ -757,7 +847,7 @@ export function createXplaceToolRegistry({
 
           preparedIntent = await fetchGatewayJson({
             gatewayBaseUrl,
-            gatewayClientApiKey,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
             path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/prepare`,
             method: "POST",
             body: {
@@ -784,7 +874,7 @@ export function createXplaceToolRegistry({
 
           transaction = await fetchGatewayJson({
             gatewayBaseUrl,
-            gatewayClientApiKey,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
             path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/${encodeURIComponent(intentId)}/transactions`,
             method: "POST",
             body: {
@@ -800,7 +890,7 @@ export function createXplaceToolRegistry({
 
           issuedAccess = await fetchGatewayJson({
             gatewayBaseUrl,
-            gatewayClientApiKey,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
             path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/purchase-intents/${encodeURIComponent(intentId)}/issue-access`,
             method: "POST",
             body: {},
@@ -815,7 +905,7 @@ export function createXplaceToolRegistry({
                 : `realm_ref=${encodeURIComponent(String(realmRef || "").trim())}`;
           accessProjection = await fetchGatewayJson({
             gatewayBaseUrl,
-            gatewayClientApiKey,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
             path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
             requestLog,
           });
@@ -828,7 +918,7 @@ export function createXplaceToolRegistry({
             {
               headers: {
                 accept: "application/json",
-                "x-api-key": gatewayClientApiKey,
+                "x-api-key": resolvedGatewayClientApiKey,
               },
             },
           );
@@ -878,6 +968,229 @@ export function createXplaceToolRegistry({
                 }
               : null,
             summary: `Monetization lab activated ${selectedPackageLabel} on ${activationScope} scope for the current request context.`,
+            checkedAt: nowIso(),
+          },
+        };
+      },
+    },
+    spend_lab_credits: {
+      key: "spend_lab_credits",
+      mode: XPLACE_REQUEST_MODES.AUTO,
+      xapp: "xplace-monetization-lab-jsonforms",
+      title: "Spend Lab Credits (automatic reference response)",
+      validate(payload) {
+        const scopeKind = String(payload.scopeKind || "")
+          .trim()
+          .toLowerCase();
+        if (
+          scopeKind &&
+          scopeKind !== "subject" &&
+          scopeKind !== "installation" &&
+          scopeKind !== "realm"
+        ) {
+          return {
+            ok: false,
+            message: "scopeKind must be subject, installation, or realm",
+          };
+        }
+        return { ok: true };
+      },
+      async handle({
+        payload,
+        requestId,
+        xappId,
+        clientId,
+        installationId,
+        subjectId,
+        requestLog,
+      }) {
+        const toolName = "spend_lab_credits";
+        const resolvedGatewayClientApiKey = resolveGatewayClientApiKey({
+          gatewayClientApiKey,
+          clientId,
+          xappId,
+          toolName,
+        });
+        const { activationScope, realmRef, notes } = readNormalizedScopeSelection(payload);
+        const actionLabel =
+          String(payload.actionLabel || "").trim() || "Reference lab spend operation";
+        if (!String(gatewayBaseUrl || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Gateway base URL is not configured for lab credit spending" },
+          };
+        }
+        if (!resolvedGatewayClientApiKey) {
+          return {
+            status: "error",
+            result: {
+              message: "Target client API key is not configured for lab credit spending",
+            },
+          };
+        }
+        if (!String(xappId || "").trim() || !String(clientId || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Xapp and client context are required for lab credit spending",
+            },
+          };
+        }
+        if (activationScope === "subject" && !String(subjectId || "").trim()) {
+          return {
+            status: "error",
+            result: { message: "Subject context is required for subject-scoped spending" },
+          };
+        }
+        if (activationScope === "installation" && !String(installationId || "").trim()) {
+          return {
+            status: "error",
+            result: {
+              message: "Installation context is required for installation-scoped spending",
+            },
+          };
+        }
+        if (activationScope === "realm" && !realmRef) {
+          return {
+            status: "error",
+            result: { message: "realmRef is required for realm-scoped spending" },
+          };
+        }
+
+        const scopeQuery = buildMonetizationScopeQuery({
+          activationScope,
+          subjectId,
+          installationId,
+          realmRef,
+        });
+        let accessProjection = null;
+        let currentSubscription = null;
+        let walletAccount = null;
+        let walletLedger = null;
+        let spendAmount = 0;
+        let requiredVirtualCurrencyCode = "";
+        try {
+          const usagePolicyRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/usage-policies/${encodeURIComponent(toolName)}`,
+            requestLog,
+          });
+          const usagePolicy = usagePolicyRes?.usage_policy ?? null;
+          spendAmount = readXmsUsagePolicyCreditCost(usagePolicy, 1);
+          requiredVirtualCurrencyCode = String(usagePolicy?.virtual_currency_code || "")
+            .trim()
+            .toUpperCase();
+
+          accessProjection =
+            (
+              await fetchGatewayJson({
+                gatewayBaseUrl,
+                gatewayClientApiKey: resolvedGatewayClientApiKey,
+                path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/access?${scopeQuery}`,
+                requestLog,
+              })
+            )?.access_projection ?? null;
+
+          currentSubscription =
+            (
+              await fetchGatewayJson({
+                gatewayBaseUrl,
+                gatewayClientApiKey: resolvedGatewayClientApiKey,
+                path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/current-subscription?${scopeQuery}`,
+                requestLog,
+              })
+            )?.current_subscription ?? null;
+
+          const walletAccountsRes = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts?${scopeQuery}`,
+            requestLog,
+          });
+          const wallet = readActiveWallet(
+            walletAccountsRes?.items,
+            spendAmount,
+            requiredVirtualCurrencyCode,
+          );
+          if (!wallet) {
+            return {
+              status: "error",
+              result: {
+                message: requiredVirtualCurrencyCode
+                  ? `Insufficient ${requiredVirtualCurrencyCode} balance for this operation`
+                  : "Insufficient balance for this operation",
+                activationScope,
+                realmRef,
+                spendAmount,
+                requiredVirtualCurrencyCode: requiredVirtualCurrencyCode || null,
+                credits_remaining: accessProjection?.credits_remaining ?? null,
+                subscriptionStatus: currentSubscription?.status ?? null,
+              },
+            };
+          }
+
+          const consumed = await fetchGatewayJson({
+            gatewayBaseUrl,
+            gatewayClientApiKey: resolvedGatewayClientApiKey,
+            path: `/v1/xapps/${encodeURIComponent(xappId)}/monetization/wallet-accounts/${encodeURIComponent(String(wallet.id))}/consume`,
+            method: "POST",
+            body: {
+              amount: String(spendAmount),
+              source_ref: requestId
+                ? `xplace-monetization-lab:${requestId}`
+                : "xplace-monetization-lab",
+              metadata: {
+                tool_name: toolName,
+                action_label: actionLabel,
+                spend_amount: String(spendAmount),
+                virtual_currency_code: requiredVirtualCurrencyCode || null,
+                installation_id: installationId || null,
+                realm_ref: realmRef,
+                notes,
+              },
+            },
+            requestLog,
+          });
+          walletAccount = consumed?.wallet_account ?? null;
+          walletLedger = consumed?.wallet_ledger ?? null;
+          accessProjection =
+            consumed?.access_projection && typeof consumed.access_projection === "object"
+              ? {
+                  ...(accessProjection && typeof accessProjection === "object"
+                    ? accessProjection
+                    : {}),
+                  ...consumed.access_projection,
+                }
+              : accessProjection;
+        } catch (err) {
+          return {
+            status: "error",
+            result: {
+              message: err?.message || String(err),
+              activationScope,
+              realmRef,
+            },
+          };
+        }
+
+        return {
+          status: "success",
+          result: {
+            status: "success",
+            activationScope,
+            realmRef,
+            actionLabel,
+            notes,
+            spendAmount,
+            virtualCurrencyCode: requiredVirtualCurrencyCode || null,
+            credits_remaining: accessProjection?.credits_remaining ?? null,
+            subscriptionStatus: currentSubscription?.status ?? null,
+            walletAccountId: walletAccount?.id ?? null,
+            walletLedgerId: walletLedger?.id ?? null,
+            summary: requiredVirtualCurrencyCode
+              ? `Spent ${spendAmount} ${requiredVirtualCurrencyCode} for ${actionLabel}.`
+              : `Spent ${spendAmount} credits for ${actionLabel}.`,
             checkedAt: nowIso(),
           },
         };

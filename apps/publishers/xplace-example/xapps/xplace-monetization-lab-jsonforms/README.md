@@ -25,6 +25,12 @@ What it proves now:
 - xapp-scoped catalog/access/current-subscription APIs against a real example slug
 - reference activation of the selected package and scope through the landed monetization core
   using the real request installation/xapp context
+- dedicated virtual-currency spending on the same lane through `spend_lab_credits`, using the
+  named `LAB_CREDITS` currency on a new test-only path instead of mutating older credit lanes
+- manifest-level `monetization.virtual_currencies` definitions, so the proving app reflects the
+  same canonical authoring model now used by publisher studio
+- recurring subscription + virtual-currency grant on the same product family through
+  `pro_plus_monthly`, not only credit-pack and hybrid lanes
 - portal/shared marketplace current monetization reads on a real example xapp
 - operator catalog/subscription reads against the same example lane
 
@@ -37,6 +43,9 @@ Current runtime behavior:
 - it issues access and returns:
   - current access projection
   - current subscription when relevant
+- the shared `spend_lab_credits` tool resolves the named `LAB_CREDITS` usage policy, locates the
+  matching wallet account for the selected scope, and consumes it through the canonical wallet
+  ledger path
 
 Current proving posture:
 

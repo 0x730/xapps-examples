@@ -9,7 +9,7 @@
     "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
     "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
   },
-  "version": "1.0.107",
+  "version": "1.0.123",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "linking": {
@@ -263,6 +263,13 @@
   ],
   "tools": [],
   "monetization": {
+    "virtual_currencies": [
+      {
+        "code": "CREATOR_CREDITS",
+        "name": "Creator Credits",
+        "status": "active"
+      }
+    ],
     "products": [
       {
         "slug": "creator_starter_unlock_access",
@@ -309,6 +316,9 @@
           "ro": "Top-up bazat pe portofel pentru exporturi și pachete de acțiuni AI."
         },
         "product_family": "credit_pack",
+        "virtual_currency": {
+          "code": "CREATOR_CREDITS"
+        },
         "status": "active",
         "metadata": {
           "credits_unit": "creator_ops"
@@ -325,6 +335,9 @@
           "ro": "Plan hibrid de workspace care combină acces recurent cu credite incluse."
         },
         "product_family": "hybrid_plan",
+        "virtual_currency": {
+          "code": "CREATOR_CREDITS"
+        },
         "status": "active",
         "metadata": {
           "tier": "team",
