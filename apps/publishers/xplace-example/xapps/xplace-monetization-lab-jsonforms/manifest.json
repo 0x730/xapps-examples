@@ -9,7 +9,7 @@
     "en": "Reference JSON Forms xapp in xplace-example for exercising one-time unlock, subscription, credit-pack, and hybrid monetization families on the current XPO rail.",
     "ro": "Xapp de referință JSON Forms în xplace-example pentru exercitarea familiilor de monetizare one-time unlock, subscription, credit-pack și hybrid pe rail-ul XPO curent."
   },
-  "version": "1.0.121",
+  "version": "1.0.129",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

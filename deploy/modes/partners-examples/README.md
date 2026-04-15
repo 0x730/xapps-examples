@@ -5,8 +5,8 @@ This is the broader public example/reference lane.
 Use it for:
 
 - `xplace-example`
-- `xconect`
-- `xconect-host`
+- `xconecta`
+- `xconecta-host`
 - `xconectb`
 - `xconectb-host`
 - `xconectc`
@@ -36,7 +36,7 @@ cp deploy/modes/partners-examples/env/xop-partners-examples.env.example \
 Practical rule:
 
 - this folder is the public reference lane only
-- keep the `xconect` example runtime wired to the gateway tenant/profile `xconecta`
+- keep the `xconecta` example runtime and host separate from the production `xconect` lane
 - keep example public domains here rather than reusing production hostnames
 
 ## What To Edit

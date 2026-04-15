@@ -1,0 +1,17 @@
+{
+  "schema_version": "xapps.dev.flow.v1",
+  "flow": "xplace-certs-ai-artifacts",
+  "title": "xplace certs AI artifact workflow",
+  "description": "Validate the xplace-certs manifest and generate/read-only-check AI artifacts for internal repo workflows.",
+  "commands": [
+    "npm run xapps -- validate --from apps/publishers/xplace-example/xapps/xplace-certs/manifest.json",
+    "npm run xapps -- ai plan --mode internal --from apps/publishers/xplace-example/xapps/xplace-certs/manifest.json --preset internal-v1 --flow xplace-certs --json --out {{ARTIFACTS_DIR}}/xapps-xplace-certs.plan.json",
+    "npm run xapps -- ai check --mode internal --plan {{ARTIFACTS_DIR}}/xapps-xplace-certs.plan.json --policy apps/publishers/xplace-example/xapps/xplace-certs/ai/policy.readonly.internal-v1.json --json --out {{ARTIFACTS_DIR}}/xapps-xplace-certs.check.json"
+  ],
+  "refs": [
+    "apps/publishers/xplace-example/xapps/xplace-certs/manifest.json",
+    "apps/publishers/xplace-example/xapps/xplace-certs/ai/policy.readonly.internal-v1.json",
+    "apps/publishers/xplace-example/xapps/xplace-certs/README.md",
+    "dev/engineering/audits/OPEN_067_PHASE1_INTERNAL_REPO_PLAN.md"
+  ]
+}

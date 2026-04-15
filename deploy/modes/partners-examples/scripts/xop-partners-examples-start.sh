@@ -54,9 +54,9 @@ fi
 if [[ "${NO_BUILD:-0}" == "1" ]]; then
   if ! compose_up; then
     echo "[xop-partners-examples-start] compose up failed; retrying after service cleanup..."
-    cleanup_services=(xconect xplace-example)
-    if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
-      cleanup_services+=(xconect-host)
+    cleanup_services=(xconecta xplace-example)
+    if [[ "${ENABLE_XCONECTA_HOST:-0}" == "1" ]]; then
+      cleanup_services+=(xconecta-host)
     fi
     if [[ "${ENABLE_XCONECTB:-0}" == "1" ]]; then
       cleanup_services+=(xconectb)
@@ -74,13 +74,13 @@ if [[ "${NO_BUILD:-0}" == "1" ]]; then
     compose_up
   fi
 else
-  build_services=(xconect xconectb xconectc xconectc-host)
+  build_services=(xconecta xconectb xconectc xconectc-host)
   docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" build "${build_services[@]}"
   if ! compose_up; then
     echo "[xop-partners-examples-start] compose up failed after build; retrying after service cleanup..."
-    cleanup_services=(xconect xplace-example)
-    if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
-      cleanup_services+=(xconect-host)
+    cleanup_services=(xconecta xplace-example)
+    if [[ "${ENABLE_XCONECTA_HOST:-0}" == "1" ]]; then
+      cleanup_services+=(xconecta-host)
     fi
     if [[ "${ENABLE_XCONECTB:-0}" == "1" ]]; then
       cleanup_services+=(xconectb)

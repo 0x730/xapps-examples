@@ -3,17 +3,17 @@
   "private": true,
   "description": "Public starter/reference app family for xapps integrators.",
   "workspaces": [
-    "apps/tenants/xconect/backend",
+    "apps/tenants/xconecta/backend",
     "apps/tenants/host-proof-common",
     "apps/tenants/xconectc",
     "apps/tenants/xconectc-host"
   ],
   "scripts": {
-    "dev:xconect-host": "tsx watch apps/tenants/xconect-host/server.ts",
+    "dev:xconecta-host": "tsx watch apps/tenants/xconecta-host/server.ts",
     "dev:xconectb-host": "tsx watch apps/tenants/xconectb-host/server.ts"
   },
   "dependencies": {
-    "@xapps-platform/browser-host": "^0.1.13",
+    "@xapps-platform/browser-host": "^0.1.14",
     "@xapps-platform/embed-sdk": "^0.1.12"
   },
   "devDependencies": {

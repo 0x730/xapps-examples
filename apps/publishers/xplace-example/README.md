@@ -41,6 +41,7 @@ Near-term intent:
 Current deployment rule:
 
 - `xplace-example` is the broader public/example publisher fleet
+- it now owns the older pay-by-request and weather reference families that used to live under `xplace`
 - it should carry the current example fleet resolved by `scripts/lib/xplace-publisher-xapps.mjs`
 - it is the intended publisher side for:
   - `xconecta` when you are exercising the public example/reference lane
@@ -50,6 +51,7 @@ Current deployment rule:
   - `xconectb-host`
   - `xconectc-host`
 - private production `xconect` + `xconect-host` remain paired with private `xplace`
+  and the production XMS cert lane `xplace-certs-xms-jsonforms`
 
 Current public-release note:
 
@@ -77,6 +79,15 @@ Current workspace pieces:
 - isolated JSON Forms XMS certificate reference lane:
   - [xapps/xplace-certs-xms-jsonforms/manifest.json](./xapps/xplace-certs-xms-jsonforms/manifest.json)
   - [xapps/xplace-certs-xms-jsonforms/README.md](./xapps/xplace-certs-xms-jsonforms/README.md)
+- pay-by-request and weather reference families now owned by `xplace-example`:
+  - [xapps/xplace-certs/manifest.json](./xapps/xplace-certs/manifest.json)
+  - [xapps/xplace-certs/README.md](./xapps/xplace-certs/README.md)
+  - [xapps/xplace-certs-gateway-stripe/manifest.json](./xapps/xplace-certs-gateway-stripe/manifest.json)
+  - [xapps/xplace-certs-gateway-stripe/README.md](./xapps/xplace-certs-gateway-stripe/README.md)
+  - [xapps/xplace-certs-tenant-delegated-stripe/manifest.json](./xapps/xplace-certs-tenant-delegated-stripe/manifest.json)
+  - [xapps/xplace-certs-tenant-delegated-stripe/README.md](./xapps/xplace-certs-tenant-delegated-stripe/README.md)
+  - [xapps/xplace-weather-now-gateway-stripe/manifest.json](./xapps/xplace-weather-now-gateway-stripe/manifest.json)
+  - [xapps/xplace-weather-now-gateway-stripe/README.md](./xapps/xplace-weather-now-gateway-stripe/README.md)
 - isolated JSON Forms XMS virtual-currency certificate reference lane:
   - [xapps/xplace-certs-xms-jsonforms-vc/manifest.json](./xapps/xplace-certs-xms-jsonforms-vc/manifest.json)
   - [xapps/xplace-certs-xms-jsonforms-vc/README.md](./xapps/xplace-certs-xms-jsonforms-vc/README.md)
@@ -112,12 +123,12 @@ Current operator commands:
 ```bash
 npm run seed:xplace-example-publisher
 npm run seed:xplace-example-publisher-admin
-npm run xplace-example:prepare-republish -- --json --target-client-slug xconect
+npm run xplace-example:prepare-republish -- --json --target-client-slug xconecta
 npm run -s xapps -- publish --yes \
   --from apps/publishers/xplace-example/xapps/xplace-bridge-session-publisher-rendered/manifest.json \
   --publisher-gateway-url http://localhost:3000 \
   --api-key xplace-example-dev-api-key \
-  --replace __TENANT_CLIENT_ID__=<xconect-client-id> \
+  --replace __TENANT_CLIENT_ID__=<xconecta-client-id> \
   --replace __XPLACE_BACKEND_BASE_URL__=http://localhost:3016
 ```
 
@@ -130,7 +141,7 @@ Current `TASK-044` lane:
 Current bridge-session lane:
 
 - kept in `xplace-example` as the isolated post-bootstrap publisher-session reference
-- current intended Node reference tenant lane: `xconect`
+- current intended Node reference tenant lane: `xconecta`
 - proves:
   - verified iframe bootstrap
   - optional signed bootstrap ticket transport for publisher-rendered `iframe_url`
@@ -143,7 +154,7 @@ Current bridge-session lane:
 Current BonBun exploratory lane:
 
 - kept in `xplace-example` as the first partner-review iframe lane
-- current intended Node reference tenant lane: `xconect`
+- current intended Node reference tenant lane: `xconecta`
 - proves only:
   - real public `iframe_url` integration on a partner SPA
   - passive publisher-rendered runtime mode for non-bridge partner review
@@ -174,7 +185,9 @@ Local dev note:
 
 - `./dev-start.sh` now starts `xplace-example` automatically when `xconectb` or `xconectc` are enabled
 - use `START_XPLACE_EXAMPLE=1 ./dev-start.sh` when you want the example publisher shell up explicitly
-- on a clean DB, standalone `xplace-example` local bootstrap also needs a tenant context, for example:
+- local `dev-start` now seeds `xconecta` as a separate tenant on its own example runtime lane
+- the canonical local `xplace-example` tenant target is now `xconecta`
+- on a clean DB, standalone `xplace-example` local bootstrap can still be redirected explicitly, for example:
   - `XPLACE_EXAMPLE_TENANT_SLUG=xconectb START_XPLACE_EXAMPLE=1 ./dev-start.sh`
 - local grouped example publish uses:
   - `npm run publish:xconect-xplace-example`
@@ -182,8 +195,10 @@ Local dev note:
 Default republish behavior:
 
 - `npm run xplace-example:prepare-republish` defaults to the current broader example fleet:
+  - `xplace-certs`
   - `xplace-certs-gateway-stripe`
   - `xplace-certs-tenant-delegated-stripe`
+  - `xplace-weather-now-gateway-stripe`
   - `xplace-bonbun-public-iframe-publisher-rendered`
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
@@ -191,7 +206,7 @@ Default republish behavior:
   - `xplace-certs-xms-jsonforms-vc`
   - `xplace-creator-club-publisher-rendered`
   - `xplace-monetization-lab-jsonforms`
-- `npm run xplace:prepare-republish` remains the narrow private production publisher path
+- `npm run xplace:prepare-republish` now publishes only the production XMS cert lane
 - grouped example-lane publish:
 
 ```bash

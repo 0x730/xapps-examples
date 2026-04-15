@@ -12,7 +12,7 @@ This is a shared/common concern across both tenant adoption modes:
 ## Start Here
 
 1. Guard manifests:
-   [../../xapps/guards](../../xconect/xapps/guards)
+   [../../xapps/guards](../../xconecta/xapps/guards)
 2. Guard execution route:
    [guard.js](../../../../packages/backend-kit/src/backend/routes/gateway/guard.ts)
 3. Publish and secret handling:
@@ -22,16 +22,21 @@ This is a shared/common concern across both tenant adoption modes:
 
 ### Payment Policy
 
+Reference/example payment guard source of truth lives under `xconecta`:
+
 - owner-managed baseline:
-  - [xconect-tenant-payment-policy](../../xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json)
+  - [xconect-tenant-payment-policy](../../xconecta/xapps/guards/xconect-tenant-payment-policy/manifest.json)
 - gateway-managed Stripe:
-  - [xconect-tenant-payment-policy-stripe-gateway](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-gateway/manifest.json)
+  - [xconect-tenant-payment-policy-stripe-gateway](../../xconecta/xapps/guards/xconect-tenant-payment-policy-stripe-gateway/manifest.json)
 - tenant-delegated Stripe:
-  - [xconect-tenant-payment-policy-stripe-delegated](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-delegated/manifest.json)
+  - [xconect-tenant-payment-policy-stripe-delegated](../../xconecta/xapps/guards/xconect-tenant-payment-policy-stripe-delegated/manifest.json)
 
 ### Subject Profile
 
-- [xconect-tenant-subject-profile-policy](../../xconect/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
+- production `xconect` keeps its own subject-profile guard:
+  - [xconect-tenant-subject-profile-policy](../../xconect/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
+- reference/example tenants publish the same canonical slug from the `xconecta` workspace:
+  - [xconect-tenant-subject-profile-policy](../../xconecta/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
 
 ## What The Tenant Owns Here
 

@@ -1,0 +1,12 @@
+{
+  "schema_version": "xapps.dev.flow.v1",
+  "flow": "xplace-certs-manual-loop",
+  "title": "xplace certs publisher manual response smoke",
+  "description": "Runs a self-contained smoke for the xplace sample publisher (health, ingest, pending list, manual response, callback complete).",
+  "commands": ["node apps/publishers/xplace/backend/scripts/manual-loop-smoke.mjs"],
+  "refs": [
+    "apps/publishers/xplace/backend/scripts/manual-loop-smoke.mjs",
+    "apps/publishers/xplace/backend/server.js",
+    "apps/publishers/xplace-example/xapps/xplace-certs/README.md"
+  ]
+}

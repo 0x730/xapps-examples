@@ -1,0 +1,121 @@
+{
+  "name": "Xconect • Tenant Subject Profile Policy",
+  "title": {
+    "en": "Xconect • Tenant Subject Profile Policy",
+    "ro": "Xconect • Politică tenant pentru profilul subiectului"
+  },
+  "slug": "xconect-tenant-subject-profile-policy",
+  "description": {
+    "en": "Tenant-owned subject-profile guard defaults for billing/customer profile selection and remediation.",
+    "ro": "Setări implicite de gardă pentru profilul subiectului, deținute de tenant, pentru selecția și remedierea profilului de facturare/client."
+  },
+  "version": "1.0.450",
+  "visibility": "private",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "metadata": {
+    "xconect": {
+      "owner": "tenant",
+      "workspace": "xconect"
+    },
+    "catalog": {
+      "hidden": true
+    }
+  },
+  "tags": ["xconect", "tenant", "guards", "subject-profile", "billing"],
+  "tools": [
+    {
+      "tool_name": "evaluate_tenant_subject_profile_policy",
+      "title": {
+        "en": "Evaluate Tenant Subject Profile Policy",
+        "ro": "Evaluează politica tenantului pentru profilul subiectului"
+      },
+      "description": {
+        "en": "Reference tenant-owned subject profile policy tool.",
+        "ro": "Unealtă de referință pentru politica tenantului privind profilul subiectului."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xconect_tenant_subject_profile_policy_guard",
+      "title": {
+        "en": "Xconect A Tenant Subject Profile Policy Guard",
+        "ro": "Gardă Xconect pentru politica tenantului privind profilul subiectului"
+      },
+      "type": "read",
+      "renderer": "platform",
+      "bind_tool_name": "evaluate_tenant_subject_profile_policy",
+      "entry": {
+        "kind": "platform_template",
+        "template": "read_only_result"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "inline"
+        }
+      }
+    }
+  ],
+  "subject_profile_guard_definitions": [
+    {
+      "name": "xconect_tenant_billing_business",
+      "policy": {
+        "kind": "subject_profile"
+      },
+      "subject_profile_requirement": {
+        "required_profile_family": "billing_business",
+        "required_profile_families": ["billing_business", "billing_individual"],
+        "required_profile_fields_by_family": {
+          "billing_business": [
+            "company_name",
+            "company_identification_number",
+            "address",
+            "city",
+            "country",
+            "email"
+          ],
+          "billing_individual": ["name", "address", "city", "country", "email"]
+        }
+      },
+      "subject_profile_remediation": {
+        "capture_mode": "collect_and_save",
+        "save_scope": "subject_private"
+      },
+      "subject_profile_sources": {
+        "tenant": {
+          "provider_kind": "endpoint",
+          "endpoint_base_url": "__XCONECTA_TENANT_GUARD_BASE_URL__/guard/subject-profiles/tenant-candidates"
+        }
+      },
+      "owner_override_allowlist": ["tools", "subject_profile_sources.publisher"]
+    }
+  ],
+  "guards": [],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XCONECTA_TENANT_GUARD_BASE_URL__",
+      "timeout_ms": 5000,
+      "region": "tenant",
+      "labels": {
+        "profile": "xconect-tenant-subject-profile-policy",
+        "env": "dev"
+      }
+    }
+  },
+  "connectivity": {
+    "executor_mode": "PRIVATE_EXECUTOR",
+    "auth_mode": "USER_DELEGATED",
+    "signing_policy": "none",
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  }
+}

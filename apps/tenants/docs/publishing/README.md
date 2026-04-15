@@ -46,7 +46,7 @@ Read these first:
 1. [../common/README.md](../common/README.md)
 2. [../guards/README.md](../guards/README.md)
 3. [../integrations/README.md](../integrations/README.md)
-4. [../../xapps/README.md](../../xconect/xapps/README.md)
+4. [../../xapps/README.md](../../xconecta/xapps/README.md)
 
 ## 1. How publishing works today
 
@@ -67,25 +67,25 @@ That means:
 
 Code/document anchors:
 
-- [../../xapps/README.md](../../xconect/xapps/README.md)
+- [../../xapps/README.md](../../xconecta/xapps/README.md)
 - [../guards/README.md](../guards/README.md)
 
 ## 2. Source of truth
 
 Keep source manifests here:
 
-- [../../xapps/guards](../../xconect/xapps/guards)
+- [../../xapps/guards](../../xconecta/xapps/guards)
 
 Useful sample manifests in the current repo:
 
 - gateway-managed / baseline tenant payment guard:
-  - [xconect-tenant-payment-policy/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json)
+  - [xconect-tenant-payment-policy/manifest.json](../../xconecta/xapps/guards/xconect-tenant-payment-policy/manifest.json)
 - tenant-delegated Stripe guard:
-  - [xconect-tenant-payment-policy-stripe-delegated/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-delegated/manifest.json)
+  - [xconect-tenant-payment-policy-stripe-delegated/manifest.json](../../xconecta/xapps/guards/xconect-tenant-payment-policy-stripe-delegated/manifest.json)
 - gateway-executed Stripe guard:
-  - [xconect-tenant-payment-policy-stripe-gateway/manifest.json](../../xconect/xapps/guards/xconect-tenant-payment-policy-stripe-gateway/manifest.json)
+  - [xconect-tenant-payment-policy-stripe-gateway/manifest.json](../../xconecta/xapps/guards/xconect-tenant-payment-policy-stripe-gateway/manifest.json)
 - subject-profile guard:
-  - [xconect-tenant-subject-profile-policy/manifest.json](../../xconect/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
+  - [xconect-tenant-subject-profile-policy/manifest.json](../../xconecta/xapps/guards/xconect-tenant-subject-profile-policy/manifest.json)
 
 Practical rule:
 
@@ -160,7 +160,7 @@ Concrete validate example against a source manifest:
 
 ```bash
 npm run -s xapps -- validate \
-  --from apps/tenants/xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json
+  --from apps/tenants/xconecta/xapps/guards/xconect-tenant-payment-policy/manifest.json
 ```
 
 Concrete local publish example after rendering placeholders:
@@ -190,7 +190,7 @@ For a practical local tenant-guard publish, the operator path is:
 ```bash
 # 1. Validate the source manifest kept in the tenant workspace
 npm run -s xapps -- validate \
-  --from apps/tenants/xconect/xapps/guards/xconect-tenant-payment-policy/manifest.json
+  --from apps/tenants/xconecta/xapps/guards/xconect-tenant-payment-policy/manifest.json
 
 # 2. Render placeholders into a temporary output file
 # Example output path:

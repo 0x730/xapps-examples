@@ -1,0 +1,15 @@
+{
+  "schema_version": "xapps.dev.flow.v1",
+  "flow": "xplace-certs-dev-loop",
+  "title": "xplace certs developer loop (AI artifacts + manual loop)",
+  "description": "Composes the xplace-certs AI artifact flow and manual-loop smoke flow to validate the developer workflow end-to-end.",
+  "commands": [
+    "npm run xapps -- dev check flow --from apps/publishers/xplace-example/xapps/xplace-certs/flows/ai-artifacts.flow.json --run --json --artifacts-dir {{ARTIFACTS_DIR}}",
+    "npm run xapps -- dev check flow --from apps/publishers/xplace-example/xapps/xplace-certs/flows/manual-loop.flow.json --run --json"
+  ],
+  "refs": [
+    "apps/publishers/xplace-example/xapps/xplace-certs/flows/ai-artifacts.flow.json",
+    "apps/publishers/xplace-example/xapps/xplace-certs/flows/manual-loop.flow.json",
+    "apps/publishers/xplace-example/xapps/xplace-certs/README.md"
+  ]
+}

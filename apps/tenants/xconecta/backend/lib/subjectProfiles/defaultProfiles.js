@@ -1,0 +1,57 @@
+export const DEFAULT_SUBJECT_PROFILES = [
+  {
+    id: "xconect_demo_identity",
+    label: "Xconect A Demo Identity",
+    profile_family: "identity_basic",
+    is_default: false,
+    data: {
+      profile_family: "identity_basic",
+      name: "Xconect A Demo User",
+      email: "user@xconecta-demo.test",
+      phone: "+40 722 000 222",
+    },
+  },
+  {
+    id: "xconect_demo_business",
+    label: "Xconect A Demo Business",
+    profile_family: "billing_business",
+    is_default: true,
+    data: {
+      profile_family: "billing_business",
+      company_name: "Xconect A Demo SRL",
+      company_identification_number: "12345678",
+      vat_code: "RO12345678",
+      company_registration_number: "J40/1234/2020",
+      address: "Str. Exemplu 10",
+      city: "Bucuresti",
+      country: "Romania",
+      country_code: "RO",
+      email: "billing@xconecta-demo.test",
+      phone: "+40 721 000 111",
+      linked_profiles: [
+        {
+          target_profile_id: "xconect_demo_identity",
+          relation_type: "delegate",
+          label: "Primary delegate",
+          is_primary: true,
+        },
+      ],
+    },
+  },
+  {
+    id: "xconect_demo_individual",
+    label: "Xconect A Demo Individual",
+    profile_family: "billing_individual",
+    is_default: false,
+    data: {
+      profile_family: "billing_individual",
+      name: "Xconect A Demo User",
+      address: "Str. Exemplu 10",
+      city: "Bucuresti",
+      country: "Romania",
+      country_code: "RO",
+      email: "user@xconecta-demo.test",
+      phone: "+40 722 000 222",
+    },
+  },
+];

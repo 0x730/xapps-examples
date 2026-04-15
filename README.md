@@ -34,5 +34,5 @@ Install rule:
 
 Root helper commands:
 
-- `npm run dev:xconect-host`
+- `npm run dev:xconecta-host`
 - `npm run dev:xconectb-host`

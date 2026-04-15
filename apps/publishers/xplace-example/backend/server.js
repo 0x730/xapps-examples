@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   createGatewayApiClient,
+  createPublisherApiClient,
   verifyXappsSignature,
 } from "../../../../packages/server-sdk/dist/index.js";
 import {
@@ -71,6 +72,22 @@ const XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP = (() => {
     return {};
   }
 })();
+const XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP = (() => {
+  const raw = String(process.env.XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP || "").trim();
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).map(([key, value]) => [
+        String(key).trim().toLowerCase(),
+        String(value ?? "").trim(),
+      ]),
+    );
+  } catch {
+    return {};
+  }
+})();
 const XPLACE_EXAMPLE_ADMIN_KEY = String(
   process.env.XPLACE_EXAMPLE_ADMIN_KEY || "xplace-example-dev-admin-key",
 );
@@ -108,6 +125,33 @@ const XPLACE_EXAMPLE_SIGNING_CONTEXT_STRICT =
   String(process.env.SIGNING_CONTEXT_STRICT || "true").trim() !== "false";
 const XPLACE_EXAMPLE_SIGNING_CONTEXT_ALLOW_LEGACY_FALLBACK =
   String(process.env.SIGNING_CONTEXT_ALLOW_LEGACY_FALLBACK || "true").trim() !== "false";
+const XPLACE_EXAMPLE_PUBLISHER_CLIENT_LOOKUP_TIMEOUT_MS = Math.max(
+  250,
+  Number(process.env.XPLACE_EXAMPLE_PUBLISHER_CLIENT_LOOKUP_TIMEOUT_MS || 3000),
+);
+const xplaceExamplePublisherApiClient = createPublisherApiClient({
+  baseUrl: GATEWAY_BASE_URL,
+  apiKey: XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
+  requestTimeoutMs: XPLACE_EXAMPLE_PUBLISHER_CLIENT_LOOKUP_TIMEOUT_MS,
+});
+const XPLACE_EXAMPLE_CLIENT_SLUG_BY_ID = await (async () => {
+  try {
+    const listed = await xplaceExamplePublisherApiClient.listClients();
+    return Object.fromEntries(
+      (Array.isArray(listed?.items) ? listed.items : [])
+        .map((item) => ({
+          id: String(item?.id || "").trim(),
+          slug: String(item?.slug || "")
+            .trim()
+            .toLowerCase(),
+        }))
+        .filter((item) => item.id && item.slug)
+        .map((item) => [item.id, item.slug]),
+    );
+  } catch {
+    return {};
+  }
+})();
 
 const xplaceExampleRepo = await createXplaceDb({ databaseUrl: XPLACE_EXAMPLE_DATABASE_URL });
 const xplaceExamplePlaygroundAccountsRepo = await createPlaygroundAccountsRepo({
@@ -171,13 +215,21 @@ function rejectDisallowedBootstrapOrigin(reply, hostOrigin) {
   return null;
 }
 
+function resolveExampleGatewayClientApiKey({ clientId }) {
+  const normalizedClientId = String(clientId || "").trim();
+  const clientSlug = XPLACE_EXAMPLE_CLIENT_SLUG_BY_ID[normalizedClientId] || "";
+  return (
+    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP[normalizedClientId] ||
+    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP[clientSlug] ||
+    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY
+  );
+}
+
 const XPLACE_EXAMPLE_TOOL_REGISTRY = createXplaceToolRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,
   nowIso,
   gatewayBaseUrl: GATEWAY_BASE_URL,
-  gatewayClientApiKey: ({ clientId }) =>
-    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP[String(clientId || "").trim()] ||
-    XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
+  gatewayClientApiKey: resolveExampleGatewayClientApiKey,
 });
 const XPLACE_EXAMPLE_PREVIEW_REGISTRY = createXplacePreviewRegistry({
   weatherApiBaseUrl: XPLACE_EXAMPLE_WEATHER_API_BASE_URL,
@@ -254,6 +306,7 @@ await registerPublisherSessionBridgeRoutes(fastify, {
 await registerMonetizationPlaygroundRoutes(fastify, {
   gatewayBaseUrl: GATEWAY_BASE_URL,
   gatewayClientApiKey: XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY,
+  resolveGatewayClientApiKey: resolveExampleGatewayClientApiKey,
   publisherGatewayApiKey: XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
   repo: xplaceExampleRepo,
   sessionStore: xplaceExamplePlaygroundSessions,

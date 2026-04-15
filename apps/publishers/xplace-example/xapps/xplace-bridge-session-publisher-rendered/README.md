@@ -7,7 +7,7 @@ Purpose:
 
 - keep the current certs payment example untouched
 - show the lighter session-ownership flow after verified widget bootstrap
-- keep the Node reference target aligned with `xconect`, like the other publisher-rendered lane
+- keep the Node reference target aligned with `xconecta`, like the other publisher-rendered lane
 - reuse the existing bridge contract:
   - gateway `POST /v1/publisher/bridge/token`
   - publisher `POST /xapps/bridge/exchange`
@@ -58,7 +58,7 @@ npm run -s xapps -- publish --yes \
   --from apps/publishers/xplace-example/xapps/xplace-bridge-session-publisher-rendered/manifest.json \
   --publisher-gateway-url http://localhost:3000 \
   --api-key xplace-example-dev-api-key \
-  --replace __TENANT_CLIENT_ID__=<xconect-client-id> \
+  --replace __TENANT_CLIENT_ID__=<xconecta-client-id> \
   --replace __XPLACE_BACKEND_BASE_URL__=http://localhost:3016
 ```
 

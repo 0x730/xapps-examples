@@ -1,0 +1,519 @@
+{
+  "name": "xplace • Weather Now (Gateway Stripe)",
+  "title": {
+    "en": "xplace • Weather Now (Gateway Stripe)",
+    "ro": "xplace • Vreme acum (Stripe gateway)"
+  },
+  "slug": "xplace-weather-now-gateway-stripe",
+  "version": "1.0.314",
+  "description": {
+    "en": "Sample xplace publisher xapp (JSON Forms) for automatic weather lookups using xconect gateway-managed Stripe payment guard flow.",
+    "ro": "Xapp de exemplu xplace publisher (JSON Forms) pentru interogări automate meteo, folosind fluxul xconect cu gardă Stripe gestionată de gateway."
+  },
+  "visibility": "public",
+  "tags": [
+    "xplace",
+    "json-forms",
+    "weather-now",
+    "pay-per-request",
+    "auto-response",
+    "gateway-managed",
+    "stripe"
+  ],
+  "tools": [
+    {
+      "tool_name": "lookup_weather_now",
+      "title": {
+        "en": "Lookup Weather Now",
+        "ro": "Caută vremea curentă"
+      },
+      "description": {
+        "en": "Fetches current weather from a public weather API through the xplace publisher workspace and returns an automatic response.",
+        "ro": "Preia vremea curentă dintr-un API public meteo prin workspace-ul xplace publisher și întoarce un răspuns automat."
+      },
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "locationLabel": {
+            "type": "string",
+            "title": "Location Label"
+          },
+          "temperatureUnit": {
+            "type": "string",
+            "title": "Temperature Unit",
+            "enum": ["celsius", "fahrenheit"],
+            "default": "celsius"
+          }
+        },
+        "required": ["latitude", "longitude"]
+      },
+      "input_ui_schema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/locationLabel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/latitude"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/longitude"
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "location-map-preview",
+            "label": "Map Preview",
+            "options": {
+              "latitudeScope": "#/properties/latitude",
+              "longitudeScope": "#/properties/longitude",
+              "zoom": 9,
+              "height": 220
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Location Details",
+            "options": {
+              "layout": {
+                "sideBySide": true,
+                "width": "half"
+              },
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "responsePath": "#/summary",
+                "debounceMs": 250
+              },
+              "view": {
+                "type": "key-value",
+                "compact": true,
+                "fields": [
+                  {
+                    "path": "#/timezone",
+                    "label": "Timezone"
+                  },
+                  {
+                    "path": "#/elevation",
+                    "label": "Elevation (m)"
+                  },
+                  {
+                    "path": "#/provider",
+                    "label": "Provider"
+                  },
+                  {
+                    "path": "#/fetchedAt",
+                    "label": "Fetched At"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Preview Tags",
+            "options": {
+              "layout": {
+                "sideBySide": true,
+                "width": "half"
+              },
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "cacheTtlMs": 2000,
+                "debounceMs": 250
+              },
+              "view": {
+                "type": "list",
+                "path": "#/tags"
+              }
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Preview JSON",
+            "options": {
+              "layout": {
+                "sideBySide": true,
+                "width": "half"
+              },
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "cacheTtlMs": 2000,
+                "debounceMs": 250
+              },
+              "view": {
+                "type": "json"
+              }
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Capabilities",
+            "options": {
+              "layout": {
+                "sideBySide": true,
+                "width": "half"
+              },
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "cacheTtlMs": 2000,
+                "debounceMs": 250
+              },
+              "view": {
+                "type": "badges",
+                "path": "#/badges"
+              }
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Preview Stations",
+            "options": {
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "cacheTtlMs": 2000,
+                "debounceMs": 250
+              },
+              "view": {
+                "type": "table",
+                "path": "#/stations",
+                "columns": [
+                  {
+                    "path": "#/name",
+                    "label": "Station"
+                  },
+                  {
+                    "path": "#/kind",
+                    "label": "Kind"
+                  },
+                  {
+                    "path": "#/distanceKm",
+                    "label": "Distance (km)"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "XAppsDisplayPanel",
+            "component": "data-view",
+            "label": "Preview Cards",
+            "options": {
+              "dataSource": {
+                "kind": "publisher_preview",
+                "endpointKey": "weather_location_details",
+                "inputMapping": {
+                  "latitude": "#/properties/latitude",
+                  "longitude": "#/properties/longitude"
+                },
+                "cacheTtlMs": 2000,
+                "debounceMs": 250,
+                "timeoutMs": 2500
+              },
+              "view": {
+                "type": "cards",
+                "path": "#/cards",
+                "titlePath": "#/title",
+                "subtitlePath": "#/subtitle",
+                "fields": [
+                  {
+                    "path": "#/latitude",
+                    "label": "Lat"
+                  },
+                  {
+                    "path": "#/longitude",
+                    "label": "Lon"
+                  },
+                  {
+                    "path": "#/elevation",
+                    "label": "Elevation"
+                  },
+                  {
+                    "path": "#/temperature_2m",
+                    "label": "Temp"
+                  },
+                  {
+                    "path": "#/weather_code",
+                    "label": "Code"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/temperatureUnit"
+          }
+        ]
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "locationLabel": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "temperatureUnit": {
+            "type": "string"
+          },
+          "weatherCode": {
+            "type": "number"
+          },
+          "windSpeedKmh": {
+            "type": "number"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "checkedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "locationLabel",
+          "latitude",
+          "longitude",
+          "temperature",
+          "temperatureUnit",
+          "weatherCode",
+          "windSpeedKmh",
+          "provider",
+          "summary",
+          "checkedAt"
+        ]
+      },
+      "output_ui_schema": {
+        "xapps": {
+          "render": {
+            "kind": "kv",
+            "title": "Weather Result",
+            "fields": [
+              {
+                "label": "Location",
+                "path": "locationLabel"
+              },
+              {
+                "label": "Temperature",
+                "path": "temperature"
+              },
+              {
+                "label": "Unit",
+                "path": "temperatureUnit"
+              },
+              {
+                "label": "Weather Code",
+                "path": "weatherCode"
+              },
+              {
+                "label": "Wind (km/h)",
+                "path": "windSpeedKmh"
+              },
+              {
+                "label": "Provider",
+                "path": "provider"
+              },
+              {
+                "label": "Checked At",
+                "path": "checkedAt"
+              },
+              {
+                "label": "Summary",
+                "path": "summary"
+              }
+            ]
+          }
+        },
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/locationLabel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/latitude"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/longitude"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/temperature"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/temperatureUnit"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/weatherCode"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/windSpeedKmh"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/provider"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/summary",
+            "options": {
+              "multi": true
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/checkedAt"
+          }
+        ]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xplace_weather_now_form_stripe",
+      "title": {
+        "en": "Weather Now (Stripe)",
+        "ro": "Vreme acum (Stripe)"
+      },
+      "type": "write",
+      "renderer": "json-forms",
+      "bind_tool_name": "lookup_weather_now",
+      "entry": {
+        "kind": "platform_template",
+        "template": "write_form"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "runtime_default"
+        }
+      }
+    }
+  ],
+  "guards": [
+    {
+      "slug": "xconect-tenant-payment-policy-stripe-gateway",
+      "trigger": "before:tool_run",
+      "headless": false,
+      "config": {
+        "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
+        "tool_name": "evaluate_tenant_payment_policy",
+        "tools": ["lookup_weather_now"],
+        "ui_mode": "redirect",
+        "allow_orchestration_approval": true
+      }
+    },
+    {
+      "slug": "platform-internal-invoice-handler",
+      "trigger": "after:payment_completed",
+      "headless": true,
+      "config": {
+        "invoice_ref": "gateway_payment_invoice"
+      }
+    },
+    {
+      "slug": "platform-internal-notification-handler",
+      "trigger": "after:response_finalized",
+      "headless": true,
+      "config": {
+        "notification_ref": "gateway_response_finalized_email"
+      }
+    }
+  ],
+  "guards_policy": {
+    "before:tool_run": "all",
+    "after:payment_completed": "all",
+    "after:response_finalized": "all"
+  },
+  "connectivity": {
+    "executor_mode": "PUBLIC_EXECUTOR",
+    "auth_mode": "PUBLISHER_APP",
+    "signing_policy": "none",
+    "webhooks": {
+      "enabled": true
+    },
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  },
+  "event_subscriptions": [
+    {
+      "event_type": "xapps.request.completed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    },
+    {
+      "event_type": "xapps.request.failed",
+      "webhook_url": "__XPLACE_BACKEND_BASE_URL__/webhooks/events"
+    }
+  ],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XPLACE_BACKEND_BASE_URL__/xapps/requests",
+      "timeout_ms": 10000,
+      "retry_policy": {
+        "max_retries": 1,
+        "backoff": "linear"
+      },
+      "region": "global",
+      "labels": {
+        "publisher": "xplace-stripe",
+        "env": "development"
+      }
+    }
+  }
+}

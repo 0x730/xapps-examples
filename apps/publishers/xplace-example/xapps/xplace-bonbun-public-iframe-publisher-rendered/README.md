@@ -63,7 +63,7 @@ npm run -s xapps -- publish --yes \
   --from apps/publishers/xplace-example/xapps/xplace-bonbun-public-iframe-publisher-rendered/manifest.json \
   --publisher-gateway-url http://localhost:3000 \
   --api-key xplace-example-dev-api-key \
-  --replace __TENANT_CLIENT_ID__=<xconect-client-id>
+  --replace __TENANT_CLIENT_ID__=<xconecta-client-id>
 ```
 
 Publisher clarification doc:

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Xconect A Marketplace Reference</title>
+    <link rel="stylesheet" href="/host/xconecta-host-base.css?v=20260320-host-proof-1" />
+    <link rel="stylesheet" href="/host/xconecta-host-marketplace.css?v=20260320-host-proof-1" />
+  </head>
+  <body data-mode="single-panel" data-reference-tenant="xconecta">
+    <script>
+      (function () {
+        const aliases = { slate: "harbor", graphite: "atlas" };
+        try {
+          const rawTheme = String(
+            window.localStorage.getItem("xconecta_reference_host_theme_v1") || "",
+          ).trim();
+          const theme = aliases[rawTheme] || rawTheme;
+          if (["harbor", "atlas", "copper", "emerald", "iris"].includes(theme)) {
+            document.body.dataset.theme = theme;
+          }
+        } catch {
+          // ignore localStorage failures
+        }
+      })();
+    </script>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div class="brand-copy">
+            <strong>Xconect A Marketplace Workspace</strong>
+            <span class="brand-subtitle"
+              >Tenant-side host shell for the xconecta + xplace lane</span
+            >
+            <div class="brand-badges">
+              <span id="host-reference-badge" class="brand-chip brand-chip--tenant">xconecta</span>
+              <span id="host-stack-badge" class="brand-chip brand-chip--stack">Node + Fastify</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="host-header-toggle" class="topbar-toggle" type="button" aria-expanded="true">
+          Hide header
+        </button>
+
+        <div class="topbar-actions">
+          <div class="pill display-pill"><strong id="identity-name">-</strong></div>
+          <div class="pill display-pill" id="identity-email">-</div>
+          <div class="pill display-pill">subject <strong id="identity-subject">-</strong></div>
+          <select
+            id="host-locale-select"
+            class="theme-select interactive-control"
+            aria-label="Choose host language"
+          >
+            <option value="en">English</option>
+            <option value="ro">Română</option>
+          </select>
+          <select
+            id="host-theme-select"
+            class="theme-select interactive-control"
+            aria-label="Choose host theme"
+          >
+            <option value="harbor">Harbor</option>
+            <option value="atlas">Atlas</option>
+            <option value="copper">Copper</option>
+            <option value="emerald">Emerald</option>
+            <option value="iris">Iris</option>
+          </select>
+          <div class="mode-switch interactive-shell">
+            <button class="mode-btn" data-mode="single-panel" type="button">Single panel</button>
+            <button class="mode-btn" data-mode="split-panel" type="button">Split panel</button>
+            <a class="mode-link" href="/single-xapp.html">Single xapp</a>
+          </div>
+          <button id="host-proof-button" class="context-btn interactive-control" type="button">
+            Info
+          </button>
+          <a class="ghost-link interactive-control" href="/">Back to launcher</a>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="intro">
+          <h1 id="mode-title">Single-panel marketplace workspace</h1>
+          <p id="mode-subtitle">
+            Catalog and widget navigation stay in the same embedded surface while xconecta still
+            owns the host bridge, install mutations, and payment resume handling.
+          </p>
+        </div>
+
+        <div id="mode-shell" class="mode-shell"></div>
+      </section>
+    </div>
+    <aside id="host-proof-panel" class="proof-flyout" aria-live="polite" hidden></aside>
+
+    <div id="host-modal" class="host-modal-backdrop" aria-hidden="true">
+      <div
+        class="host-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="host-modal-title"
+      >
+        <h3 id="host-modal-title">Notice</h3>
+        <div id="host-modal-message" class="host-modal-message"></div>
+        <div class="host-modal-actions">
+          <button id="host-modal-close" class="host-modal-btn" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-root" class="toasts"></div>
+    <script type="module" src="/host/xconecta-marketplace-host.js?v=20260320-host-proof-1"></script>
+  </body>
+</html>

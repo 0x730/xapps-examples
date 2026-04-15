@@ -233,7 +233,7 @@ Current publisher-rendered monetization playground:
      - gateway and XMS reads in `backend/playground/gatewayClient.js`
      - shared session/linking/runtime helpers in `backend/playground/runtimeSupport.js`
 4. target local tenant lane:
-   - `xconect`
+   - `xconecta`
 5. this app should remain the main publisher-rendered in-app monetization proving surface before widening the same ideas into additional renderers
 
 Possible later follow-on:
@@ -262,10 +262,10 @@ Current workspace files:
   - [scripts/provision-publisher-admin.mjs](../../xplace/scripts/provision-publisher-admin.mjs)
   - [scripts/prepare-republish-manifests.mjs](../../xplace/scripts/prepare-republish-manifests.mjs)
 - xapp families:
-  - [xplace-certs](../../xplace/xapps/xplace-certs/README.md)
-  - [xplace-certs-gateway-stripe](../../xplace/xapps/xplace-certs-gateway-stripe/README.md)
-  - [xplace-certs-tenant-delegated-stripe](../../xplace/xapps/xplace-certs-tenant-delegated-stripe/README.md)
-  - [xplace-weather-now-gateway-stripe](../../xplace/xapps/xplace-weather-now-gateway-stripe/README.md)
+  - [xplace-certs](../xapps/xplace-certs/README.md)
+  - [xplace-certs-gateway-stripe](../xapps/xplace-certs-gateway-stripe/README.md)
+  - [xplace-certs-tenant-delegated-stripe](../xapps/xplace-certs-tenant-delegated-stripe/README.md)
+  - [xplace-weather-now-gateway-stripe](../xapps/xplace-weather-now-gateway-stripe/README.md)
 
 ## Classification
 
@@ -356,21 +356,23 @@ Current note on provisioning wrappers:
   - `scripts/provision/provision-xplace-example-publisher.mjs`
   - `scripts/provision/provision-xplace-example-publisher-admin.mjs`
   - `scripts/prepare/prepare-xplace-example-republish-manifests.mjs`
-- those entrypoints still reuse the same current xapp source tree while the publisher shells are splitting
-- the next change should be manifest/source ownership only when `xplace-example` needs its own version cadence
+- those entrypoints now own the broader example xapp fleet directly
+- production `xplace` keeps its own manifest/source tree only for the production XMS cert lane
 
 ## Xapp family rule
 
-Current production `xplace` xapps are the source of truth for the publisher baseline.
+Current production `xplace` keeps only the production XMS cert lane. The broader pay-by-request,
+Stripe-reference, and weather families now live under `xplace-example`.
 
 Current deployment split:
 
-- private production `xplace` keeps the two Stripe cert families:
-  - `xplace-certs-gateway-stripe`
-  - `xplace-certs-tenant-delegated-stripe`
+- private production `xplace` keeps:
+  - `xplace-certs-xms-jsonforms`
 - public `xplace-example` carries the current broader example fleet:
+  - `xplace-certs`
   - `xplace-certs-gateway-stripe`
   - `xplace-certs-tenant-delegated-stripe`
+  - `xplace-weather-now-gateway-stripe`
   - `xplace-bonbun-public-iframe-publisher-rendered`
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
@@ -392,15 +394,15 @@ Current tenant mapping:
 Practical local note:
 
 - the intended Node reference family is `xconecta`
-- the current local seeded/runtime lane may still appear as `xconect`
+- the local example runtime now uses `xconecta` as its own tenant/backend lane
 
 Near-term rule:
 
-- do not duplicate the xapp family tree immediately
-- keep the current source of truth in `apps/publishers/xplace/xapps/*` while the shells split
-- move deployment ownership first, then split the xapp families physically only when the example lane needs its own manifest/version cadence
+- production and example xapp ownership are now physically split
+- `apps/publishers/xplace/xapps/*` is the production `xplace` XMS lane only
+- `apps/publishers/xplace-example/xapps/*` is the broader example/reference fleet
 - the command split is now explicit:
-  - `npm run xplace:prepare-republish` -> narrow private production pair
+  - `npm run xplace:prepare-republish` -> production XMS cert lane
   - `npm run xplace-example:prepare-republish` -> current broader example fleet
 
 ## Deploy rule

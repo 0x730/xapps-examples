@@ -1,0 +1,278 @@
+{
+  "name": "Xconect • Tenant Payment Policy (Gateway-Managed Stripe)",
+  "title": {
+    "en": "Xconect • Tenant Payment Policy (Gateway-Managed Stripe)",
+    "ro": "Xconect • Politică de plată tenant (Stripe gestionat de gateway)"
+  },
+  "slug": "xconect-tenant-payment-policy-stripe-gateway",
+  "description": {
+    "en": "Tenant-owned gateway-managed Stripe payment guard xapp for xconect (gateway-hosted Stripe checkout).",
+    "ro": "Xapp de gardă de plată Stripe gestionat de gateway, deținut de tenant, pentru xconect (checkout Stripe găzduit de gateway)."
+  },
+  "version": "1.0.483",
+  "visibility": "private",
+  "target_client_id": "__TENANT_CLIENT_ID__",
+  "metadata": {
+    "xconect": {
+      "owner": "tenant",
+      "workspace": "xconect"
+    },
+    "catalog": {
+      "hidden": true
+    }
+  },
+  "tags": ["xconect", "tenant", "guards", "payment", "policy", "gateway-managed", "stripe"],
+  "tools": [
+    {
+      "tool_name": "evaluate_tenant_payment_policy",
+      "title": {
+        "en": "Evaluate Tenant Payment Policy",
+        "ro": "Evaluează politica de plată a tenantului"
+      },
+      "description": {
+        "en": "Returns payment guard decision with optional UI orchestration metadata for redirect-and-resume flows.",
+        "ro": "Întoarce decizia gărzii de plată cu metadate opționale de orchestrare UI pentru fluxurile redirect-and-resume."
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "payment_status": {
+            "type": "string"
+          },
+          "guard": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "trigger": {
+                "type": "string"
+              },
+              "config": {
+                "type": "object"
+              }
+            }
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "toolName": {
+                "type": "string"
+              },
+              "orchestration": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          }
+        },
+        "required": ["allowed"]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "widget_name": "xconect_tenant_payment_policy_stripe_gateway_guard",
+      "title": {
+        "en": "Xconect A Tenant Payment Policy (Gateway-Managed Stripe)",
+        "ro": "Politică de plată Xconect tenant (Stripe gestionat de gateway)"
+      },
+      "type": "read",
+      "renderer": "platform",
+      "bind_tool_name": "evaluate_tenant_payment_policy",
+      "entry": {
+        "kind": "platform_template",
+        "template": "read_only_result"
+      },
+      "config": {
+        "xapps": {
+          "result_presentation": "inline"
+        }
+      }
+    }
+  ],
+  "payment_guard_definitions": [
+    {
+      "name": "xconect_tenant_pay_by_request_gateway_stripe",
+      "payment_type": "pay_by_request",
+      "payment_issuer_mode": "gateway_managed",
+      "payment_scheme": "stripe",
+      "payment_allowed_issuers": ["gateway"],
+      "payment_return_contract": "xapps_payment_orchestration_v1",
+      "payment_return_required": true,
+      "payment_return_max_age_s": 900,
+      "payment_return_hmac_secret_refs": {
+        "gateway": "platform://payment:gateway:hmac"
+      },
+      "payment_provider_credentials_refs": {
+        "stripe": {
+          "bundle_ref": "platform://payment:gateway:stripe:bundle"
+        }
+      },
+      "payment_ui": {
+        "brand": {
+          "name": {
+            "en": "Xconect A Tenant",
+            "ro": "Tenant Xconect"
+          },
+          "accent": "#635bff"
+        },
+        "copy": {
+          "title": {
+            "en": "Xconect A Tenant",
+            "ro": "Tenant Xconect"
+          },
+          "subtitle": {
+            "en": "Gateway checkout",
+            "ro": "Checkout gateway"
+          }
+        },
+        "schemes": [
+          {
+            "scheme": "stripe",
+            "badge": {
+              "en": "Stripe",
+              "ro": "Stripe"
+            },
+            "title": {
+              "en": "Pay with Stripe",
+              "ro": "Plătește cu Stripe"
+            },
+            "subtitle": {
+              "en": "Secure card checkout hosted by Stripe.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe."
+            },
+            "cta_label": {
+              "en": "Continue to Stripe",
+              "ro": "Continuă către Stripe"
+            },
+            "help_text": {
+              "en": "Secure card checkout hosted by Stripe.",
+              "ro": "Checkout securizat cu cardul, găzduit de Stripe."
+            },
+            "accent": "#635bff"
+          },
+          {
+            "scheme": "mock_manual",
+            "badge": {
+              "en": "Hosted Redirect",
+              "ro": "Redirect găzduit"
+            },
+            "title": {
+              "en": "Hosted Checkout Test",
+              "ro": "Test checkout găzduit"
+            },
+            "subtitle": {
+              "en": "Provider-style redirect and signed return flow.",
+              "ro": "Flux de redirect și retur semnat, în stil provider."
+            },
+            "cta_label": {
+              "en": "Continue to Checkout",
+              "ro": "Continuă către checkout"
+            },
+            "help_text": {
+              "en": "Hosted redirect flow for end-to-end payment return testing.",
+              "ro": "Flux de redirect găzduit pentru testarea end-to-end a revenirii din plată."
+            },
+            "accent": "#0f766e"
+          }
+        ]
+      },
+      "accepts": [
+        {
+          "scheme": "mock_manual",
+          "label": "Mock Hosted Redirect"
+        }
+      ],
+      "owner_override_allowlist": [
+        "tool_name",
+        "tools",
+        "ui_mode",
+        "allow_orchestration_approval",
+        "pricing.default_amount",
+        "pricing.xapp_prices.*",
+        "pricing.tool_overrides.*",
+        "policy",
+        "action"
+      ],
+      "owner_pricing_floor": {
+        "default_amount": 3,
+        "xapp_prices": {
+          "xplace-certs-gateway-stripe": 3,
+          "xplace-weather-now-gateway-stripe": 3
+        },
+        "tool_overrides": {
+          "xplace-certs-gateway-stripe:submit_certificate_request_async": 3.5
+        }
+      },
+      "pricing_model": "pay_per_request",
+      "receipt_field": "paymentReceipt",
+      "payment_url": "__GATEWAY_BASE_URL__/v1/gateway-payment.html",
+      "pricing": {
+        "currency": "USD",
+        "default_amount": 3,
+        "description": "Xconect gateway-managed Stripe pay-per-request fee",
+        "xapp_prices": {
+          "xplace-certs-gateway-stripe": 3,
+          "xplace-weather-now-gateway-stripe": 3
+        },
+        "tool_overrides": {
+          "xplace-certs-gateway-stripe:submit_certificate_request_async": 3.5
+        }
+      },
+      "policy": {
+        "kind": "payment",
+        "reason": "payment_required",
+        "message": "Gateway-managed Stripe payment is required before continuing."
+      },
+      "action": {
+        "kind": "complete_payment",
+        "label": {
+          "en": "Open Payment",
+          "ro": "Deschide plata"
+        },
+        "title": {
+          "en": "Complete Payment",
+          "ro": "Finalizează plata"
+        },
+        "target": "external"
+      }
+    }
+  ],
+  "guards": [],
+  "endpoints": {
+    "prod": {
+      "base_url": "__XCONECTA_TENANT_GUARD_BASE_URL__",
+      "timeout_ms": 5000,
+      "region": "tenant",
+      "labels": {
+        "profile": "xconect-tenant-guards",
+        "env": "dev"
+      }
+    }
+  },
+  "connectivity": {
+    "executor_mode": "PRIVATE_EXECUTOR",
+    "auth_mode": "USER_DELEGATED",
+    "signing_policy": "none",
+    "proxy_policy": {
+      "egress_enabled": false
+    }
+  }
+}

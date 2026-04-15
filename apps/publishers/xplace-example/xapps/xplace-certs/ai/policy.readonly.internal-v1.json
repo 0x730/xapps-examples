@@ -1,0 +1,14 @@
+{
+  "schema_version": "xapps.ai.policy.v1",
+  "require_read_only": true,
+  "max_actions": 20,
+  "allow_action_kinds": [
+    "analyze.manifest",
+    "suggest.flow_checks",
+    "analyze.renderers",
+    "suggest.renderer_checks",
+    "suggest.context_refresh",
+    "suggest.ai_policy_check",
+    "suggest.flow_run"
+  ]
+}

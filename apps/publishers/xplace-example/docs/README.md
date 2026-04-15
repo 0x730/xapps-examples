@@ -16,12 +16,13 @@ Planned role:
 Current practical Node-lane note:
 
 - the `xconecta` family is the intended Node reference lane
-- the current local seeded proof/runtime commonly appears as `xconect`
+- the local example runtime now uses `xconecta` as its own tenant/backend lane
 
 Important distinction:
 
 - private production publisher surface: [xplace](../../xplace/README.md)
 - public publisher reference surface: `xplace-example`
+- older pay-by-request and weather reference xapps now also live here, while `xplace` keeps only the production XMS cert lane
 
 Current shell:
 

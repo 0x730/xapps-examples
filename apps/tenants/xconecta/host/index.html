@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Xconect A Reference Host</title>
+    <link rel="stylesheet" href="/host/xconecta-host-base.css?v=20260319-host-layout-31" />
+    <link rel="stylesheet" href="/host/xconecta-host-entry.css?v=20260319-host-layout-31" />
+  </head>
+  <body>
+    <script>
+      (function () {
+        const aliases = { slate: "harbor", graphite: "atlas" };
+        try {
+          const rawTheme = String(
+            window.localStorage.getItem("xconecta_reference_host_theme_v1") || "",
+          ).trim();
+          const theme = aliases[rawTheme] || rawTheme;
+          if (["harbor", "atlas", "copper", "emerald", "iris"].includes(theme)) {
+            document.body.dataset.theme = theme;
+          }
+        } catch {
+          // ignore localStorage failures
+        }
+      })();
+    </script>
+    <main>
+      <section class="hero">
+        <article class="panel intro">
+          <div class="intro-head">
+            <div class="eyebrow">Xconect A Reference Host</div>
+            <label class="theme-picker">
+              <span>Palette</span>
+              <select id="host-theme-select" class="theme-select" aria-label="Choose host theme">
+                <option value="harbor">Harbor</option>
+                <option value="atlas">Atlas</option>
+                <option value="copper">Copper</option>
+                <option value="emerald">Emerald</option>
+                <option value="iris">Iris</option>
+              </select>
+            </label>
+            <label class="theme-picker">
+              <span>Language</span>
+              <select
+                id="host-locale-select"
+                class="theme-select"
+                aria-label="Choose host language"
+              >
+                <option value="en">English</option>
+                <option value="ro">Română</option>
+              </select>
+            </label>
+          </div>
+          <h1>Start with one calm question, then enter the marketplace.</h1>
+          <p>
+            This page stays intentionally stateless, but the experience should still feel like a
+            real tenant entry flow. Name and email stay browser-local here; the stable subject
+            identity comes from the gateway resolve flow, so the same email returns to the same
+            subject.
+          </p>
+          <div class="journey">
+            <div class="journey-step is-active">
+              <span>1</span>
+              <div>
+                <strong>Identify the tenant subject</strong>
+                <small>Use name + email only, without a login system yet.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>2</span>
+              <div>
+                <strong>Choose the launch surface</strong>
+                <small>Marketplace or single xapp, depending on the demo you want to show.</small>
+              </div>
+            </div>
+            <div class="journey-step">
+              <span>3</span>
+              <div>
+                <strong>Open the tenant runtime</strong>
+                <small>Install/update/payment resume stays in the shared SDK flow.</small>
+              </div>
+            </div>
+          </div>
+          <div class="notes">
+            <div class="note">
+              <strong>What this shows</strong>
+              <span>
+                Tenant-side marketplace publish/embed wiring, install/update/uninstall mutations,
+                and payment return resume behavior, all through the shared embed SDK.
+              </span>
+            </div>
+            <div class="note">
+              <strong>What this intentionally avoids</strong>
+              <span>
+                No local auth, no tenant database, and no extra identity framework. This stays a
+                reference seam, not an application shell.
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <section class="panel launcher">
+          <div class="launcher-shell">
+            <div class="launcher-head">
+              <div>
+                <div class="launcher-kicker">Tenant intake</div>
+                <h2>Who is entering this tenant experience?</h2>
+              </div>
+              <div class="hint">Stateless bootstrap, stable subject</div>
+            </div>
+            <form id="entry-form">
+              <div class="question-block">
+                <div class="question-index">Question 1 of 2</div>
+                <p class="question-copy">
+                  Use the person who should own the marketplace state. The same email resolves to
+                  the same subject again.
+                </p>
+              </div>
+              <div class="field-grid">
+                <label>
+                  Full name
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value="Xconect A Demo User"
+                    autocomplete="name"
+                    required
+                  />
+                </label>
+                <label>
+                  Email
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="user@xconecta-demo.test"
+                    autocomplete="email"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div class="identity-choice">
+                <div class="question-index">Optional subject override</div>
+                <p class="identity-choice-copy">
+                  If the same email can represent multiple tenant identities, choose one here before
+                  launch.
+                </p>
+                <div class="identity-preset-row">
+                  <button class="secondary-button" id="identity-preset-individual" type="button">
+                    Individual
+                  </button>
+                  <button class="secondary-button" id="identity-preset-company-a" type="button">
+                    Company A
+                  </button>
+                  <button class="secondary-button" id="identity-preset-company-b" type="button">
+                    Company B
+                  </button>
+                  <button class="secondary-button" id="identity-preset-clear" type="button">
+                    Email-only
+                  </button>
+                </div>
+              </div>
+
+              <details class="identity-advanced" id="identity-advanced">
+                <summary>Custom identity fields</summary>
+                <p class="advanced-note">
+                  Use these raw fields only when the preset buttons are not enough. Subject identity
+                  is defined by kind plus identifier type and identifier value. Hint and metadata
+                  are attached context.
+                </p>
+                <div class="field-grid">
+                  <label>
+                    Identity kind
+                    <select id="subjectType" name="subjectType">
+                      <option value="">Email-only subject</option>
+                      <option value="individual">Individual</option>
+                      <option value="business_member">Business member</option>
+                    </select>
+                  </label>
+                  <label>
+                    Identifier type
+                    <input
+                      id="subjectIdentifierType"
+                      name="subjectIdentifierType"
+                      type="text"
+                      value=""
+                      placeholder="tenant_member_id"
+                    />
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Identifier value
+                    <input
+                      id="subjectIdentifierValue"
+                      name="subjectIdentifierValue"
+                      type="text"
+                      value=""
+                      placeholder="acct-a"
+                    />
+                  </label>
+                  <label>
+                    Identifier hint
+                    <input
+                      id="subjectIdentifierHint"
+                      name="subjectIdentifierHint"
+                      type="text"
+                      value=""
+                      placeholder="Company A"
+                    />
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Metadata JSON
+                    <input
+                      id="subjectMetadata"
+                      name="subjectMetadata"
+                      type="text"
+                      value=""
+                      placeholder='{"company":"A","role":"member"}'
+                    />
+                  </label>
+                </div>
+              </details>
+
+              <div class="question-block compact">
+                <div class="question-index">Question 2 of 2</div>
+                <p class="question-copy">
+                  Choose how much framing the tenant host should keep around the marketplace or a
+                  single xapp.
+                </p>
+              </div>
+
+              <div class="modes">
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-panel" checked />
+                  <span class="mode-card">
+                    <strong>Single panel</strong>
+                    <span>
+                      Catalog and widgets stay in one embedded flow. Best first reference for a lean
+                      tenant host.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="split-panel" />
+                  <span class="mode-card">
+                    <strong>Split panel</strong>
+                    <span>
+                      Catalog stays on the left and widgets open in a dedicated panel. Useful when
+                      the integrator wants stronger host framing around widget execution.
+                    </span>
+                  </span>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="mode" value="single-xapp" />
+                  <span class="mode-card">
+                    <strong>Single xapp</strong>
+                    <span>
+                      Open one deployed xapp directly for demo purposes, without the full
+                      marketplace shell.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="single-xapp-inline single-xapp-only">
+                <label class="single-xapp-field">
+                  <span class="single-xapp-label">Demo xapp id</span>
+                  <input
+                    id="xappId"
+                    name="xappId"
+                    type="text"
+                    value="01KKYA9CQKNTG3N9PWM0Z31Z09"
+                    spellcheck="false"
+                  />
+                </label>
+                <div class="single-xapp-note">
+                  Direct-open one deployed xapp without the marketplace shell.
+                </div>
+              </div>
+
+              <div class="actions">
+                <button id="launch-btn" type="submit">Launch Tenant Surface</button>
+                <a class="secondary-link" href="/api/reference" target="_blank" rel="noreferrer">
+                  Open backend reference
+                </a>
+              </div>
+              <div id="status" class="status"></div>
+              <div id="identity" class="identity" hidden>
+                <strong>Last resolved subject</strong>
+                <div id="identity-copy"></div>
+              </div>
+            </form>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const storageKey = "xconecta_reference_host_identity_v1";
+        const form = document.getElementById("entry-form");
+        const statusEl = document.getElementById("status");
+        const launchBtn = document.getElementById("launch-btn");
+        const identityCard = document.getElementById("identity");
+        const identityCopy = document.getElementById("identity-copy");
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const xappIdInput = document.getElementById("xappId");
+        const identityAdvancedEl = document.getElementById("identity-advanced");
+        const subjectTypeInput = document.getElementById("subjectType");
+        const subjectIdentifierTypeInput = document.getElementById("subjectIdentifierType");
+        const subjectIdentifierValueInput = document.getElementById("subjectIdentifierValue");
+        const subjectIdentifierHintInput = document.getElementById("subjectIdentifierHint");
+        const subjectMetadataInput = document.getElementById("subjectMetadata");
+        const localeSelect = document.getElementById("host-locale-select");
+        const themeSelect = document.getElementById("host-theme-select");
+        const currentUrl = new URL(window.location.href);
+        const themeAliases = { slate: "harbor", graphite: "atlas" };
+        const validThemes = new Set(["harbor", "atlas", "copper", "emerald", "iris"]);
+        const localeStorageKey = "xconecta_reference_host_locale_v1";
+
+        function normalizeLocale(value) {
+          const raw = String(value || "")
+            .trim()
+            .replace(/_/g, "-")
+            .toLowerCase();
+          if (raw === "ro" || raw.startsWith("ro-")) return "ro";
+          if (raw === "en" || raw.startsWith("en-")) return "en";
+          return "en";
+        }
+
+        function syncSelectedModeUi() {
+          const modeInput = form.querySelector('input[name="mode"]:checked');
+          const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
+          document.body.dataset.entryMode = mode;
+        }
+
+        function readTheme() {
+          try {
+            const raw = String(
+              window.localStorage.getItem("xconecta_reference_host_theme_v1") || "",
+            ).trim();
+            const resolved = themeAliases[raw] || raw;
+            return validThemes.has(resolved) ? resolved : "harbor";
+          } catch {
+            return "harbor";
+          }
+        }
+
+        function applyTheme(theme, options = {}) {
+          const raw = String(theme || "").trim();
+          const resolved = validThemes.has(themeAliases[raw] || raw)
+            ? themeAliases[raw] || raw
+            : "harbor";
+          document.body.dataset.theme = resolved;
+          if (themeSelect) themeSelect.value = resolved;
+          if (options.persist === false) return resolved;
+          try {
+            window.localStorage.setItem("xconecta_reference_host_theme_v1", resolved);
+          } catch {
+            // ignore localStorage failures
+          }
+          return resolved;
+        }
+
+        function readLocale() {
+          const queryLocale = String(currentUrl.searchParams.get("locale") || "").trim();
+          if (queryLocale) return normalizeLocale(queryLocale);
+          try {
+            const stored = String(window.localStorage.getItem(localeStorageKey) || "").trim();
+            if (stored) return normalizeLocale(stored);
+          } catch {
+            // ignore localStorage failures
+          }
+          return normalizeLocale(
+            (navigator.languages && navigator.languages[0]) || navigator.language || "en",
+          );
+        }
+
+        function applyLocale(locale, options = {}) {
+          const resolved = normalizeLocale(locale);
+          document.documentElement.lang = resolved;
+          if (localeSelect) localeSelect.value = resolved;
+          if (options.persist === false) return resolved;
+          try {
+            window.localStorage.setItem(localeStorageKey, resolved);
+          } catch {
+            // ignore localStorage failures
+          }
+          return resolved;
+        }
+
+        function readStoredIdentity() {
+          try {
+            const raw = window.localStorage.getItem(storageKey) || "";
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === "object" ? parsed : null;
+          } catch {
+            return null;
+          }
+        }
+
+        function renderStoredIdentity() {
+          const identity = readStoredIdentity();
+          if (!identity || !identity.subjectId) {
+            identityCard.hidden = true;
+            identityCopy.textContent = "";
+            return;
+          }
+          identityCard.hidden = false;
+          const titleParts = [identity.name, identity.email].filter(
+            (value) => typeof value === "string" && value.trim(),
+          );
+          identityCopy.innerHTML =
+            `${String(titleParts.length ? titleParts.join(" · ") : "Resolved subject")}` +
+            `<br><code>${String(identity.subjectId)}</code>`;
+        }
+
+        function restoreFormFromStorage() {
+          const identity = readStoredIdentity();
+          if (!identity) return;
+          if (typeof identity.name === "string" && identity.name.trim()) {
+            nameInput.value = identity.name.trim();
+          }
+          if (typeof identity.email === "string" && identity.email.trim()) {
+            emailInput.value = identity.email.trim();
+          }
+          if (typeof identity.mode === "string" && identity.mode.trim()) {
+            const input = form.querySelector(`input[name="mode"][value="${identity.mode.trim()}"]`);
+            if (input) input.checked = true;
+          }
+          if (xappIdInput && typeof identity.xappId === "string" && identity.xappId.trim()) {
+            xappIdInput.value = identity.xappId.trim();
+          }
+          if (subjectTypeInput && typeof identity.type === "string") {
+            subjectTypeInput.value = identity.type.trim();
+          }
+          if (
+            subjectIdentifierTypeInput &&
+            identity.identifier &&
+            typeof identity.identifier === "object" &&
+            typeof identity.identifier.idType === "string"
+          ) {
+            subjectIdentifierTypeInput.value = identity.identifier.idType.trim();
+          }
+          if (
+            subjectIdentifierValueInput &&
+            identity.identifier &&
+            typeof identity.identifier === "object" &&
+            typeof identity.identifier.value === "string"
+          ) {
+            subjectIdentifierValueInput.value = identity.identifier.value.trim();
+          }
+          if (
+            subjectIdentifierHintInput &&
+            identity.identifier &&
+            typeof identity.identifier === "object" &&
+            typeof identity.identifier.hint === "string"
+          ) {
+            subjectIdentifierHintInput.value = identity.identifier.hint.trim();
+          }
+          if (
+            subjectMetadataInput &&
+            identity.metadata &&
+            typeof identity.metadata === "object" &&
+            !Array.isArray(identity.metadata)
+          ) {
+            subjectMetadataInput.value = JSON.stringify(identity.metadata);
+          }
+        }
+
+        function readOptionalString(value) {
+          return typeof value === "string" ? value.trim() : "";
+        }
+
+        function syncIdentityAdvancedVisibility(override = null) {
+          if (!(identityAdvancedEl instanceof HTMLDetailsElement)) return;
+          const current =
+            override ||
+            mergeIdentityOverrides(readIdentityOverrideFromForm(), readIdentityOverrideFromQuery());
+          identityAdvancedEl.open = Boolean(
+            current?.subjectId || current?.type || current?.identifier || current?.metadata,
+          );
+        }
+
+        function readIdentityOverrideFromQuery() {
+          const subjectId = readOptionalString(currentUrl.searchParams.get("subjectId"));
+          const type =
+            readOptionalString(currentUrl.searchParams.get("subjectType")) ||
+            readOptionalString(currentUrl.searchParams.get("type"));
+          const idType =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierType")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierType"));
+          const identifierValue =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierValue")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierValue"));
+          const identifierHint =
+            readOptionalString(currentUrl.searchParams.get("subjectIdentifierHint")) ||
+            readOptionalString(currentUrl.searchParams.get("identifierHint"));
+          const metadataRaw =
+            readOptionalString(currentUrl.searchParams.get("subjectMetadata")) ||
+            readOptionalString(currentUrl.searchParams.get("metadata"));
+          let metadata = null;
+          if (metadataRaw) {
+            try {
+              const parsed = JSON.parse(metadataRaw);
+              if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                metadata = parsed;
+              }
+            } catch {
+              // ignore malformed metadata query
+            }
+          }
+          return {
+            ...(subjectId ? { subjectId } : {}),
+            ...(type ? { type } : {}),
+            ...(idType && identifierValue
+              ? {
+                  identifier: {
+                    idType,
+                    value: identifierValue,
+                    ...(identifierHint ? { hint: identifierHint } : {}),
+                  },
+                }
+              : {}),
+            ...(metadata ? { metadata } : {}),
+          };
+        }
+
+        function readIdentityOverrideFromForm() {
+          const type = readOptionalString(subjectTypeInput?.value);
+          const idType = readOptionalString(subjectIdentifierTypeInput?.value);
+          const identifierValue = readOptionalString(subjectIdentifierValueInput?.value);
+          const identifierHint = readOptionalString(subjectIdentifierHintInput?.value);
+          const metadataRaw = readOptionalString(subjectMetadataInput?.value);
+          let metadata = null;
+          if (metadataRaw) {
+            try {
+              const parsed = JSON.parse(metadataRaw);
+              if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                metadata = parsed;
+              }
+            } catch {
+              throw new Error("Metadata JSON must be a valid object.");
+            }
+          }
+          return {
+            ...(type ? { type } : {}),
+            ...(idType && identifierValue
+              ? {
+                  identifier: {
+                    idType,
+                    value: identifierValue,
+                    ...(identifierHint ? { hint: identifierHint } : {}),
+                  },
+                }
+              : {}),
+            ...(metadata ? { metadata } : {}),
+          };
+        }
+
+        function mergeIdentityOverrides(...entries) {
+          return entries.reduce((acc, entry) => {
+            if (!entry || typeof entry !== "object") return acc;
+            return {
+              ...acc,
+              ...entry,
+              ...(entry.identifier ? { identifier: entry.identifier } : {}),
+              ...(entry.metadata ? { metadata: entry.metadata } : {}),
+            };
+          }, {});
+        }
+
+        function applyIdentityPreset(kind) {
+          if (
+            !subjectTypeInput ||
+            !subjectIdentifierTypeInput ||
+            !subjectIdentifierValueInput ||
+            !subjectIdentifierHintInput ||
+            !subjectMetadataInput
+          ) {
+            return;
+          }
+          if (kind === "individual") {
+            subjectTypeInput.value = "individual";
+            subjectIdentifierTypeInput.value = "person_identity_id";
+            subjectIdentifierValueInput.value = "person-default";
+            subjectIdentifierHintInput.value = "Individual";
+            subjectMetadataInput.value = '{"profile":"individual"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          if (kind === "company-a") {
+            subjectTypeInput.value = "business_member";
+            subjectIdentifierTypeInput.value = "tenant_member_id";
+            subjectIdentifierValueInput.value = "acct-a";
+            subjectIdentifierHintInput.value = "Company A";
+            subjectMetadataInput.value = '{"company":"A","role":"member"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          if (kind === "company-b") {
+            subjectTypeInput.value = "business_member";
+            subjectIdentifierTypeInput.value = "tenant_member_id";
+            subjectIdentifierValueInput.value = "acct-b";
+            subjectIdentifierHintInput.value = "Company B";
+            subjectMetadataInput.value = '{"company":"B","role":"member"}';
+            syncIdentityAdvancedVisibility();
+            return;
+          }
+          subjectTypeInput.value = "";
+          subjectIdentifierTypeInput.value = "";
+          subjectIdentifierValueInput.value = "";
+          subjectIdentifierHintInput.value = "";
+          subjectMetadataInput.value = "";
+          syncIdentityAdvancedVisibility({});
+        }
+
+        async function resolveSubject(input) {
+          const response = await fetch("/api/resolve-subject", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(input),
+          });
+          const raw = await response.text();
+          const data = (() => {
+            try {
+              return raw ? JSON.parse(raw) : {};
+            } catch {
+              return {};
+            }
+          })();
+          if (!response.ok) {
+            throw new Error(String(data && data.message ? data.message : "resolve-subject failed"));
+          }
+          const subjectId = String(
+            data?.subjectId ||
+              data?.subject_id ||
+              data?.result?.subjectId ||
+              data?.result?.subject_id ||
+              "",
+          ).trim();
+          if (!subjectId) {
+            const preview = String(raw || "")
+              .trim()
+              .replace(/\s+/g, " ")
+              .slice(0, 220);
+            throw new Error(
+              `resolve-subject response missing subjectId${preview ? `: ${preview}` : ""}`,
+            );
+          }
+          return subjectId;
+        }
+
+        function renderEntryErrorFromQuery() {
+          const errorKey = String(currentUrl.searchParams.get("hostError") || "").trim();
+          if (errorKey !== "missing_identity") return;
+          statusEl.className = "status error";
+          statusEl.textContent =
+            "The tenant host could not continue because the browser identity was incomplete. Resolve the subject again from this entry page.";
+        }
+
+        restoreFormFromStorage();
+        syncIdentityAdvancedVisibility();
+        applyTheme(readTheme(), { persist: false });
+        applyLocale(readLocale(), { persist: false });
+        renderEntryErrorFromQuery();
+        renderStoredIdentity();
+        syncSelectedModeUi();
+
+        themeSelect?.addEventListener("change", (event) => {
+          applyTheme(event.target.value);
+        });
+
+        localeSelect?.addEventListener("change", (event) => {
+          applyLocale(event.target.value);
+        });
+
+        document
+          .getElementById("identity-preset-individual")
+          ?.addEventListener("click", () => applyIdentityPreset("individual"));
+        document
+          .getElementById("identity-preset-company-a")
+          ?.addEventListener("click", () => applyIdentityPreset("company-a"));
+        document
+          .getElementById("identity-preset-company-b")
+          ?.addEventListener("click", () => applyIdentityPreset("company-b"));
+        document
+          .getElementById("identity-preset-clear")
+          ?.addEventListener("click", () => applyIdentityPreset("clear"));
+
+        form.querySelectorAll('input[name="mode"]').forEach((node) => {
+          node.addEventListener("change", syncSelectedModeUi);
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          let identityOverride;
+          try {
+            identityOverride = mergeIdentityOverrides(
+              readIdentityOverrideFromForm(),
+              readIdentityOverrideFromQuery(),
+            );
+          } catch (error) {
+            statusEl.className = "status error";
+            statusEl.textContent = String(error?.message || "Identity override is invalid.");
+            return;
+          }
+          const name = String(nameInput.value || "").trim();
+          const email = String(emailInput.value || "")
+            .trim()
+            .toLowerCase();
+          const modeInput = form.querySelector('input[name="mode"]:checked');
+          const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
+          const xappId = String(xappIdInput?.value || "").trim();
+          if (!identityOverride.subjectId && !identityOverride.identifier && (!name || !email)) {
+            return;
+          }
+          if (mode === "single-xapp" && !xappId) {
+            statusEl.className = "status error";
+            statusEl.textContent = "A demo xapp id is required for single xapp mode.";
+            return;
+          }
+
+          launchBtn.disabled = true;
+          statusEl.className = "status";
+          statusEl.textContent = "Resolving tenant subject and preparing the host...";
+
+          try {
+            const subjectId = await resolveSubject({
+              ...identityOverride,
+              ...(email ? { email } : {}),
+              ...(name ? { name } : {}),
+            });
+            const identity = {
+              name,
+              email,
+              mode,
+              xappId,
+              ...(identityOverride.type ? { type: identityOverride.type } : {}),
+              ...(identityOverride.identifier ? { identifier: identityOverride.identifier } : {}),
+              ...(identityOverride.metadata ? { metadata: identityOverride.metadata } : {}),
+              subjectId,
+              resolvedAt: new Date().toISOString(),
+            };
+            window.localStorage.setItem(storageKey, JSON.stringify(identity));
+            renderStoredIdentity();
+            const locale = readLocale();
+            if (mode === "single-xapp") {
+              const target = new URL("/single-xapp.html", window.location.href);
+              target.searchParams.set("locale", locale);
+              target.searchParams.set("xappId", xappId);
+              window.location.href = target.toString();
+              return;
+            }
+            const target = new URL("/marketplace.html", window.location.href);
+            target.searchParams.set("locale", locale);
+            target.searchParams.set("mode", mode);
+            window.location.href = target.toString();
+          } catch (error) {
+            statusEl.className = "status error";
+            statusEl.textContent =
+              error && error.message
+                ? String(error.message)
+                : "The reference host could not resolve the subject.";
+            launchBtn.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

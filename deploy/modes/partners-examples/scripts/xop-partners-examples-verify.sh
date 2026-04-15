@@ -124,39 +124,39 @@ print_service_debug() {
   fi
 }
 
-XCONECT_URL="${VERIFY_XCONECT_URL:-http://localhost:${XCONECT_PORT:-3312}}"
+XCONECTA_URL="${VERIFY_XCONECTA_URL:-http://localhost:${XCONECTA_PORT:-3314}}"
 XCONECTB_URL="${VERIFY_XCONECTB_URL:-http://localhost:${XCONECTB_PORT:-3313}}"
 XPLACE_EXAMPLE_URL="${VERIFY_XPLACE_EXAMPLE_URL:-http://localhost:${XPLACE_EXAMPLE_PORT:-3016}}"
 XCONECTC_URL="${VERIFY_XCONECTC_URL:-http://localhost:${XCONECTC_PORT:-8001}}"
 XCONECTC_HOST_URL="${VERIFY_XCONECTC_HOST_URL:-http://localhost:${XCONECTC_HOST_PORT:-8002}}"
-XCONECT_HOST_URL="${VERIFY_XCONECT_HOST_URL:-http://localhost:${XCONECT_HOST_PORT:-3412}}"
+XCONECTA_HOST_URL="${VERIFY_XCONECTA_HOST_URL:-http://localhost:${XCONECTA_HOST_PORT:-3414}}"
 XCONECTB_HOST_URL="${VERIFY_XCONECTB_HOST_URL:-http://localhost:${XCONECTB_HOST_PORT:-3413}}"
 XCONECTC_HEALTH_URL="${VERIFY_XCONECTC_HEALTH_URL:-${XCONECTC_URL}/api/health}"
 XCONECTC_HOST_HEALTH_URL="${VERIFY_XCONECTC_HOST_HEALTH_URL:-${XCONECTC_HOST_URL}/api/health}"
 
-if ! wait_for_health_ok "${XCONECT_URL}/health" "xconect health"; then
-  print_service_debug "xconect"
+if ! wait_for_health_ok "${XCONECTA_URL}/health" "xconecta health"; then
+  print_service_debug "xconecta"
   exit 1
 fi
-if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
-  if ! wait_for_health_ok "${XCONECT_HOST_URL}/health" "xconect-host health"; then
-    print_service_debug "xconect-host"
+if [[ "${ENABLE_XCONECTA_HOST:-0}" == "1" ]]; then
+  if ! wait_for_health_ok "${XCONECTA_HOST_URL}/health" "xconecta-host health"; then
+    print_service_debug "xconecta-host"
     exit 1
   fi
-  if ! wait_for_http_ok "${XCONECT_HOST_URL}/marketplace.html" "xconect-host marketplace"; then
-    print_service_debug "xconect-host"
+  if ! wait_for_http_ok "${XCONECTA_HOST_URL}/marketplace.html" "xconecta-host marketplace"; then
+    print_service_debug "xconecta-host"
     exit 1
   fi
-  if ! wait_for_http_ok "${XCONECT_HOST_URL}/single-xapp.html" "xconect-host single-xapp"; then
-    print_service_debug "xconect-host"
+  if ! wait_for_http_ok "${XCONECTA_HOST_URL}/single-xapp.html" "xconecta-host single-xapp"; then
+    print_service_debug "xconecta-host"
     exit 1
   fi
-  if ! wait_for_http_ok "${XCONECT_HOST_URL}/host/proof-config.js" "xconect-host proof config"; then
-    print_service_debug "xconect-host"
+  if ! wait_for_http_ok "${XCONECTA_HOST_URL}/host/proof-config.js" "xconecta-host proof config"; then
+    print_service_debug "xconecta-host"
     exit 1
   fi
-  if ! wait_for_json_post_ok "${XCONECT_HOST_URL}/api/host-bootstrap" "xconect-host bootstrap" '{"email":"partners.verify+xconect@example.com","name":"Partners Verify"}'; then
-    print_service_debug "xconect-host"
+  if ! wait_for_json_post_ok "${XCONECTA_HOST_URL}/api/host-bootstrap" "xconecta-host bootstrap" '{"email":"partners.verify+xconecta@example.com","name":"Partners Verify"}'; then
+    print_service_debug "xconecta-host"
     exit 1
   fi
 fi

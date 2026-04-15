@@ -58,7 +58,7 @@ Publisher-local session reference lane:
   - `XPLACE_EXAMPLE_PUBLISHER_ID`
   - `VENDOR_ASSERTION_SHARED_SECRET`
   - optional `XPLACE_EXAMPLE_WIDGET_ALLOWED_ORIGINS` for stricter bootstrap origin binding
-- current local live proof for this lane is on the `xconect` Node tenant lane
+- current local live proof for this lane is on the `xconecta` Node tenant lane
 
 Bridge-session flow:
 

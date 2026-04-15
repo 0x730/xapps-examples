@@ -100,7 +100,7 @@ fi
 require_csv_contains "XCONECTA_ALLOWED_ORIGINS" "${XCONECTA_PUBLIC_BASE_URL:-}" "xconecta allowed origins"
 require_csv_contains "XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST" "${XCONECTA_PUBLIC_BASE_URL:-}" "xconecta payment return allowlist"
 require_pair_if_any "XCONECTA_HOST_BOOTSTRAP_API_KEYS" "XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET" "xconecta host bootstrap"
-if [[ "${ENABLE_XCONECT_HOST:-0}" == "1" ]]; then
+if [[ "${ENABLE_XCONECTA_HOST:-0}" == "1" ]]; then
   require_http_url "XCONECTA_HOST_PUBLIC_BASE_URL"
   require_http_url "XCONECTA_HOST_BACKEND_BASE_URL"
   require_http_url "XCONECTA_HOST_BOOTSTRAP_BACKEND_BASE_URL"

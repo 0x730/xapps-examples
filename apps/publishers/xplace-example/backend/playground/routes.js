@@ -225,6 +225,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   const {
     gatewayBaseUrl,
     gatewayClientApiKey,
+    resolveGatewayClientApiKey,
     publisherGatewayApiKey,
     repo,
     sessionStore,
@@ -234,10 +235,21 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
     widgetAllowedOrigins = [],
   } = options;
 
-  const gatewayClient = createPlaygroundGatewayClient({
-    gatewayBaseUrl,
-    gatewayClientApiKey,
-  });
+  function resolveSessionGatewayClientApiKey(session) {
+    const clientId = String(session?.context?.client_id || "").trim();
+    if (typeof resolveGatewayClientApiKey === "function") {
+      const resolved = String(resolveGatewayClientApiKey({ clientId, session }) || "").trim();
+      if (resolved) return resolved;
+    }
+    return String(gatewayClientApiKey || "").trim();
+  }
+
+  function buildGatewayClientForSession(session) {
+    return createPlaygroundGatewayClient({
+      gatewayBaseUrl,
+      gatewayClientApiKey: resolveSessionGatewayClientApiKey(session),
+    });
+  }
   const publisherLinkClient = createPublisherApiClient({
     baseUrl: gatewayBaseUrl,
     apiKey: publisherGatewayApiKey,
@@ -277,6 +289,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   }
 
   async function readCatalogData(session) {
+    const gatewayClient = buildGatewayClientForSession(session);
     const xappId = session?.context?.xapp_id;
     const [catalog, xappDetail] = await Promise.all([
       gatewayClient.listCatalog({ xappId }),
@@ -293,6 +306,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   }
 
   async function readStateData(session, query = {}) {
+    const gatewayClient = buildGatewayClientForSession(session);
     return readPlaygroundState({
       gatewayClient,
       session,
@@ -338,6 +352,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   }
 
   async function maybeFinalizeWorkspacePayment(session, query = {}) {
+    const gatewayClient = buildGatewayClientForSession(session);
     const intentId = String(query.intentId || "").trim();
     if (!intentId) {
       return null;
@@ -394,6 +409,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   }
 
   async function runReferenceActivate(session, body) {
+    const gatewayClient = buildGatewayClientForSession(session);
     const activation = await gatewayClient.referenceActivate({
       xappId: session.context.xapp_id,
       context: session.context,
@@ -412,6 +428,7 @@ export async function registerMonetizationPlaygroundRoutes(fastify, options) {
   }
 
   async function runCreatePaymentSession(request, session, body) {
+    const gatewayClient = buildGatewayClientForSession(session);
     const host = String(request.headers.host || "").trim();
     const protocol = request.protocol || "http";
     const widgetUrl = `${protocol}://${host}/widgets/${PLAYGROUND_SLUG}.html`;
