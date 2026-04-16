@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f8c0ec7a16f78dee4826bf3cc2b21ee",
+    "content-hash": "d763c197e4a9ab59c4e21b52c4336be0",
     "packages": [
         {
             "name": "xapps-platform/xapps-backend-kit",

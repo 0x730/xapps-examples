@@ -13,8 +13,8 @@
     "firebase/php-jwt": "^6.10",
     "laravel/framework": "^12.0",
     "laravel/tinker": "^2.10.1",
-    "xapps-platform/xapps-backend-kit": "^0.2.8",
-    "xapps-platform/xapps-php": "^0.2.7"
+    "xapps-platform/xapps-backend-kit": "^0.2.9",
+    "xapps-platform/xapps-php": "^0.2.8"
   },
   "require-dev": {
     "fakerphp/faker": "^1.23",

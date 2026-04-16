@@ -12,13 +12,7 @@
   "version": "1.0.163",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
-  "tags": [
-    "xplace-example",
-    "publisher-rendered",
-    "bonbun",
-    "public-iframe",
-    "partner-review"
-  ],
+  "tags": ["xplace-example", "publisher-rendered", "bonbun", "public-iframe", "partner-review"],
   "tools": [],
   "widgets": [
     {
@@ -38,9 +32,7 @@
           "publisher_runtime_mode": "passive"
         }
       },
-      "capabilities": [
-        "ui:notification"
-      ]
+      "capabilities": ["ui:notification"]
     }
   ]
 }

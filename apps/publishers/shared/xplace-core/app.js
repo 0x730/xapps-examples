@@ -201,12 +201,11 @@ export function createPublisherWorkspaceApp({
 
       return reply.send({
         status: "success",
-        result:
-          manualPreflight?.result || {
-            status: "accepted",
-            requestRef: `XPLC-${Date.now()}`,
-            summary: `Request accepted by ${serviceName} (sync mode)`,
-          },
+        result: manualPreflight?.result || {
+          status: "accepted",
+          requestRef: `XPLC-${Date.now()}`,
+          summary: `Request accepted by ${serviceName} (sync mode)`,
+        },
       });
     }
 

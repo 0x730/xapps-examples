@@ -33,9 +33,7 @@
         "kind": "iframe_url",
         "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-bridge-session-publisher-rendered.html"
       },
-      "capabilities": [
-        "ui:notification"
-      ],
+      "capabilities": ["ui:notification"],
       "config": {
         "xapps": {
           "bootstrap_transport": "signed_ticket"

@@ -50,17 +50,11 @@
           "temperatureUnit": {
             "type": "string",
             "title": "Temperature Unit",
-            "enum": [
-              "celsius",
-              "fahrenheit"
-            ],
+            "enum": ["celsius", "fahrenheit"],
             "default": "celsius"
           }
         },
-        "required": [
-          "latitude",
-          "longitude"
-        ]
+        "required": ["latitude", "longitude"]
       },
       "input_ui_schema": {
         "type": "VerticalLayout",
@@ -459,9 +453,7 @@
       "config": {
         "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
         "tool_name": "evaluate_tenant_payment_policy",
-        "tools": [
-          "lookup_weather_now"
-        ],
+        "tools": ["lookup_weather_now"],
         "ui_mode": "redirect",
         "allow_orchestration_approval": true
       }
