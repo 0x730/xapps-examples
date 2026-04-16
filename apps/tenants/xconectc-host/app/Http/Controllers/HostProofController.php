@@ -39,16 +39,16 @@ class HostProofController extends Controller
     private function browserHostDistDir(): string
     {
         return $this->firstExistingPath([
-            $this->repoRoot() . '/node_modules/@xapps-platform/browser-host/dist',
             $this->repoRoot() . '/packages/browser-host/dist',
+            $this->repoRoot() . '/node_modules/@xapps-platform/browser-host/dist',
         ], $this->repoRoot() . '/packages/browser-host/dist');
     }
 
     private function embedSdkFile(): string
     {
         return $this->firstExistingPath([
-            $this->repoRoot() . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
             $this->repoRoot() . '/dist/sdk/xapps-embed-sdk.esm.js',
+            $this->repoRoot() . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
             $this->repoRoot() . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
         ], $this->repoRoot() . '/dist/sdk/xapps-embed-sdk.esm.js');
     }

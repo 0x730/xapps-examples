@@ -9,7 +9,7 @@
     "en": "JSON Forms certificate request app for xplace publisher using the xconect gateway-managed Stripe payment guard.",
     "ro": "Aplicație JSON Forms pentru cereri de certificate în xplace publisher, folosind garda xconect pentru Stripe gestionat de gateway."
   },
-  "version": "1.0.472",
+  "version": "1.0.510",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -74,7 +74,10 @@
             "description": "Opțional: detalii suplimentare despre utilizarea certificatului."
           }
         },
-        "required": ["companyCui", "requestPurpose"]
+        "required": [
+          "companyCui",
+          "requestPurpose"
+        ]
       },
       "input_ui_schema": {
         "type": "Categorization",
@@ -182,7 +185,10 @@
             "type": "string"
           }
         },
-        "required": ["status", "requestRef"]
+        "required": [
+          "status",
+          "requestRef"
+        ]
       },
       "output_ui_schema": {
         "xapps": {
@@ -265,7 +271,9 @@
       "headless": false,
       "config": {
         "subject_profile_guard_ref": "xconect_tenant_billing_business",
-        "tools": ["submit_certificate_request_async"],
+        "tools": [
+          "submit_certificate_request_async"
+        ],
         "subject_profile_sources": {
           "publisher": {
             "provider_kind": "endpoint",
@@ -285,7 +293,9 @@
       "config": {
         "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
         "tool_name": "evaluate_tenant_payment_policy",
-        "tools": ["submit_certificate_request_async"],
+        "tools": [
+          "submit_certificate_request_async"
+        ],
         "ui_mode": "redirect",
         "allow_orchestration_approval": true
       }

@@ -9,7 +9,7 @@
     "en": "Platform-rendered JSON Forms certificate request app proving XMS virtual currencies across one-time unlock, subscriptions, credit packs, and hybrid request consumption.",
     "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând monede virtuale XMS pentru one-time unlock, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.16",
+  "version": "1.0.47",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -27,7 +27,9 @@
       "name": "cert_xms_gateway_managed_hosted",
       "payment_issuer_mode": "gateway_managed",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["gateway"],
+      "payment_allowed_issuers": [
+        "gateway"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -69,7 +71,9 @@
       "name": "cert_xms_tenant_delegated_hosted",
       "payment_issuer_mode": "tenant_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["tenant_delegated"],
+      "payment_allowed_issuers": [
+        "tenant_delegated"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -113,7 +117,9 @@
       "name": "cert_xms_publisher_delegated_hosted",
       "payment_issuer_mode": "publisher_delegated",
       "payment_scheme": "stripe",
-      "payment_allowed_issuers": ["publisher_delegated"],
+      "payment_allowed_issuers": [
+        "publisher_delegated"
+      ],
       "payment_return_contract": "xapps_payment_orchestration_v1",
       "payment_return_required": true,
       "payment_return_max_age_s": 900,
@@ -379,7 +385,9 @@
           "ro": "Acces certificate VC"
         },
         "placement": "paywall",
-        "offering_refs": ["cert_default_paywall_vc"],
+        "offering_refs": [
+          "cert_default_paywall_vc"
+        ],
         "package_refs": [
           "cert_single_unlock_vc",
           "cert_trial_monthly_vc",
@@ -395,8 +403,12 @@
           "ro": "Ai nevoie de mai multe Certificate Credits?"
         },
         "placement": "upgrade",
-        "offering_refs": ["cert_credit_topups_vc"],
-        "package_refs": ["cert_credits_10_vc"],
+        "offering_refs": [
+          "cert_credit_topups_vc"
+        ],
+        "package_refs": [
+          "cert_credits_10_vc"
+        ],
         "default_package_ref": "cert_credits_10_vc",
         "status": "active"
       }
@@ -479,7 +491,10 @@
             "title": "Detalii solicitare"
           }
         },
-        "required": ["companyCui", "requestPurpose"]
+        "required": [
+          "companyCui",
+          "requestPurpose"
+        ]
       },
       "input_ui_schema": {
         "type": "Categorization",
@@ -557,7 +572,10 @@
             "type": "string"
           },
           "entitlement_state": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "has_current_access": {
             "type": "boolean"
@@ -569,19 +587,34 @@
             "type": "string"
           },
           "credit_cost": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "credits_remaining": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "subscriptionStatus": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "virtualCurrencyCode": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "virtualCurrencyName": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "requestRef": {
             "type": "string"
@@ -730,7 +763,11 @@
           "result_presentation": "runtime_default"
         }
       },
-      "capabilities": ["requests:create", "requests:read", "ui:notification"]
+      "capabilities": [
+        "requests:create",
+        "requests:read",
+        "ui:notification"
+      ]
     }
   ],
   "guards": [
@@ -740,7 +777,9 @@
       "headless": false,
       "config": {
         "subject_profile_guard_ref": "xconect_tenant_billing_business",
-        "tools": ["submit_xms_certificate_request_vc"],
+        "tools": [
+          "submit_xms_certificate_request_vc"
+        ],
         "subject_profile_sources": {
           "publisher": {
             "provider_kind": "endpoint",
@@ -759,7 +798,9 @@
       "headless": true,
       "order": 20,
       "config": {
-        "tools": ["submit_xms_certificate_request_vc"],
+        "tools": [
+          "submit_xms_certificate_request_vc"
+        ],
         "required_credits_source": "manifest_usage_policy",
         "policy": {
           "kind": "credits",

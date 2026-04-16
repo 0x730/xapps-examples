@@ -5,7 +5,7 @@
     "ro": "xplace • Vreme acum (Stripe gateway)"
   },
   "slug": "xplace-weather-now-gateway-stripe",
-  "version": "1.0.314",
+  "version": "1.0.345",
   "description": {
     "en": "Sample xplace publisher xapp (JSON Forms) for automatic weather lookups using xconect gateway-managed Stripe payment guard flow.",
     "ro": "Xapp de exemplu xplace publisher (JSON Forms) pentru interogări automate meteo, folosind fluxul xconect cu gardă Stripe gestionată de gateway."
@@ -50,11 +50,17 @@
           "temperatureUnit": {
             "type": "string",
             "title": "Temperature Unit",
-            "enum": ["celsius", "fahrenheit"],
+            "enum": [
+              "celsius",
+              "fahrenheit"
+            ],
             "default": "celsius"
           }
         },
-        "required": ["latitude", "longitude"]
+        "required": [
+          "latitude",
+          "longitude"
+        ]
       },
       "input_ui_schema": {
         "type": "VerticalLayout",
@@ -453,7 +459,9 @@
       "config": {
         "payment_guard_ref": "xconect_tenant_pay_by_request_gateway_stripe",
         "tool_name": "evaluate_tenant_payment_policy",
-        "tools": ["lookup_weather_now"],
+        "tools": [
+          "lookup_weather_now"
+        ],
         "ui_mode": "redirect",
         "allow_orchestration_approval": true
       }

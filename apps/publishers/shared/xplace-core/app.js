@@ -138,6 +138,31 @@ export function createPublisherWorkspaceApp({
     const createdAt = nowIso();
 
     if (tool.mode === XPLACE_REQUEST_MODES.MANUAL) {
+      let manualPreflight = null;
+      if (typeof tool.handle === "function") {
+        manualPreflight = await tool.handle({
+          payload,
+          requestId,
+          toolName,
+          callbackToken,
+          async: asyncFlag,
+          subjectId,
+          xappId,
+          clientId,
+          installationId,
+          request,
+          requestLog: request.log,
+        });
+        if (String(manualPreflight?.status || "") !== "success") {
+          return reply.send(
+            manualPreflight || {
+              status: "error",
+              result: { message: "Manual request preflight failed" },
+            },
+          );
+        }
+      }
+
       await insertOrUpdateRequestRecord(repo, {
         request_id: requestId,
         tool_name: toolName,
@@ -149,6 +174,7 @@ export function createPublisherWorkspaceApp({
         callback_token: callbackToken,
         gateway_request_id: requestId,
         subject_id: subjectId,
+        result: manualPreflight?.result || {},
         created_at: createdAt,
         updated_at: createdAt,
       });
@@ -175,11 +201,12 @@ export function createPublisherWorkspaceApp({
 
       return reply.send({
         status: "success",
-        result: {
-          status: "accepted",
-          requestRef: `XPLC-${Date.now()}`,
-          summary: `Request accepted by ${serviceName} (sync mode)`,
-        },
+        result:
+          manualPreflight?.result || {
+            status: "accepted",
+            requestRef: `XPLC-${Date.now()}`,
+            summary: `Request accepted by ${serviceName} (sync mode)`,
+          },
       });
     }
 

@@ -158,8 +158,8 @@ final class BackendKitBootstrap
                 'tenantPayment' => public_path('tenant-payment.html'),
             ],
             'embedSdkCandidateFiles' => [
-                $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
                 $repoRoot . '/dist/sdk/xapps-embed-sdk.esm.js',
+                $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
                 $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
             ],
         ];

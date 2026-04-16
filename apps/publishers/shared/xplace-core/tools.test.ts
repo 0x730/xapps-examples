@@ -33,7 +33,7 @@ describe("xplace monetization lab tool", () => {
 
     const tool = registry.submit_xms_certificate_request;
     expect(tool).toBeDefined();
-    expect(tool?.mode).toBe("auto");
+    expect(tool?.mode).toBe("manual");
     expect(tool?.xapp).toBe("xplace-certs-xms-jsonforms");
   });
 
@@ -66,7 +66,7 @@ describe("xplace monetization lab tool", () => {
             usage_policy: {
               tool_name: "submit_xms_certificate_request",
               unit: "certificate_request",
-              credit_cost: 2,
+              credit_cost: 1,
               status: "active",
             },
           }),
@@ -104,15 +104,15 @@ describe("xplace monetization lab tool", () => {
       }
       if (url.endsWith("/v1/xapps/xapp_1/monetization/wallet-accounts/wallet_1/consume")) {
         const body = JSON.parse(String(init?.body || "{}"));
-        expect(body.amount).toBe("2");
+        expect(body.amount).toBe("1");
         expect(body.source_ref).toBe("xplace-certs-xms-jsonforms:req_1");
         expect(body.metadata.tool_name).toBe("submit_xms_certificate_request");
-        expect(body.metadata.credit_cost).toBe("2");
+        expect(body.metadata.credit_cost).toBe("1");
         return new Response(
           JSON.stringify({
-            wallet_account: { id: "wallet_1", balance_remaining: "3" },
-            wallet_ledger: { id: "ledger_1", event_kind: "consume", amount: "2" },
-            access_projection: { credits_remaining: "3", balance_state: "sufficient" },
+            wallet_account: { id: "wallet_1", balance_remaining: "4" },
+            wallet_ledger: { id: "ledger_1", event_kind: "consume", amount: "1" },
+            access_projection: { credits_remaining: "4", balance_state: "sufficient" },
           }),
           { status: 200, headers: { "Content-Type": "application/json" } },
         ) as any;
@@ -133,14 +133,9 @@ describe("xplace monetization lab tool", () => {
     });
 
     expect(result.status).toBe("success");
-    expect(result.result.entitlement_state).toBe("inactive");
-    expect(result.result.has_current_access).toBe(true);
-    expect(result.result.access_summary).toBe(
-      "Current subject access with usable certificate credits",
-    );
-    expect(result.result.credit_cost).toBe(2);
-    expect(result.result.credits_remaining).toBe("3");
-    expect(result.result.walletLedgerId).toBe("ledger_1");
+    expect(result.result.status).toBe("accepted");
+    expect(String(result.result.requestRef || "")).toContain("XMS-CERT-");
+    expect(result.result.summary).toBe("Certificate request accepted for RO12345678.");
     expect(fetchSpy).toHaveBeenCalledTimes(5);
   });
 
@@ -205,11 +200,9 @@ describe("xplace monetization lab tool", () => {
     });
 
     expect(result.status).toBe("success");
-    expect(result.result.entitlement_state).toBe("active");
-    expect(result.result.has_current_access).toBe(true);
-    expect(result.result.access_summary).toBe("Current subject access");
-    expect(result.result.credit_cost).toBe(0);
-    expect(result.result.walletLedgerId).toBeNull();
+    expect(result.result.status).toBe("accepted");
+    expect(String(result.result.requestRef || "")).toContain("XMS-CERT-");
+    expect(result.result.summary).toBe("Certificate request accepted for RO12345678.");
     expect(fetchSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -230,7 +223,7 @@ describe("xplace monetization lab tool", () => {
             usage_policy: {
               tool_name: "submit_xms_certificate_request",
               unit: "certificate_request",
-              credit_cost: 2,
+              credit_cost: 1,
               status: "active",
             },
           }),
@@ -268,12 +261,12 @@ describe("xplace monetization lab tool", () => {
       }
       if (url.endsWith("/v1/xapps/xapp_1/monetization/wallet-accounts/wallet_1/consume")) {
         const body = JSON.parse(String(init?.body || "{}"));
-        expect(body.amount).toBe("2");
+        expect(body.amount).toBe("1");
         return new Response(
           JSON.stringify({
-            wallet_account: { id: "wallet_1", balance_remaining: "1" },
-            wallet_ledger: { id: "ledger_1", event_kind: "consume", amount: "2" },
-            access_projection: { credits_remaining: "1", balance_state: "sufficient" },
+            wallet_account: { id: "wallet_1", balance_remaining: "2" },
+            wallet_ledger: { id: "ledger_1", event_kind: "consume", amount: "1" },
+            access_projection: { credits_remaining: "2", balance_state: "sufficient" },
           }),
           { status: 200, headers: { "Content-Type": "application/json" } },
         ) as any;
@@ -294,15 +287,9 @@ describe("xplace monetization lab tool", () => {
     });
 
     expect(result.status).toBe("success");
-    expect(result.result.entitlement_state).toBe("active");
-    expect(result.result.has_current_access).toBe(true);
-    expect(result.result.access_summary).toBe(
-      "Active subscription with usable certificate credits",
-    );
-    expect(result.result.credit_cost).toBe(2);
-    expect(result.result.credits_remaining).toBe("1");
-    expect(result.result.subscriptionStatus).toBe("active");
-    expect(result.result.walletLedgerId).toBe("ledger_1");
+    expect(result.result.status).toBe("accepted");
+    expect(String(result.result.requestRef || "")).toContain("XMS-CERT-");
+    expect(result.result.summary).toBe("Certificate request accepted for RO12345678.");
     expect(fetchSpy).toHaveBeenCalledTimes(5);
   });
 
@@ -323,7 +310,7 @@ describe("xplace monetization lab tool", () => {
             usage_policy: {
               tool_name: "submit_xms_certificate_request",
               unit: "certificate_request",
-              credit_cost: 2,
+              credit_cost: 1,
               virtual_currency_code: "CERT_CREDITS",
               status: "active",
             },
@@ -375,22 +362,22 @@ describe("xplace monetization lab tool", () => {
       }
       if (url.endsWith("/v1/xapps/xapp_1/monetization/wallet-accounts/wallet_cert/consume")) {
         const body = JSON.parse(String(init?.body || "{}"));
-        expect(body.amount).toBe("2");
+        expect(body.amount).toBe("1");
         expect(body.metadata.virtual_currency_code).toBe("CERT_CREDITS");
         return new Response(
           JSON.stringify({
             wallet_account: {
               id: "wallet_cert",
-              balance_remaining: "3",
+              balance_remaining: "4",
               virtual_currency: { code: "CERT_CREDITS" },
             },
             wallet_ledger: {
               id: "ledger_cert",
               event_kind: "consume",
-              amount: "2",
+              amount: "1",
               virtual_currency: { code: "CERT_CREDITS" },
             },
-            access_projection: { credits_remaining: "3", balance_state: "sufficient" },
+            access_projection: { credits_remaining: "4", balance_state: "sufficient" },
           }),
           { status: 200, headers: { "Content-Type": "application/json" } },
         ) as any;
@@ -411,7 +398,8 @@ describe("xplace monetization lab tool", () => {
     });
 
     expect(result.status).toBe("success");
-    expect(result.result.walletLedgerId).toBe("ledger_cert");
+    expect(result.result.status).toBe("accepted");
+    expect(String(result.result.requestRef || "")).toContain("XMS-CERT-");
     expect(fetchSpy).toHaveBeenCalledTimes(5);
   });
 

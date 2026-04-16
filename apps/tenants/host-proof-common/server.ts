@@ -22,15 +22,15 @@ function firstExistingPath(candidates: string[], fallback: string) {
 
 const browserHostDistDir = firstExistingPath(
   [
-    path.join(repoRoot, "node_modules/@xapps-platform/browser-host/dist"),
     path.join(repoRoot, "packages/browser-host/dist"),
+    path.join(repoRoot, "node_modules/@xapps-platform/browser-host/dist"),
   ],
   path.join(repoRoot, "packages/browser-host/dist"),
 );
 const embedSdkEsmFile = firstExistingPath(
   [
-    path.join(repoRoot, "node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js"),
     path.join(repoRoot, "dist/sdk/xapps-embed-sdk.esm.js"),
+    path.join(repoRoot, "node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js"),
     path.join(repoRoot, "node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js"),
   ],
   path.join(repoRoot, "dist/sdk/xapps-embed-sdk.esm.js"),

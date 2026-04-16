@@ -339,10 +339,17 @@ export function createXplaceToolRegistry({
   gatewayBaseUrl = "",
   gatewayClientApiKey = "",
 }) {
-  function buildCertificateRequestTool({ key, xapp, title, sourceRefPrefix }) {
+  function buildCertificateRequestTool({
+    key,
+    xapp,
+    title,
+    sourceRefPrefix,
+    mode = XPLACE_REQUEST_MODES.AUTO,
+    simplifiedResult = false,
+  }) {
     return {
       key,
-      mode: XPLACE_REQUEST_MODES.AUTO,
+      mode,
       xapp,
       title,
       validate(payload) {
@@ -533,6 +540,19 @@ export function createXplaceToolRegistry({
         const walletCurrency = readVirtualCurrencySummary(walletAccount);
         const ledgerCurrency = readVirtualCurrencySummary(walletLedger);
         const accessCurrency = readVirtualCurrencySummary(accessProjection);
+        const requestRef = `XMS-CERT-${Date.now()}`;
+        const acceptedSummary = `Certificate request accepted for ${company.raw}.`;
+
+        if (simplifiedResult) {
+          return {
+            status: "success",
+            result: {
+              status: "accepted",
+              requestRef,
+              summary: acceptedSummary,
+            },
+          };
+        }
 
         return {
           status: "success",
@@ -554,8 +574,8 @@ export function createXplaceToolRegistry({
               walletCurrency.name || ledgerCurrency.name || accessCurrency.name || null,
             walletAccountId: walletAccount?.id ?? null,
             walletLedgerId: walletLedger?.id ?? null,
-            requestRef: `XMS-CERT-${Date.now()}`,
-            summary: `Certificate request accepted for ${company.raw}. ${accessSummary}.`,
+            requestRef,
+            summary: `${acceptedSummary} ${accessSummary}.`,
             checkedAt: nowIso(),
           },
         };
@@ -710,8 +730,10 @@ export function createXplaceToolRegistry({
     submit_xms_certificate_request: buildCertificateRequestTool({
       key: "submit_xms_certificate_request",
       xapp: "xplace-certs-xms-jsonforms",
-      title: "Submit XMS Certificate Request (automatic reference response)",
+      title: "Submit XMS Certificate Request (manual review)",
       sourceRefPrefix: "xplace-certs-xms-jsonforms",
+      mode: XPLACE_REQUEST_MODES.MANUAL,
+      simplifiedResult: true,
     }),
     submit_xms_certificate_request_vc: buildCertificateRequestTool({
       key: "submit_xms_certificate_request_vc",

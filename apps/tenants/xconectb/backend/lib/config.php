@@ -56,8 +56,8 @@ function xconectb_load_config(): array
     $xconectbHostDir = dirname($backendDir, 1) . '/host';
     $xconectHostDir = dirname($backendDir, 2) . '/xconect/host';
     $browserHostDirCandidates = [
-        $repoRoot . '/node_modules/@xapps-platform/browser-host/dist',
         $repoRoot . '/packages/browser-host/dist',
+        $repoRoot . '/node_modules/@xapps-platform/browser-host/dist',
     ];
     $browserHostDir = xconectb_first_existing_path($browserHostDirCandidates, $repoRoot . '/packages/browser-host/dist');
 
@@ -118,8 +118,8 @@ function xconectb_load_config(): array
             'paymentSessionsFile' => $backendDir . '/storage/payment-sessions.json',
         ],
         'embedSdkCandidateFiles' => [
-            $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
             $repoRoot . '/dist/sdk/xapps-embed-sdk.esm.js',
+            $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
             $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
         ],
         'hostAssets' => [

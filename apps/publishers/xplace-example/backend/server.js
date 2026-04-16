@@ -31,6 +31,7 @@ import {
 import { createPlaygroundAccountsRepo } from "./playground/accountsRepo.js";
 import { registerMonetizationPlaygroundRoutes } from "./playground/routes.js";
 import { createPlaygroundSessionStore } from "./playground/sessionStore.js";
+import { createClientSlugLookupCache } from "./clientSlugLookupCache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -134,24 +135,11 @@ const xplaceExamplePublisherApiClient = createPublisherApiClient({
   apiKey: XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY,
   requestTimeoutMs: XPLACE_EXAMPLE_PUBLISHER_CLIENT_LOOKUP_TIMEOUT_MS,
 });
-const XPLACE_EXAMPLE_CLIENT_SLUG_BY_ID = await (async () => {
-  try {
-    const listed = await xplaceExamplePublisherApiClient.listClients();
-    return Object.fromEntries(
-      (Array.isArray(listed?.items) ? listed.items : [])
-        .map((item) => ({
-          id: String(item?.id || "").trim(),
-          slug: String(item?.slug || "")
-            .trim()
-            .toLowerCase(),
-        }))
-        .filter((item) => item.id && item.slug)
-        .map((item) => [item.id, item.slug]),
-    );
-  } catch {
-    return {};
-  }
-})();
+const xplaceExampleClientSlugLookup = createClientSlugLookupCache({
+  listClients: () => xplaceExamplePublisherApiClient.listClients(),
+  ttlMs: XPLACE_EXAMPLE_PUBLISHER_CLIENT_LOOKUP_TIMEOUT_MS,
+});
+await xplaceExampleClientSlugLookup.hydrate();
 
 const xplaceExampleRepo = await createXplaceDb({ databaseUrl: XPLACE_EXAMPLE_DATABASE_URL });
 const xplaceExamplePlaygroundAccountsRepo = await createPlaygroundAccountsRepo({
@@ -217,7 +205,7 @@ function rejectDisallowedBootstrapOrigin(reply, hostOrigin) {
 
 function resolveExampleGatewayClientApiKey({ clientId }) {
   const normalizedClientId = String(clientId || "").trim();
-  const clientSlug = XPLACE_EXAMPLE_CLIENT_SLUG_BY_ID[normalizedClientId] || "";
+  const clientSlug = xplaceExampleClientSlugLookup.getSlugById(normalizedClientId);
   return (
     XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP[normalizedClientId] ||
     XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP[clientSlug] ||

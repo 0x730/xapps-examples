@@ -9,7 +9,7 @@
     "en": "Tenant-owned subject-profile guard defaults for billing/customer profile selection and remediation.",
     "ro": "Setări implicite de gardă pentru profilul subiectului, deținute de tenant, pentru selecția și remedierea profilului de facturare/client."
   },
-  "version": "1.0.450",
+  "version": "1.0.488",
   "visibility": "private",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "metadata": {
@@ -21,7 +21,13 @@
       "hidden": true
     }
   },
-  "tags": ["xconect", "tenant", "guards", "subject-profile", "billing"],
+  "tags": [
+    "xconect",
+    "tenant",
+    "guards",
+    "subject-profile",
+    "billing"
+  ],
   "tools": [
     {
       "tool_name": "evaluate_tenant_subject_profile_policy",
@@ -72,7 +78,10 @@
       },
       "subject_profile_requirement": {
         "required_profile_family": "billing_business",
-        "required_profile_families": ["billing_business", "billing_individual"],
+        "required_profile_families": [
+          "billing_business",
+          "billing_individual"
+        ],
         "required_profile_fields_by_family": {
           "billing_business": [
             "company_name",
@@ -82,7 +91,13 @@
             "country",
             "email"
           ],
-          "billing_individual": ["name", "address", "city", "country", "email"]
+          "billing_individual": [
+            "name",
+            "address",
+            "city",
+            "country",
+            "email"
+          ]
         }
       },
       "subject_profile_remediation": {
@@ -95,7 +110,10 @@
           "endpoint_base_url": "__XCONECTA_TENANT_GUARD_BASE_URL__/guard/subject-profiles/tenant-candidates"
         }
       },
-      "owner_override_allowlist": ["tools", "subject_profile_sources.publisher"]
+      "owner_override_allowlist": [
+        "tools",
+        "subject_profile_sources.publisher"
+      ]
     }
   ],
   "guards": [],

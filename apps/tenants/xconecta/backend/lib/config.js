@@ -108,8 +108,8 @@ export const TENANT_MARKETPLACE_PAGE_CSS_FILE = path.resolve(
 );
 const SHARED_BROWSER_HOST_DIST_DIR = firstExistingPath(
   [
-    path.resolve(backendDir, "../../../../node_modules/@xapps-platform/browser-host/dist"),
     path.resolve(backendDir, "../../../../packages/browser-host/dist"),
+    path.resolve(backendDir, "../../../../node_modules/@xapps-platform/browser-host/dist"),
   ],
   path.resolve(backendDir, "../../../../packages/browser-host/dist"),
 );
@@ -142,12 +142,12 @@ export const SHARED_HOST_STATUS_SCRIPT_FILE = path.resolve(
   "host-status.js",
 );
 export const EMBED_SDK_ESM_CANDIDATE_FILES = [
+  path.resolve(backendDir, "../../../../dist/sdk/xapps-embed-sdk.esm.js"),
+  path.resolve(backendDir, "../../../../node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js"),
   path.resolve(
     backendDir,
     "../../../../node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js",
   ),
-  path.resolve(backendDir, "../../../../dist/sdk/xapps-embed-sdk.esm.js"),
-  path.resolve(backendDir, "../../../../node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js"),
 ];
 export const TENANT_SEED_LOGO_FILE = path.resolve(backendDir, "public/xconecta-seed-logo.svg");
 
