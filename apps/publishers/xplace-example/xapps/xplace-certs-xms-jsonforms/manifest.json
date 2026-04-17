@@ -9,7 +9,7 @@
     "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption.",
     "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.93",
+  "version": "1.0.102",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

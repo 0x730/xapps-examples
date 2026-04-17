@@ -38,6 +38,13 @@ body[data-theme="atlas"] {
     linear-gradient(180deg, #f8fbff 0%, #edf2fb 100%);
 }
 
+body[data-theme="portal-blue"] {
+  background:
+    radial-gradient(circle at top left, rgba(18, 107, 241, 0.14), transparent 28%),
+    radial-gradient(circle at 85% 15%, rgba(77, 132, 229, 0.1), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+}
+
 body[data-theme="copper"] {
   background:
     radial-gradient(circle at top left, rgba(199, 86, 46, 0.14), transparent 28%),

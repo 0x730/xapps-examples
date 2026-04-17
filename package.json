@@ -13,8 +13,8 @@
     "dev:xconectb-host": "tsx watch apps/tenants/xconectb-host/server.ts"
   },
   "dependencies": {
-    "@xapps-platform/browser-host": "^0.1.15",
-    "@xapps-platform/embed-sdk": "^0.1.13"
+    "@xapps-platform/browser-host": "^0.1.17",
+    "@xapps-platform/embed-sdk": "^0.1.15"
   },
   "devDependencies": {
     "tsx": "^4.21.0"

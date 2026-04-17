@@ -17,7 +17,7 @@
             window.localStorage.getItem("xconectb_reference_host_theme_v1") || "",
           ).trim();
           const theme = aliases[rawTheme] || rawTheme;
-          if (["harbor", "atlas", "copper", "emerald", "iris"].includes(theme)) {
+          if (["harbor", "atlas", "portal-blue", "copper", "emerald", "iris"].includes(theme)) {
             document.body.dataset.theme = theme;
           }
         } catch {
@@ -35,6 +35,7 @@
               <select id="host-theme-select" class="theme-select" aria-label="Choose host theme">
                 <option value="harbor">Harbor</option>
                 <option value="atlas">Atlas</option>
+                <option value="portal-blue">Portal Blue</option>
                 <option value="copper">Copper</option>
                 <option value="emerald">Emerald</option>
                 <option value="iris">Iris</option>
@@ -324,7 +325,14 @@
         const localeSelect = document.getElementById("host-locale-select");
         const themeSelect = document.getElementById("host-theme-select");
         const themeAliases = { slate: "harbor", graphite: "atlas" };
-        const validThemes = new Set(["harbor", "atlas", "copper", "emerald", "iris"]);
+        const validThemes = new Set([
+          "harbor",
+          "atlas",
+          "portal-blue",
+          "copper",
+          "emerald",
+          "iris",
+        ]);
         const currentUrl = new URL(window.location.href);
         const localeStorageKey = "xconectb_reference_host_locale_v1";
 

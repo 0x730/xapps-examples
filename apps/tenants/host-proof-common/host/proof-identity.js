@@ -1,6 +1,7 @@
-import { HOST_BOOTSTRAP_URL, IDENTITY_STORAGE_KEY } from "/host/proof-config.js";
+const DEFAULT_HOST_BOOTSTRAP_URL = "/api/host-bootstrap";
+const DEFAULT_IDENTITY_STORAGE_KEY = "xapps_reference_host_identity_v1";
 
-function parseStoredIdentity(storageKey = IDENTITY_STORAGE_KEY) {
+function parseStoredIdentity(storageKey = DEFAULT_IDENTITY_STORAGE_KEY) {
   try {
     const raw = window.localStorage.getItem(storageKey) || "";
     if (!raw) return null;
@@ -18,12 +19,12 @@ function parseExpiry(identity) {
   return Number.isFinite(timestamp) ? timestamp : null;
 }
 
-export function readStoredProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
+export function readStoredProofIdentity(storageKey = DEFAULT_IDENTITY_STORAGE_KEY) {
   const identity = parseStoredIdentity(storageKey);
   return identity && typeof identity === "object" ? identity : null;
 }
 
-export function clearProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
+export function clearProofIdentity(storageKey = DEFAULT_IDENTITY_STORAGE_KEY) {
   try {
     window.localStorage.removeItem(storageKey);
   } catch {
@@ -31,7 +32,7 @@ export function clearProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
   }
 }
 
-export function readProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
+export function readProofIdentity(storageKey = DEFAULT_IDENTITY_STORAGE_KEY) {
   const identity = readStoredProofIdentity(storageKey);
   if (!identity) return null;
   const bootstrapToken = String(identity.bootstrapToken || "").trim();
@@ -42,16 +43,21 @@ export function readProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
   const identifierType = String(identifier?.idType || "").trim();
   const identifierValue = String(identifier?.value || "").trim();
   if ((!subjectId && (!identifierType || !identifierValue)) || !bootstrapToken) {
-    clearProofIdentity(storageKey);
-    return null;
+    if (!subjectId && (!identifierType || !identifierValue)) {
+      clearProofIdentity(storageKey);
+      return null;
+    }
   }
-  if (expiresAt !== null && expiresAt <= Date.now()) {
+  if (bootstrapToken && expiresAt !== null && expiresAt <= Date.now()) {
     return null;
   }
   return identity;
 }
 
-export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
+export async function refreshProofIdentity(
+  storageKey = DEFAULT_IDENTITY_STORAGE_KEY,
+  hostBootstrapUrl = DEFAULT_HOST_BOOTSTRAP_URL,
+) {
   const identity = readStoredProofIdentity(storageKey);
   const email = String(identity?.email || "")
     .trim()
@@ -72,7 +78,7 @@ export async function refreshProofIdentity(storageKey = IDENTITY_STORAGE_KEY) {
     throw new Error("Stored host identity is missing subject identity for silent re-bootstrap");
   }
 
-  const response = await fetch(HOST_BOOTSTRAP_URL, {
+  const response = await fetch(String(hostBootstrapUrl || DEFAULT_HOST_BOOTSTRAP_URL), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

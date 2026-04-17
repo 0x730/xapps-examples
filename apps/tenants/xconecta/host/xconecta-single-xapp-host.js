@@ -1,12 +1,12 @@
 import { bootSingleXappHost } from "/host/single-xapp-host.js";
 import { renderHostStatus } from "/host/host-status.js";
+import { readProofIdentity, refreshProofIdentity } from "/host/proof-identity.js";
 import {
   applyLocalePreference,
   applyThemePreference,
   readHeaderCollapsedPreference,
   readLocalePreference,
   renderSingleXappShell,
-  readStoredJson,
   readThemePreference,
   renderIdentity,
   setHeaderCollapsed,
@@ -27,7 +27,8 @@ async function main() {
     readHeaderCollapsedPreference,
     readLocalePreference,
     renderSingleXappShell,
-    readStoredJson,
+    readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
+    refreshStoredJson: () => refreshProofIdentity(IDENTITY_STORAGE_KEY),
     readThemePreference,
     renderIdentity,
     setHeaderCollapsed,

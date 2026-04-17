@@ -55,6 +55,7 @@ function xconectb_load_config(): array
 
     $xconectbHostDir = dirname($backendDir, 1) . '/host';
     $xconectHostDir = dirname($backendDir, 2) . '/xconect/host';
+    $sharedHostProofDir = dirname($backendDir, 2) . '/host-proof-common/host';
     $browserHostDirCandidates = [
         $repoRoot . '/packages/browser-host/dist',
         $repoRoot . '/node_modules/@xapps-platform/browser-host/dist',
@@ -129,6 +130,7 @@ function xconectb_load_config(): array
             'reference-runtime.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/reference-runtime.js'],
             'marketplace-host.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/marketplace-host.js'],
             'host-status.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/host-status.js'],
+            'proof-identity.js' => ['type' => 'js', 'filePath' => $sharedHostProofDir . '/proof-identity.js'],
             'single-xapp-host.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/single-xapp-host.js'],
             'xconectb-host-base.css' => ['type' => 'css', 'filePath' => $xconectHostDir . '/xconect-host-base.css'],
             'xconectb-host-entry.css' => ['type' => 'css', 'filePath' => $xconectHostDir . '/xconect-host-entry.css'],

@@ -9,7 +9,7 @@
     "en": "Platform-rendered JSON Forms certificate request app proving XMS virtual currencies across one-time unlock, subscriptions, credit packs, and hybrid request consumption.",
     "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând monede virtuale XMS pentru one-time unlock, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.47",
+  "version": "1.0.56",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

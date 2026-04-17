@@ -19,7 +19,7 @@ const LEGACY_THEME_ALIASES = {
   slate: "harbor",
   graphite: "atlas",
 };
-const VALID_THEMES = ["harbor", "atlas", "copper", "emerald", "iris"];
+const VALID_THEMES = ["harbor", "atlas", "portal-blue", "copper", "emerald", "iris"];
 
 const shellApi = createHostShellApi({
   modeCopy: MODE_COPY,

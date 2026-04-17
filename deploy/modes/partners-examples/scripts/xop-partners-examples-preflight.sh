@@ -60,6 +60,19 @@ require_pair_if_any() {
   fi
 }
 
+require_any_non_empty() {
+  local label="$1"
+  shift
+  local key
+  for key in "$@"; do
+    if [[ -n "${!key:-}" ]]; then
+      return
+    fi
+  done
+  echo "[xop-partners-examples-preflight] Missing required ${label}: set at least one of $*"
+  errors=$((errors + 1))
+}
+
 csv_contains_value() {
   local csv="$1"
   local expected="$2"
@@ -165,7 +178,14 @@ if [[ "${ENABLE_XPLACE_EXAMPLE:-1}" == "1" ]]; then
   require_non_empty "XPLACE_EXAMPLE_GATEWAY_PUBLISHER_API_KEY"
   require_non_empty "XPLACE_EXAMPLE_XAPP_INGEST_API_KEY"
   require_non_empty "XPLACE_EXAMPLE_ADMIN_KEY"
+  require_any_non_empty \
+    "xplace-example target client gateway key config" \
+    "XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY" \
+    "XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP" \
+    "XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP"
   require_non_empty "XPLACE_EXAMPLE_DATABASE_URL"
+  require_http_url "XPLACE_EXAMPLE_PORTAL_BASE_URL"
+  require_http_url "XPLACE_EXAMPLE_PUBLISHER_BASE_URL"
   if [[ "${XPLACE_EXAMPLE_DATABASE_URL:-}" == *"host.docker.internal"* ]]; then
     echo "[xop-partners-examples-preflight] Warning: XPLACE_EXAMPLE_DATABASE_URL uses host.docker.internal."
     echo "[xop-partners-examples-preflight] That is usually only valid when PostgreSQL runs on the same host outside Docker."
@@ -190,6 +210,13 @@ fi
 
 if [[ "${errors}" -gt 0 ]]; then
   echo "[xop-partners-examples-preflight] FAILED (errors=${errors})"
+  exit 1
+fi
+
+gateway_health_url="${INTERNAL_GATEWAY_BASE_URL%/}/health"
+if ! curl -fsS "${gateway_health_url}" >/dev/null 2>&1; then
+  echo "[xop-partners-examples-preflight] Gateway health check failed: ${gateway_health_url}"
+  echo "[xop-partners-examples-preflight] The examples lanes require INTERNAL_GATEWAY_BASE_URL to point to a working gateway API, not an nginx 502 endpoint."
   exit 1
 fi
 

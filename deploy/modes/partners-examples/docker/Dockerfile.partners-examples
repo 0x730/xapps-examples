@@ -39,6 +39,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 
 RUN export NODE_ENV=development \
+  && node scripts/build/build-openapi-import.mjs \
   && node scripts/build/build-xapp-manifest.mjs \
   && node scripts/build/build-server-sdk.mjs \
   && node scripts/build/build-browser-host.mjs \

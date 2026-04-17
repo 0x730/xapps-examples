@@ -29,8 +29,21 @@ cp deploy/modes/partners-examples/env/xop-partners-examples.env.example \
   deploy/modes/partners-examples/env/xop-partners-examples.env
 
 ./deploy/modes/partners-examples/scripts/xop-partners-examples-start.sh
+./deploy/modes/partners-examples/scripts/xop-partners-examples-publish.sh
 ./deploy/modes/partners-examples/scripts/xop-partners-examples-verify.sh
 ./deploy/modes/partners-examples/scripts/xop-partners-examples-status.sh
+```
+
+Lane ownership split:
+
+- `xop-partners-examples-start.sh` starts the examples runtime
+- `xop-partners-examples-publish.sh` publishes the examples tenant guard sets and `xplace-example` xapps into the gateway
+- unified/core can now use [../unified/scripts/xop-provision-foundation.sh](../unified/scripts/xop-provision-foundation.sh) when you want tenant/publisher bootstrap without the examples publish wave
+
+Clean recreate of the external `xplace_example` PostgreSQL DB on startup:
+
+```bash
+XPLACE_EXAMPLE_RECREATE_DB_ON_STARTUP=1 ./deploy/modes/partners-examples/scripts/xop-partners-examples-start.sh
 ```
 
 Practical rule:
@@ -46,6 +59,9 @@ Before first deploy:
 - copy `env/xop-partners-examples.env.example` to `env/xop-partners-examples.env`
 - replace all sample keys/secrets
 - replace the PostgreSQL hostname in `XPLACE_EXAMPLE_DATABASE_URL` if needed
+- set the `XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY` default and any needed
+  `XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_SLUG_MAP` / `XPLACE_EXAMPLE_TARGET_CLIENT_API_KEY_MAP`
+- set `XPLACE_EXAMPLE_PORTAL_BASE_URL` and `XPLACE_EXAMPLE_PUBLISHER_BASE_URL`
 - choose the public example hostnames you actually want to serve
 
 Then:

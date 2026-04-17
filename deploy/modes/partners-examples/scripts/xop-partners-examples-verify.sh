@@ -157,6 +157,7 @@ if [[ "${ENABLE_XCONECTA_HOST:-0}" == "1" ]]; then
   fi
   if ! wait_for_json_post_ok "${XCONECTA_HOST_URL}/api/host-bootstrap" "xconecta-host bootstrap" '{"email":"partners.verify+xconecta@example.com","name":"Partners Verify"}'; then
     print_service_debug "xconecta-host"
+    print_service_debug "xconecta"
     exit 1
   fi
 fi
@@ -183,6 +184,7 @@ if [[ "${ENABLE_XCONECTB_HOST:-0}" == "1" ]]; then
   fi
   if ! wait_for_json_post_ok "${XCONECTB_HOST_URL}/api/host-bootstrap" "xconectb-host bootstrap" '{"email":"partners.verify+xconectb@example.com","name":"Partners Verify"}'; then
     print_service_debug "xconectb-host"
+    print_service_debug "xconectb"
     exit 1
   fi
 fi
@@ -210,6 +212,7 @@ if [[ "${ENABLE_XCONECTC:-0}" == "1" ]]; then
     fi
     if ! wait_for_json_post_ok "${XCONECTC_HOST_URL}/api/host-bootstrap" "xconectc-host bootstrap" '{"email":"partners.verify+xconectc@example.com","name":"Partners Verify"}'; then
       print_service_debug "xconectc-host"
+      print_service_debug "xconectc"
       exit 1
     fi
   fi

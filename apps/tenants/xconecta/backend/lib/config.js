@@ -106,6 +106,10 @@ export const TENANT_MARKETPLACE_PAGE_CSS_FILE = path.resolve(
   backendDir,
   "../host/xconecta-host-marketplace.css",
 );
+export const SHARED_PROOF_IDENTITY_SCRIPT_FILE = path.resolve(
+  backendDir,
+  "../../host-proof-common/host/proof-identity.js",
+);
 const SHARED_BROWSER_HOST_DIST_DIR = firstExistingPath(
   [
     path.resolve(backendDir, "../../../../packages/browser-host/dist"),

@@ -1,12 +1,12 @@
 import { bootMarketplaceHost } from "/host/marketplace-host.js";
 import { renderHostStatus } from "/host/host-status.js";
+import { readProofIdentity, refreshProofIdentity } from "/host/proof-identity.js";
 import {
   applyLocalePreference,
   applyThemePreference,
   readHeaderCollapsedPreference,
   readLocalePreference,
   readModeFromUrl,
-  readStoredJson,
   readThemePreference,
   renderIdentity,
   renderMode,
@@ -30,7 +30,8 @@ async function main() {
     readHeaderCollapsedPreference,
     readLocalePreference,
     readModeFromUrl,
-    readStoredJson,
+    readStoredJson: () => readProofIdentity(IDENTITY_STORAGE_KEY),
+    refreshStoredJson: () => refreshProofIdentity(IDENTITY_STORAGE_KEY),
     readThemePreference,
     renderIdentity,
     renderMode,

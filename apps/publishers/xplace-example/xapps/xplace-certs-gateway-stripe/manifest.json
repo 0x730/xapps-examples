@@ -9,7 +9,7 @@
     "en": "JSON Forms certificate request app for xplace publisher using the xconect gateway-managed Stripe payment guard.",
     "ro": "Aplicație JSON Forms pentru cereri de certificate în xplace publisher, folosind garda xconect pentru Stripe gestionat de gateway."
   },
-  "version": "1.0.510",
+  "version": "1.0.519",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

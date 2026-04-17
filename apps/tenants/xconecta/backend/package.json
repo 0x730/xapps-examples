@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@xapps-platform/backend-kit": "^0.2.8",
-    "@xapps-platform/browser-host": "^0.1.15",
-    "@xapps-platform/embed-sdk": "^0.1.13",
+    "@xapps-platform/browser-host": "^0.1.17",
+    "@xapps-platform/embed-sdk": "^0.1.15",
     "@xapps-platform/server-sdk": "^0.2.7",
     "dotenv": "^17.2.3",
     "fastify": "^5.7.4"

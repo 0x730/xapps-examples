@@ -19,7 +19,7 @@ const shellApi = createHostShellApi({
   localeStorageKey: `${WORKSPACE_KEY}_host_proof_locale_v1`,
   themeStorageKey: `${WORKSPACE_KEY}_host_proof_theme_v1`,
   themeAliases: { slate: "harbor", graphite: "atlas" },
-  validThemes: ["harbor", "atlas", "copper", "emerald", "iris"],
+  validThemes: ["harbor", "atlas", "portal-blue", "copper", "emerald", "iris"],
   validLocales: ["en", "ro"],
   defaultLocale: "en",
   defaultTheme: "harbor",

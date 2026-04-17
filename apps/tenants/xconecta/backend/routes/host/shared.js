@@ -3,6 +3,7 @@ import {
   SHARED_BACKEND_BASE_SCRIPT_FILE,
   SHARED_MARKETPLACE_HOST_SCRIPT_FILE,
   SHARED_HOST_STATUS_SCRIPT_FILE,
+  SHARED_PROOF_IDENTITY_SCRIPT_FILE,
   SHARED_MARKETPLACE_RUNTIME_SCRIPT_FILE,
   SHARED_HOST_SHELL_SCRIPT_FILE,
   SHARED_SINGLE_XAPP_HOST_SCRIPT_FILE,
@@ -56,6 +57,10 @@ export const hostAssets = {
   "host-status.js": {
     type: "js",
     filePath: SHARED_HOST_STATUS_SCRIPT_FILE,
+  },
+  "proof-identity.js": {
+    type: "js",
+    filePath: SHARED_PROOF_IDENTITY_SCRIPT_FILE,
   },
   "single-xapp-host.js": {
     type: "js",
