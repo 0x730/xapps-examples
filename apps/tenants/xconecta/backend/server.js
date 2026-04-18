@@ -188,7 +188,8 @@ const BACKEND_KIT_OPTIONS = normalizeBackendKitOptions({
         {
           method: "GET",
           path: "/host/xconecta-host-shell.js",
-          purpose: "Shared host-shell rendering helpers for marketplace and single-xapp surfaces.",
+          purpose:
+            "Reference host-shell rendering helpers for marketplace and single-xapp surfaces.",
         },
         {
           method: "GET",

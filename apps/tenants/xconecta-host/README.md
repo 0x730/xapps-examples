@@ -42,6 +42,17 @@ server should call an internal backend address:
 
 - `XCONECTA_HOST_BOOTSTRAP_BACKEND_BASE_URL=<internal-bootstrap-target>`
 
+Concrete integrator runbook:
+
+- [apps/tenants/docs/tooling/first-hosted-tenant-integrator-handoff.md](../docs/tooling/first-hosted-tenant-integrator-handoff.md)
+- [apps/tenants/docs/tooling/nodejs-hosted-integrator-platform-tenant.md](../docs/tooling/nodejs-hosted-integrator-platform-tenant.md)
+
+Browser contract:
+
+- this proof host now exercises the unified `@xapps-platform/browser-host` surface
+- the proof/reference launcher/pages come from `apps/tenants/reference-host-common`
+- real integrators should start from the browser starter, not from this proof app line-by-line
+
 Run:
 
 ```bash

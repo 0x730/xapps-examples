@@ -14,6 +14,8 @@ full details:
   - [../host/README.md](../host/README.md)
 - PHP/Laravel quickstart:
   - [php-laravel-quickstart.md](./php-laravel-quickstart.md)
+- hosted-integrator runbook for the first real integrator shape:
+  - [laravel-hosted-integrator-platform-tenant.md](./laravel-hosted-integrator-platform-tenant.md)
 
 ## Short Answer
 
@@ -31,7 +33,11 @@ All three still use the same shared contract:
   - `xapps-platform/xapps-backend-kit`
 - browser host:
   - `@xapps-platform/browser-host`
-- browser runtime underneath:
+- recommended browser surface:
+  - `bootstrapXappsEmbedSession(...)`
+  - `mountCatalogEmbed(...)`
+  - `mountSingleXappEmbed(...)`
+- lower-level browser runtime, only when needed:
   - `@xapps-platform/embed-sdk`
 
 ## Recommended Decision Rule
@@ -92,6 +98,16 @@ Read it as:
 - the browser only keeps the short-lived bootstrap token
 - the tenant app still owns gateway/session/runtime authority
 
+If your real-world shape is:
+
+- existing Laravel app
+- platform-hosted tenant backend
+- one email may map to multiple business/member identities
+
+read this immediately after this page:
+
+- [laravel-hosted-integrator-platform-tenant.md](./laravel-hosted-integrator-platform-tenant.md)
+
 ### 1. Full Laravel Tenant App
 
 Use this when the tenant app owns:
@@ -131,17 +147,23 @@ Key file anchors in the current reference:
     - forwards Laravel requests into the PHP backend-kit route surface
 - local launcher and host-mode helper:
   - [apps/tenants/xconectc/app/Http/Controllers/HostProofController.php](../../xconectc/app/Http/Controllers/HostProofController.php)
-    - same-origin launcher bootstrap, shared host asset delivery, and local host
-      page transforms
+    - same-origin launcher bootstrap, local host asset delivery, and starter config
 - launcher page:
-  - [apps/tenants/xconectc/resources/views/catalog-single-panel.blade.php](../../xconectc/resources/views/catalog-single-panel.blade.php)
+  - [apps/tenants/xconectc/resources/host-pages/index.html](../../xconectc/resources/host-pages/index.html)
     - workspace launcher UI for `single-panel`, `split-panel`, and
       `single-xapp`
-- local host wrappers:
-  - [apps/tenants/xconectc/resources/host/proof-marketplace-host.js](../../xconectc/resources/host/proof-marketplace-host.js)
-  - [apps/tenants/xconectc/resources/host/proof-single-xapp-host.js](../../xconectc/resources/host/proof-single-xapp-host.js)
-    - thin wrappers around `@xapps-platform/browser-host` with `entryHref` pointing back
-      to `/catalog`
+- local thin host assets:
+  - [apps/tenants/xconectc/resources/host/launcher.js](../../xconectc/resources/host/launcher.js)
+  - [apps/tenants/xconectc/resources/host/marketplace.js](../../xconectc/resources/host/marketplace.js)
+  - [apps/tenants/xconectc/resources/host/single-xapp.js](../../xconectc/resources/host/single-xapp.js)
+    - local SDK consumer files that mount catalog and single-xapp surfaces with
+      `ENTRY_HREF` configured back to `/catalog`
+
+Browser SDK boundary:
+
+- public browser SDK: `@xapps-platform/browser-host`
+- repo reference host controllers for the secondary proof lanes still live under
+  `apps/tenants/reference-host-common`
 
 ### 2. Laravel Hosted Integrator Shell
 

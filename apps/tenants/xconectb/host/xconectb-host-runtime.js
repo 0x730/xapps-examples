@@ -1,15 +1,15 @@
 import {
-  createReferenceMarketplaceRuntime,
-  resolveReferenceTheme,
-} from "/host/reference-runtime.js";
+  createStandardHostMarketplaceRuntime,
+  resolveStandardTheme,
+} from "/host/standard-runtime.js";
 import { setWidgetPlaceholder } from "./xconectb-host-shell.js";
 
 export function resolveXconectbTheme(themeKey) {
-  return resolveReferenceTheme(themeKey, { defaultThemeKey: "harbor" });
+  return resolveStandardTheme(themeKey, { defaultThemeKey: "harbor" });
 }
 
 export function createXconectbMarketplaceRuntime(options) {
-  return createReferenceMarketplaceRuntime({
+  return createStandardHostMarketplaceRuntime({
     ...options,
     onStatePatch: (patch) => {
       if (patch && typeof patch === "object" && Object.keys(patch).length > 0) {
@@ -22,3 +22,6 @@ export function createXconectbMarketplaceRuntime(options) {
     },
   });
 }
+
+export const createReferenceHostMarketplaceRuntime = createXconectbMarketplaceRuntime;
+export const resolveReferenceHostTheme = resolveXconectbTheme;

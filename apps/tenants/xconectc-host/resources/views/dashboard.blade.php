@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XconectC Host Dashboard</title>
-    <link rel="stylesheet" href="/host/proof-host.css" />
+    <link rel="stylesheet" href="/host/starter.css" />
     <style>
       .dashboard-shell {
         display: grid;
@@ -25,9 +25,9 @@
       .dashboard-badge {
         padding: 6px 12px;
         border-radius: 999px;
-        border: 1px solid var(--proof-stroke);
-        background: var(--proof-panel-soft);
-        color: var(--proof-muted);
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--muted);
         font-size: 13px;
       }
 
@@ -43,39 +43,39 @@
         gap: 8px;
         padding: 16px 18px;
         border-radius: 16px;
-        border: 1px solid rgba(103, 79, 45, 0.1);
-        background: var(--proof-panel-soft);
+        border: 1px solid var(--border);
+        background: var(--card);
         text-decoration: none;
         color: inherit;
       }
 
       .resource-card strong {
-        color: var(--proof-accent-strong);
+        color: var(--text);
       }
 
       .resource-card span {
-        color: var(--proof-muted);
+        color: var(--muted);
         font-size: 14px;
       }
 
       .dashboard-copy {
         margin: 0;
-        color: var(--proof-muted);
+        color: var(--muted);
       }
 
       .dashboard-json {
         margin-top: 18px;
         padding: 12px 14px;
         border-radius: 14px;
-        background: var(--proof-panel-soft);
-        color: var(--proof-muted);
+        background: #f8fbff;
+        color: var(--muted);
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 13px;
       }
     </style>
   </head>
   <body>
-    <main class="page-shell">
+    <main class="page">
       <section class="panel dashboard-shell">
         <div class="dashboard-header">
           <h1>XconectC Host</h1>

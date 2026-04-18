@@ -37,14 +37,9 @@ class HostProofController extends Controller
         return $fallback;
     }
 
-    private function commonPublicDir(): string
+    private function localPublicDir(): string
     {
-        return $this->repoRoot() . '/apps/tenants/host-proof-common/public';
-    }
-
-    private function commonHostDir(): string
-    {
-        return $this->repoRoot() . '/apps/tenants/host-proof-common/host';
+        return resource_path('host-pages');
     }
 
     private function localHostDir(): string
@@ -214,32 +209,17 @@ class HostProofController extends Controller
 
     public function entry(): Response
     {
-        return $this->sendHtmlFile($this->commonPublicDir() . '/index.html', [
-            'Hosted Tenant Workspace' => 'XconectC Workspace Launcher',
-            'Hosted Workspace' => 'XconectC Workspace',
-            'Hosted Integrator Demo User' => 'Daniel Paul',
-            'user@hosted-integrator.test' => 'daniel.vladescu@gmail.com',
-            'href="/"' => 'href="/catalog"',
-            'Launch Hosted Workspace' => 'Launch XconectC Workspace',
-        ]);
+        return $this->sendFile($this->localPublicDir() . '/index.html', 'text/html; charset=utf-8');
     }
 
     public function marketplace(): Response
     {
-        return $this->sendHtmlFile($this->commonPublicDir() . '/marketplace.html', [
-            'Hosted Marketplace Workspace' => 'XconectC Marketplace',
-            'href="/"' => 'href="/catalog"',
-            'Back to launcher' => 'Back to workspace',
-        ]);
+        return $this->sendFile($this->localPublicDir() . '/marketplace.html', 'text/html; charset=utf-8');
     }
 
     public function singleXapp(): Response
     {
-        return $this->sendHtmlFile($this->commonPublicDir() . '/single-xapp.html', [
-            'Hosted Single Xapp Workspace' => 'XconectC Single Xapp',
-            'href="/"' => 'href="/catalog"',
-            'Back to launcher' => 'Back to workspace',
-        ]);
+        return $this->sendFile($this->localPublicDir() . '/single-xapp.html', 'text/html; charset=utf-8');
     }
 
     public function embedSdk(): Response
@@ -247,22 +227,36 @@ class HostProofController extends Controller
         return $this->sendFile($this->embedSdkFile(), 'application/javascript; charset=utf-8');
     }
 
-    public function proofConfig(): Response
+    private function starterConfigBody(): string
     {
-        $body = implode("\n", [
+        return implode("\n", [
+            'export const STARTER_NAME = ' . json_encode('xconectc') . ';',
             'export const BACKEND_BASE_URL = ' . json_encode($this->backendBaseUrl()) . ';',
             'export const PUBLIC_BASE_URL = ' . json_encode($this->publicBaseUrl()) . ';',
             'export const HOST_BOOTSTRAP_URL = "/catalog/api/host-bootstrap";',
+            'export const ENTRY_HREF = "/catalog";',
             'export const DASHBOARD_HREF = "/dashboard";',
             'export const DASHBOARD_LABEL = "Back to dashboard";',
-            'export const PROOF_NAME = "XconectC";',
+            'export const PROOF_NAME = "xconectc";',
             'export const WORKSPACE_KEY = "xconectc";',
             'export const STACK_LABEL = "laravel-12";',
-            'export const IDENTITY_STORAGE_KEY = "xconectc-proof-identity";',
+            'export const IDENTITY_STORAGE_KEY = "xapps_xconectc_identity_v1";',
             'export const SDK_PATH = "/embed/sdk/xapps-embed-sdk.esm.js";',
+            'export const DEFAULT_SINGLE_XAPP_ID = "01KKYA9CQKNTG3N9PWM0Z31Z09";',
+            'export const DEFAULT_MODE = "single-panel";',
+            'export const DEFAULT_LOCALE = "en";',
+            'export const DEFAULT_THEME_KEY = "";',
         ]);
+    }
 
-        return response($body, 200)->header('Content-Type', 'application/javascript; charset=utf-8');
+    public function starterConfig(): Response
+    {
+        return response($this->starterConfigBody(), 200)->header('Content-Type', 'application/javascript; charset=utf-8');
+    }
+
+    public function proofConfig(): Response
+    {
+        return response($this->starterConfigBody(), 200)->header('Content-Type', 'application/javascript; charset=utf-8');
     }
 
     public function hostAsset(string $assetName): Response
@@ -271,11 +265,6 @@ class HostProofController extends Controller
         $localFile = $this->localHostDir() . '/' . $assetName;
         if (is_file($localFile)) {
             return $this->sendFile($localFile, $this->contentTypeForAsset($assetName));
-        }
-
-        $sharedFile = $this->commonHostDir() . '/' . $assetName;
-        if (is_file($sharedFile)) {
-            return $this->sendFile($sharedFile, $this->contentTypeForAsset($assetName));
         }
 
         $browserHostFile = $this->browserHostDistDir() . '/' . $assetName;

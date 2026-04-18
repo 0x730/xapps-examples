@@ -1,4 +1,4 @@
-import { createHostShellApi } from "/host/host-shell.js";
+import { createHostShellApi } from "/host/host-shell-core.js";
 import { WORKSPACE_KEY } from "/host/proof-config.js";
 
 const MODE_COPY = {

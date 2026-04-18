@@ -14,10 +14,15 @@ Current state:
 - marketplace entry page exists at [index.html](./index.html)
 - marketplace shell exists at [marketplace.html](./marketplace.html)
 - single-xapp demo page exists at [single-xapp.html](./single-xapp.html)
-- marketplace bootstrap/orchestration lives in [xconecta-marketplace-host.js](./xconecta-marketplace-host.js)
-- single-xapp bootstrap lives in [xconecta-single-xapp-host.js](./xconecta-single-xapp-host.js)
+- repo reference launcher/page controllers are served from `apps/tenants/reference-host-common` via:
+  - `/host/reference-launcher-page.js`
+  - `/host/xconecta-marketplace-host.js`
+  - `/host/xconecta-single-xapp-host.js`
+    These are repo reference host controllers, not the public SDK entrypoints.
+- local asset aliasing lives in [../backend/routes/host/shared.js](../backend/routes/host/shared.js)
 - shell/identity rendering helpers live in [xconecta-host-shell.js](./xconecta-host-shell.js)
 - marketplace runtime/mount orchestration lives in [xconecta-host-runtime.js](./xconecta-host-runtime.js)
+- local launcher config lives in [xconecta-reference-config.js](./xconecta-reference-config.js)
 - tenant-owned payment page exists at [tenant-payment.html](./tenant-payment.html)
 - current reference launch path:
   - `GET /`
@@ -31,18 +36,22 @@ Current state:
 
 ## How to read the host split
 
-- [xconecta-marketplace-host.js](./xconecta-marketplace-host.js)
-  - tiny entrypoint
-  - reads stored identity/bootstrap state
-  - delegates to the shared marketplace bootstrap
+- [../../reference-host-common/host/reference-launcher-page.js](../../reference-host-common/host/reference-launcher-page.js)
+  - repo reference launcher page controller used by the tenant launcher
+- [../../reference-host-common/host/reference-marketplace-page.js](../../reference-host-common/host/reference-marketplace-page.js)
+  - repo reference marketplace page controller, exposed here as `/host/xconecta-marketplace-host.js`
+- [../../reference-host-common/host/reference-single-xapp-page.js](../../reference-host-common/host/reference-single-xapp-page.js)
+  - repo reference single-xapp page controller, exposed here as `/host/xconecta-single-xapp-host.js`
 - [xconecta-host-runtime.js](./xconecta-host-runtime.js)
   - xconecta-specific configuration for the shared browser runtime
   - theme, mounts, API base path, small callbacks
 - [xconecta-host-shell.js](./xconecta-host-shell.js)
   - xconecta-only page chrome
   - header, identity chips, mode switch, placeholder rendering
+- [xconecta-reference-config.js](./xconecta-reference-config.js)
+  - xconecta-specific launcher config and storage keys
 - [packages/browser-host/README.md](../../../../packages/browser-host/README.md)
-  - shared browser host package used by tenant hosts
+  - browser SDK used by tenant hosts and integrators
 
 ## Required invariant
 
@@ -74,7 +83,8 @@ It should not invent:
 ## Practical rule
 
 - do not copy `xconecta` file-by-file as the primary starter
-- use the package starter in [packages/xapps-embed-sdk/examples/marketplace-host-starter/index.html](../../../../packages/xapps-embed-sdk/examples/marketplace-host-starter/index.html)
+- start from the canonical handoff in [apps/tenants/docs/tooling/first-hosted-tenant-integrator-handoff.md](../../docs/tooling/first-hosted-tenant-integrator-handoff.md)
+- use the browser starter in [packages/browser-host/examples/hosted-integrator-starter/README.md](../../../../packages/browser-host/examples/hosted-integrator-starter/README.md)
 - use xconecta to see how a real tenant brands and configures the same runtime contract
 - for a first release, implement `single-panel` first and add `split-panel` only if the tenant really needs a separate widget pane
 

@@ -23,8 +23,9 @@ Read it as:
 - use this when backend ownership is intentional, not just because a host shell
   needs to go live quickly
 
-Do not start here if the first delivery only needs a Laravel host shell with the tenant backend still platform-hosted. In that case, start from:
+Do not start here if the first delivery only needs a hosted-integrator shell with the tenant backend still platform-hosted. In that case, start from:
 
+- [apps/tenants/docs/tooling/first-hosted-tenant-integrator-handoff.md](../docs/tooling/first-hosted-tenant-integrator-handoff.md)
 - [apps/tenants/xconectc-host/README.md](../xconectc-host/README.md)
 - [apps/tenants/docs/README.md](../docs/README.md)
 

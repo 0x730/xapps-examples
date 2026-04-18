@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { startHostProofServer } from "../host-proof-common/server.js";
+import { startHostProofServer } from "../reference-host-common/server.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

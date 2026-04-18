@@ -6,6 +6,10 @@ Practical rule:
 
 - reuse the shared host implementation under
   [../../../../packages/browser-host/README.md](../../../../packages/browser-host/README.md)
+- start from the canonical handoff in
+  [../../docs/tooling/first-hosted-tenant-integrator-handoff.md](../../docs/tooling/first-hosted-tenant-integrator-handoff.md)
+- use the browser starter in
+  [../../../../packages/browser-host/examples/hosted-integrator-starter/README.md](../../../../packages/browser-host/examples/hosted-integrator-starter/README.md)
 - keep tenant-specific pages and config thin
 - do not duplicate host bootstrap logic from `xconect`
 

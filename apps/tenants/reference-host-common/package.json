@@ -1,9 +1,9 @@
 {
-  "name": "@xconect/host-proof-common",
+  "name": "@xconect/reference-host-common",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Shared host proof support for public xconect reference hosts",
+  "description": "Shared reference host support for public xconect host examples",
   "dependencies": {
     "@fastify/static": "^9.0.0",
     "@xapps-platform/browser-host": "^0.1.17",

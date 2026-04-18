@@ -16,6 +16,22 @@ It is the Laravel counterpart to:
 
 It keeps the host/integrator shell local, while the actual tenant-side xapps host APIs stay on `xconectc`.
 
+This host is now self-contained and no longer loads its proof pages/assets from
+the old shared proof layer.
+
+This same host can also point at another compliant tenant backend without code
+changes.
+
+For example, to point `xconectc-host` at the Node `xconect` backend instead of
+the Laravel `xconectc` backend, switch:
+
+- `XCONECTC_HOST_BACKEND_BASE_URL=http://localhost:3312`
+- `XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL=http://localhost:3312`
+- `XCONECTC_HOST_BOOTSTRAP_API_KEY=<the xconect bootstrap key>`
+
+That lets you keep the same Laravel proof host while testing the same browser
+host contract against the Node tenant backend.
+
 ## What This Shape Looks Like
 
 ```mermaid
@@ -43,16 +59,18 @@ Use this when:
 
 Do not treat this README as the only contract source. Read these first as the shared docs:
 
-- [apps/tenants/docs/README.md](../docs/README.md)
+- [apps/tenants/docs/tooling/first-hosted-tenant-integrator-handoff.md](../docs/tooling/first-hosted-tenant-integrator-handoff.md)
+- [apps/tenants/docs/tooling/hosted-integrator-starter-contract.md](../docs/tooling/hosted-integrator-starter-contract.md)
 - [apps/tenants/docs/host/README.md](../docs/host/README.md)
-- [apps/tenants/docs/tooling/laravel-integration-map.md](../docs/tooling/laravel-integration-map.md)
+- [apps/tenants/docs/tooling/laravel-hosted-integrator-platform-tenant.md](../docs/tooling/laravel-hosted-integrator-platform-tenant.md)
 
 ## First Reading Order
 
-1. [apps/tenants/docs/README.md](../docs/README.md)
-2. [apps/tenants/docs/host/README.md](../docs/host/README.md)
-3. [apps/tenants/docs/tooling/laravel-integration-map.md](../docs/tooling/laravel-integration-map.md)
-4. this README for the concrete Laravel proof lane
+1. [apps/tenants/docs/tooling/first-hosted-tenant-integrator-handoff.md](../docs/tooling/first-hosted-tenant-integrator-handoff.md)
+2. [apps/tenants/docs/tooling/hosted-integrator-starter-contract.md](../docs/tooling/hosted-integrator-starter-contract.md)
+3. [apps/tenants/docs/host/README.md](../docs/host/README.md)
+4. [apps/tenants/docs/tooling/laravel-hosted-integrator-platform-tenant.md](../docs/tooling/laravel-hosted-integrator-platform-tenant.md)
+5. this README for the concrete Laravel proof lane
 
 It provides:
 
@@ -65,7 +83,8 @@ It provides:
 - Local bootstrap proxy:
     - `POST /api/host-bootstrap`
 - Host assets and SDK delivery:
-    - `GET /host/proof-config.js`
+    - `GET /host/starter-config.js`
+    - `GET /host/proof-config.js` compatibility alias
     - `GET /host/*`
     - `GET /embed/sdk/xapps-embed-sdk.esm.js`
 - Health:
@@ -76,6 +95,18 @@ It intentionally does not provide:
 - tenant/member auth flows
 - a full operator domain model
 - integrator-specific navigation, RBAC, or business pages
+
+Browser contract:
+
+- launcher page stays local and thin
+- marketplace and single-xapp pages are clean SDK mount surfaces
+- local host assets now only provide:
+    - `launcher.js`
+    - `marketplace.js`
+    - `single-xapp.js`
+    - `starter.css`
+    - dynamic `GET /host/starter-config.js`
+- real integrators should start from the browser starter, not from this proof app line-by-line
 
 #### Local run
 
@@ -116,11 +147,19 @@ Then open:
     - the initial Laravel schema + seed data
 
 - Required env for the host proof:
-    - `XAPPS_API_KEY` should match the paired `xconectc` tenant key
     - `XCONECTC_HOST_PUBLIC_BASE_URL`
     - `XCONECTC_HOST_BACKEND_BASE_URL`
     - `XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL`
-    - `XCONECTC_HOST_BOOTSTRAP_API_KEY`
+    - `XCONECTC_HOST_BOOTSTRAP_API_KEY` should match the target backend bootstrap key
+
+- `XAPPS_API_KEY` may still exist in local env examples, but it is not the key
+  used by the host proof proxy route. The local `POST /api/host-bootstrap`
+  path uses `XCONECTC_HOST_BOOTSTRAP_API_KEY`.
+
+- To point this same Laravel host at the Node `xconect` backend instead:
+    - `XCONECTC_HOST_BACKEND_BASE_URL=http://localhost:3312`
+    - `XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL=http://localhost:3312`
+    - `XCONECTC_HOST_BOOTSTRAP_API_KEY=<the xconect bootstrap key>`
 
 - Current package status:
     - `xconectc-host` is the Laravel host-only starter/reference app, mirroring the `xconectb-host` lane.

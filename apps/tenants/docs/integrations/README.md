@@ -95,7 +95,7 @@ For the lean marketplace path, keep:
 - installation lifecycle stays included
 - invoicing stays platform-managed
 - notifications stay platform-managed
-- subject-profile candidates are optional
+- subject-profile candidates are optional in the generic lean path, but mandatory for the current first hosted-integrator lane
 
 Use expanded ownership only when the tenant already knows it needs:
 
@@ -131,10 +131,11 @@ Reference implementations:
 - same-origin launcher-backed tenant app:
   - [xconectc](../../xconectc/README.md)
 - hosted-integrator proof/reference:
-  - [host-proof-common](../../host-proof-common/README.md)
   - [xconect-host](../../xconect-host/README.md)
   - [xconectb-host](../../xconectb-host/README.md)
   - [xconectc-host](../../xconectc-host/README.md)
+  - [reference-host-common](../../reference-host-common/README.md)
+    - shared repo reference layer for `xconecta-host` and `xconectb-host`
 
 ### Installation Lifecycle
 

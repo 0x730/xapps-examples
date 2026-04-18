@@ -120,7 +120,12 @@ Use:
 Recommended browser contract:
 
 - `@xapps-platform/browser-host`
-- `createStandardMarketplaceRuntime(...)` underneath it
+- `bootstrapXappsEmbedSession(...)`
+- `mountCatalogEmbed(...)`
+- `mountSingleXappEmbed(...)`
+
+Drop to `@xapps-platform/embed-sdk` only when the host needs a lower-level
+custom browser shape.
 
 Hosted-integrator note:
 
@@ -138,12 +143,24 @@ Same-origin launcher note:
 
 Concrete file roles in the Laravel launcher-backed reference:
 
-- [apps/tenants/xconectc/resources/views/catalog-single-panel.blade.php](../../xconectc/resources/views/catalog-single-panel.blade.php)
+- [apps/tenants/xconectc/app/Http/Controllers/HostProofController.php](../../xconectc/app/Http/Controllers/HostProofController.php)
+  - emits `ENTRY_HREF="/catalog"`, serves local thin host pages from `resources/host-pages`,
+    and serves local SDK consumer assets from `resources/host`
+- [apps/tenants/xconectc/resources/host-pages/index.html](../../xconectc/resources/host-pages/index.html)
   - launcher page that resolves identity and chooses the host surface
-- [apps/tenants/xconectc/resources/host/proof-marketplace-host.js](../../xconectc/resources/host/proof-marketplace-host.js)
-  - thin marketplace wrapper around `@xapps-platform/browser-host`
-- [apps/tenants/xconectc/resources/host/proof-single-xapp-host.js](../../xconectc/resources/host/proof-single-xapp-host.js)
-  - thin single-xapp wrapper around `@xapps-platform/browser-host`
+- [apps/tenants/xconectc/resources/host/launcher.js](../../xconectc/resources/host/launcher.js)
+  - thin launcher bootstrap using the browser SDK
+- [apps/tenants/xconectc/resources/host/marketplace.js](../../xconectc/resources/host/marketplace.js)
+  - thin marketplace mount using `mountCatalogEmbed(...)`
+- [apps/tenants/xconectc/resources/host/single-xapp.js](../../xconectc/resources/host/single-xapp.js)
+  - thin single-xapp mount using `mountSingleXappEmbed(...)`
+
+These local starter files are not the public browser SDK. The public browser
+integration contract is still:
+
+- `bootstrapXappsEmbedSession(...)`
+- `mountCatalogEmbed(...)`
+- `mountSingleXappEmbed(...)`
 
 ## 6. Choose The First Payment Mode
 

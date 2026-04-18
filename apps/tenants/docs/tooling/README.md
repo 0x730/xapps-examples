@@ -1,16 +1,11 @@
 # Tenant Tooling
 
-Use this page when the tenant team needs to know which packages and tools to
-start from for integration.
+Use this page when the question is: “which packages and docs do we actually use
+to integrate?”
 
-Choose the adoption mode first, then come here for package/tool selection:
+## Package Choice
 
-- [host-mode](../host-mode/README.md)
-- [full-mode](../full-mode/README.md)
-
-## Quick Answer
-
-If the tenant asks "what do we actually use?", the answer is:
+Start with these packages first:
 
 - Node backend:
   - `@xapps-platform/backend-kit`
@@ -18,108 +13,54 @@ If the tenant asks "what do we actually use?", the answer is:
   - `xapps-platform/xapps-backend-kit`
 - browser host:
   - `@xapps-platform/browser-host`
-- publishing and validation:
+- manifest publish and validation:
   - `xapps` CLI
 
-Drop to the primitive SDKs only when needed:
+Use the lower-level packages only when you need a deeper custom seam:
 
 - Node primitives:
   - `@xapps-platform/server-sdk`
 - PHP primitives:
   - `xapps-platform/xapps-php`
-- low-level custom browser host work:
+- low-level browser primitives:
   - `@xapps-platform/embed-sdk`
 
-## Tooling By Area
+## Hosted-Integrator Path
 
-### Backend
+For the current first hosted-integrator tenant lane, read in this order:
 
-Use the backend kit first:
+1. [first-hosted-tenant-integrator-handoff.md](./first-hosted-tenant-integrator-handoff.md)
+2. [hosted-integrator-starter-contract.md](./hosted-integrator-starter-contract.md)
+3. [nodejs-hosted-integrator-platform-tenant.md](./nodejs-hosted-integrator-platform-tenant.md)
+4. [laravel-hosted-integrator-platform-tenant.md](./laravel-hosted-integrator-platform-tenant.md)
 
-- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/backend-kit#readme>
+Practical rule:
 
-Why:
+- the canonical process is the handoff page
+- the Node and Laravel pages are only stack-specific wrappers
+- the browser starter is only the browser slice of that process
 
-- default tenant backend behavior
-- default route and mode surface
-- config-driven backend assembly
-- hooks and override seams
+## Starter References
 
-Use the primitive SDKs only when the tenant needs a deeper custom seam:
+- browser starter:
+  - [packages/browser-host/examples/hosted-integrator-starter/README.md](../../../../packages/browser-host/examples/hosted-integrator-starter/README.md)
+- Node bootstrap proxy:
+  - [packages/server-sdk/examples/host-proxy/hosted-integrator-bootstrap.mjs](../../../../packages/server-sdk/examples/host-proxy/hosted-integrator-bootstrap.mjs)
+- PHP bootstrap proxy:
+  - [packages/xapps-php/examples/host-proxy/hosted-integrator-bootstrap.php](../../../../packages/xapps-php/examples/host-proxy/hosted-integrator-bootstrap.php)
 
-- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/server-sdk#readme>
-- <https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php#readme>
+## Full Tenant Path
 
-### Browser Host
+If the integrator needs to own the tenant backend as well, read these instead:
 
-Use:
-
-- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/browser-host#readme>
-- <https://github.com/0x730/xapps-sdk-js/tree/main/packages/xapps-embed-sdk#readme>
-
-Why:
-
-- standard marketplace host runtime
-- `single-panel`, `split-panel`, and `single-xapp` host surfaces
-- bridge handling
-- overlay, focus, and payment-resume behavior
-
-Hosted-integrator references:
-
-- [../host/README.md](../host/README.md)
-- [../host-proof-common/README.md](../../host-proof-common/README.md)
-- [../xconect-host/README.md](../../xconect-host/README.md)
-- [../xconectb-host/README.md](../../xconectb-host/README.md)
-- [../../../apps/tenants/xconectc/README.md](../../xconectc/README.md)
-- [../../../apps/tenants/xconectc-host/README.md](../../xconectc-host/README.md)
-
-### Publishing And Validation
-
-Use:
-
-- `xapps` CLI
-
-Why:
-
-- validate manifests
-- publish tenant-owned guards through the linked publisher path
-
-## Recommended Integration Rule
-
-Start from:
-
-- backend kit
-- shared browser host runtime
-- xapps CLI
-
-Do not start from:
-
-- `widget-sdk`
-- `widget-runtime`
-- low-level internal runtime packages
-- primitive backend SDKs, unless the tenant already knows it needs lower-level control
-
-Starter/reference publication rule:
-
-- the public `xapps-examples` repo exports the starter/reference app family using the canonical app names
-- keep `-example` only for deploy hostnames/domains where the example lane must stay distinct from production
-
-## Quickstarts
-
-Use these next:
-
-- Node.js:
-  - [nodejs-quickstart.md](./nodejs-quickstart.md)
-- PHP:
-  - [php-laravel-quickstart.md](./php-laravel-quickstart.md)
-- Laravel shape chooser:
-  - [laravel-integration-map.md](./laravel-integration-map.md)
+1. [../full-mode/README.md](../full-mode/README.md)
+2. [../backend/README.md](../backend/README.md)
+3. [../host/README.md](../host/README.md)
 
 ## Practical Rule
 
-For the current tenant lane:
+For the current lane:
 
-- backend stack choice changes the adapter layer
-- it does not change the tenant contract
-- it does not change the browser host contract
-- it does not change the guard publishing model
+- start from the canonical hosted-integrator handoff
+- keep `@xapps-platform/browser-host` as the browser contract
+- keep `reference-host-common` as repo reference only, not an integrator requirement

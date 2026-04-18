@@ -11,6 +11,13 @@ It is the Laravel counterpart to:
 
 It keeps OIDC, the launcher/browser-host surfaces, and the full PHP backend-kit tenant surface in one Laravel starter/reference app.
 
+The same-origin launcher/browser-host surface is now self-contained here too:
+
+- local launcher pages live in `resources/host-pages`
+- local thin starter assets live in `resources/host`
+- launcher, marketplace, and single-xapp pages are local SDK consumers
+- `xconectc` no longer reads launcher pages/assets from the old shared proof layer
+
 For xapps provisioning, `xconectc` belongs to the public example/reference lane:
 
 - it should receive the published `xplace-example` lane xapps targeted to tenant slug `xconectc`

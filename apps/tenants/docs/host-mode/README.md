@@ -32,15 +32,24 @@ and wants the fastest route to a working catalog/widget integration.
 
 Start here:
 
-1. [../host/README.md](../host/README.md)
-2. [../tooling/laravel-integration-map.md](../tooling/laravel-integration-map.md)
-3. [../../xconectc-host/README.md](../../xconectc-host/README.md)
+1. [../tooling/first-hosted-tenant-integrator-handoff.md](../tooling/first-hosted-tenant-integrator-handoff.md)
+2. [../tooling/hosted-integrator-starter-contract.md](../tooling/hosted-integrator-starter-contract.md)
+3. [../tooling/README.md](../tooling/README.md)
+4. [../host/README.md](../host/README.md)
 
 Additional references:
 
 - [../../xconect-host/README.md](../../xconect-host/README.md)
 - [../../xconectb-host/README.md](../../xconectb-host/README.md)
-- [../../host-proof-common/README.md](../../host-proof-common/README.md)
+- [../../reference-host-common/README.md](../../reference-host-common/README.md)
+
+Practical boundary:
+
+- `xconect-host` and `xconectc-host` are now self-contained primary references
+- `reference-host-common` is the shared repo reference layer
+- `xconecta-host` and `xconectb-host` use that layer
+- it is not the mandatory runtime dependency for host mode
+- the mandatory part is the host contract described by backend-kit plus the unified `@xapps-platform/browser-host` surface
 
 ### 2. Same-origin launcher-backed host
 

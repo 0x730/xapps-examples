@@ -78,14 +78,6 @@ export const TENANT_PAYMENT_PAGE_FILE = path.resolve(backendDir, "../host/tenant
 export const TENANT_MARKETPLACE_ENTRY_FILE = path.resolve(backendDir, "../host/index.html");
 export const TENANT_MARKETPLACE_PAGE_FILE = path.resolve(backendDir, "../host/marketplace.html");
 export const TENANT_SINGLE_XAPP_PAGE_FILE = path.resolve(backendDir, "../host/single-xapp.html");
-export const TENANT_MARKETPLACE_SCRIPT_FILE = path.resolve(
-  backendDir,
-  "../host/xconecta-marketplace-host.js",
-);
-export const TENANT_SINGLE_XAPP_SCRIPT_FILE = path.resolve(
-  backendDir,
-  "../host/xconecta-single-xapp-host.js",
-);
 export const TENANT_MARKETPLACE_SHELL_SCRIPT_FILE = path.resolve(
   backendDir,
   "../host/xconecta-host-shell.js",
@@ -93,6 +85,10 @@ export const TENANT_MARKETPLACE_SHELL_SCRIPT_FILE = path.resolve(
 export const TENANT_MARKETPLACE_RUNTIME_SCRIPT_FILE = path.resolve(
   backendDir,
   "../host/xconecta-host-runtime.js",
+);
+export const TENANT_REFERENCE_CONFIG_SCRIPT_FILE = path.resolve(
+  backendDir,
+  "../host/xconecta-reference-config.js",
 );
 export const TENANT_MARKETPLACE_BASE_CSS_FILE = path.resolve(
   backendDir,
@@ -106,10 +102,6 @@ export const TENANT_MARKETPLACE_PAGE_CSS_FILE = path.resolve(
   backendDir,
   "../host/xconecta-host-marketplace.css",
 );
-export const SHARED_PROOF_IDENTITY_SCRIPT_FILE = path.resolve(
-  backendDir,
-  "../../host-proof-common/host/proof-identity.js",
-);
 const SHARED_BROWSER_HOST_DIST_DIR = firstExistingPath(
   [
     path.resolve(backendDir, "../../../../packages/browser-host/dist"),
@@ -117,33 +109,49 @@ const SHARED_BROWSER_HOST_DIST_DIR = firstExistingPath(
   ],
   path.resolve(backendDir, "../../../../packages/browser-host/dist"),
 );
-export const SHARED_HOST_SHELL_SCRIPT_FILE = path.resolve(
-  SHARED_BROWSER_HOST_DIST_DIR,
-  "host-shell.js",
+const REFERENCE_HOST_COMMON_DIR = path.resolve(
+  backendDir,
+  "../../../../apps/tenants/reference-host-common/host",
 );
-export const SHARED_BACKEND_BASE_SCRIPT_FILE = path.resolve(
+export const SHARED_LAUNCHER_CORE_SCRIPT_FILE = path.resolve(
   SHARED_BROWSER_HOST_DIST_DIR,
-  "backend-base.js",
+  "launcher-core.js",
+);
+export const SHARED_EMBED_SURFACE_SCRIPT_FILE = path.resolve(
+  SHARED_BROWSER_HOST_DIST_DIR,
+  "embed-surface.js",
+);
+export const SHARED_STANDARD_RUNTIME_SCRIPT_FILE = path.resolve(
+  SHARED_BROWSER_HOST_DIST_DIR,
+  "standard-runtime.js",
 );
 export const SHARED_MARKETPLACE_RUNTIME_SCRIPT_FILE = path.resolve(
   SHARED_BROWSER_HOST_DIST_DIR,
   "marketplace-runtime.js",
 );
-export const SHARED_REFERENCE_RUNTIME_SCRIPT_FILE = path.resolve(
+export const SHARED_BACKEND_BASE_SCRIPT_FILE = path.resolve(
   SHARED_BROWSER_HOST_DIST_DIR,
-  "reference-runtime.js",
+  "backend-base.js",
 );
-export const SHARED_MARKETPLACE_HOST_SCRIPT_FILE = path.resolve(
-  SHARED_BROWSER_HOST_DIST_DIR,
-  "marketplace-host.js",
+export const REFERENCE_HOST_PAGE_UTILS_SCRIPT_FILE = path.resolve(
+  REFERENCE_HOST_COMMON_DIR,
+  "page-utils.js",
 );
-export const SHARED_SINGLE_XAPP_HOST_SCRIPT_FILE = path.resolve(
-  SHARED_BROWSER_HOST_DIST_DIR,
-  "single-xapp-host.js",
+export const REFERENCE_HOST_SHELL_CORE_SCRIPT_FILE = path.resolve(
+  REFERENCE_HOST_COMMON_DIR,
+  "host-shell-core.js",
 );
-export const SHARED_HOST_STATUS_SCRIPT_FILE = path.resolve(
-  SHARED_BROWSER_HOST_DIST_DIR,
-  "host-status.js",
+export const SHARED_REFERENCE_LAUNCHER_PAGE_SCRIPT_FILE = path.resolve(
+  REFERENCE_HOST_COMMON_DIR,
+  "reference-launcher-page.js",
+);
+export const SHARED_REFERENCE_MARKETPLACE_PAGE_SCRIPT_FILE = path.resolve(
+  REFERENCE_HOST_COMMON_DIR,
+  "reference-marketplace-page.js",
+);
+export const SHARED_REFERENCE_SINGLE_XAPP_PAGE_SCRIPT_FILE = path.resolve(
+  REFERENCE_HOST_COMMON_DIR,
+  "reference-single-xapp-page.js",
 );
 export const EMBED_SDK_ESM_CANDIDATE_FILES = [
   path.resolve(backendDir, "../../../../dist/sdk/xapps-embed-sdk.esm.js"),

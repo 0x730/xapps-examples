@@ -86,7 +86,12 @@ Use:
 Recommended browser contract:
 
 - `@xapps-platform/browser-host`
-- `createStandardMarketplaceRuntime(...)` underneath it
+- `bootstrapXappsEmbedSession(...)`
+- `mountCatalogEmbed(...)`
+- `mountSingleXappEmbed(...)`
+
+Drop to `@xapps-platform/embed-sdk` only when the host needs a lower-level
+custom browser shape.
 
 Hosted-integrator note:
 
@@ -97,7 +102,7 @@ Hosted-integrator note:
 
 Recommended starter:
 
-- [packages/xapps-embed-sdk/examples/marketplace-host-starter/index.html](../../../../packages/xapps-embed-sdk/examples/marketplace-host-starter/index.html)
+- [packages/browser-host/examples/hosted-integrator-starter/README.md](../../../../packages/browser-host/examples/hosted-integrator-starter/README.md)
 
 ## 6. Choose The First Payment Mode
 

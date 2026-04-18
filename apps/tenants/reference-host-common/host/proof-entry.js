@@ -1,75 +1,67 @@
 import {
-  BACKEND_BASE_URL,
-  DASHBOARD_HREF,
-  DASHBOARD_LABEL,
-  HOST_BOOTSTRAP_URL,
-  IDENTITY_STORAGE_KEY,
-  PROOF_NAME,
-  STACK_LABEL,
-  WORKSPACE_KEY,
-} from "/host/proof-config.js";
-import { readProofIdentity } from "./proof-identity.js";
-
-const LOCALE_STORAGE_KEY = `${WORKSPACE_KEY}_host_proof_locale_v1`;
+  buildStoredHostIdentity,
+  executeHostBootstrap,
+  readStoredHostIdentity,
+  writeStoredHostIdentity,
+} from "/host/launcher-core.js";
+import {
+  importBrowserAssetModule,
+  normalizeLocaleTag,
+  parseObjectJson,
+  readOptionalString,
+  renderPageFailure,
+  setText,
+} from "/host/page-utils.js";
 
 function $(id) {
   return document.getElementById(id);
 }
 
-function setText(id, value) {
-  const node = $(id);
-  if (node) node.textContent = String(value || "");
+function byAnyId(...ids) {
+  for (const id of ids) {
+    const node = $(id);
+    if (node) return node;
+  }
+  return null;
 }
 
-function readStoredIdentity() {
-  return readProofIdentity(IDENTITY_STORAGE_KEY);
+function readStoredIdentity(identityStorageKey) {
+  return readStoredHostIdentity(identityStorageKey);
 }
 
-function normalizeLocale(value) {
-  const raw = String(value || "")
-    .trim()
-    .replace(/_/g, "-")
-    .toLowerCase();
-  if (raw === "ro" || raw.startsWith("ro-")) return "ro";
-  if (raw === "en" || raw.startsWith("en-")) return "en";
-  return "en";
-}
-
-function readLocalePreference() {
+function readLocalePreference(localeStorageKey) {
   const currentUrl = new URL(window.location.href);
-  const queryLocale = String(currentUrl.searchParams.get("locale") || "").trim();
-  if (queryLocale) return normalizeLocale(queryLocale);
+  const queryLocale = readOptionalString(currentUrl.searchParams.get("locale"));
+  if (queryLocale) return normalizeLocaleTag(queryLocale);
   try {
-    const stored = String(window.localStorage.getItem(LOCALE_STORAGE_KEY) || "").trim();
-    if (stored) return normalizeLocale(stored);
+    const stored = readOptionalString(window.localStorage.getItem(localeStorageKey));
+    if (stored) return normalizeLocaleTag(stored);
   } catch {
     // ignore localStorage failures
   }
-  return normalizeLocale(
+  return normalizeLocaleTag(
     typeof navigator !== "undefined"
       ? String((navigator.languages && navigator.languages[0]) || navigator.language || "")
       : "",
   );
 }
 
-function applyLocalePreference(locale, options = {}) {
-  const resolved = normalizeLocale(locale);
+function applyLocalePreference(localeStorageKey, locale, options = {}) {
+  const resolved = normalizeLocaleTag(locale);
   document.documentElement.lang = resolved;
   const select = $("host-locale-select");
-  if (select instanceof HTMLSelectElement) {
-    select.value = resolved;
-  }
+  if (select instanceof HTMLSelectElement) select.value = resolved;
   if (options.persist === false) return resolved;
   try {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, resolved);
+    window.localStorage.setItem(localeStorageKey, resolved);
   } catch {
     // ignore localStorage failures
   }
   return resolved;
 }
 
-function renderStoredIdentity() {
-  const identity = readStoredIdentity();
+function renderStoredIdentity(identityStorageKey) {
+  const identity = readStoredIdentity(identityStorageKey);
   const card = $("identity");
   const copy = $("identity-copy");
   if (!card || !copy) return;
@@ -94,16 +86,24 @@ function renderStoredIdentity() {
 
 function renderEntryErrorFromQuery() {
   const currentUrl = new URL(window.location.href);
-  const errorKey = String(currentUrl.searchParams.get("hostError") || "").trim();
   const statusEl = $("status");
+  const errorKey = readOptionalString(currentUrl.searchParams.get("hostError"));
   if (!statusEl || errorKey !== "missing_identity") return;
   statusEl.className = "status error";
   statusEl.textContent =
     "The host could not continue because the browser identity was missing or the bootstrap session expired. Resolve the subject again from this entry page.";
 }
 
-function readOptionalString(value) {
-  return typeof value === "string" ? value.trim() : "";
+function mergeIdentityOverrides(...entries) {
+  return entries.reduce((acc, entry) => {
+    if (!entry || typeof entry !== "object") return acc;
+    return {
+      ...acc,
+      ...entry,
+      ...(entry.identifier ? { identifier: entry.identifier } : {}),
+      ...(entry.metadata ? { metadata: entry.metadata } : {}),
+    };
+  }, {});
 }
 
 function syncIdentityAdvancedVisibility(override = null) {
@@ -132,31 +132,21 @@ function readIdentityOverrideFromQuery() {
   const identifierHint =
     readOptionalString(currentUrl.searchParams.get("subjectIdentifierHint")) ||
     readOptionalString(currentUrl.searchParams.get("identifierHint"));
-  const metadataRaw =
-    readOptionalString(currentUrl.searchParams.get("subjectMetadata")) ||
-    readOptionalString(currentUrl.searchParams.get("metadata"));
-  let metadata = null;
-  if (metadataRaw) {
-    try {
-      const parsed = JSON.parse(metadataRaw);
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        metadata = parsed;
-      }
-    } catch {
-      // ignore malformed metadata query
-    }
-  }
+  const metadata =
+    parseObjectJson(currentUrl.searchParams.get("subjectMetadata")) ||
+    parseObjectJson(currentUrl.searchParams.get("metadata"));
   return {
-    subjectId: subjectId || null,
-    type: type || null,
-    identifier:
-      idType && identifierValue
-        ? {
+    ...(subjectId ? { subjectId } : {}),
+    ...(type ? { type } : {}),
+    ...(idType && identifierValue
+      ? {
+          identifier: {
             idType,
             value: identifierValue,
             ...(identifierHint ? { hint: identifierHint } : {}),
-          }
-        : null,
+          },
+        }
+      : {}),
     ...(metadata ? { metadata } : {}),
   };
 }
@@ -191,18 +181,6 @@ function readIdentityOverrideFromForm() {
       : {}),
     ...(metadata ? { metadata } : {}),
   };
-}
-
-function mergeIdentityOverrides(...entries) {
-  return entries.reduce((acc, entry) => {
-    if (!entry || typeof entry !== "object") return acc;
-    return {
-      ...acc,
-      ...entry,
-      ...(entry.identifier ? { identifier: entry.identifier } : {}),
-      ...(entry.metadata ? { metadata: entry.metadata } : {}),
-    };
-  }, {});
 }
 
 function applyIdentityPreset(kind) {
@@ -255,79 +233,56 @@ function applyIdentityPreset(kind) {
   syncIdentityAdvancedVisibility({});
 }
 
-async function resolveSubject(input) {
-  const response = await fetch(HOST_BOOTSTRAP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  const raw = await response.text();
-  const data = (() => {
-    try {
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  })();
-  if (!response.ok) {
-    throw new Error(String(data?.message || "resolve-subject failed"));
-  }
-  const subjectId = String(data?.subjectId || data?.subject_id || "").trim();
-  const bootstrapToken = String(data?.bootstrapToken || data?.bootstrap_token || "").trim();
-  if (!subjectId) {
-    throw new Error("resolve-subject response missing subjectId");
-  }
-  if (!bootstrapToken) {
-    throw new Error("host-bootstrap response missing bootstrapToken");
-  }
-  return {
-    subjectId,
-    bootstrapToken,
-    expiresIn: Number(data?.expiresIn || data?.expires_in || 300) || 300,
-  };
-}
+async function main() {
+  const proofConfig = await importBrowserAssetModule("/host/proof-config.js");
+  const {
+    BACKEND_BASE_URL,
+    HOST_BOOTSTRAP_URL,
+    ENTRY_HREF,
+    IDENTITY_STORAGE_KEY,
+    PROOF_NAME,
+    STACK_LABEL,
+    WORKSPACE_KEY,
+  } = proofConfig;
+  const form = byAnyId("identity-form", "entry-form");
+  const statusEl = $("status");
+  const localeStorageKey = `${WORKSPACE_KEY}_host_proof_locale_v1`;
+  if (!(form instanceof HTMLFormElement) || !statusEl) return;
 
-function main() {
+  setText("host-proof-name", PROOF_NAME);
+  setText("host-proof-workspace", WORKSPACE_KEY);
+  setText("host-proof-stack", STACK_LABEL);
+  setText("host-proof-backend-base", BACKEND_BASE_URL);
   setText("proof-name", PROOF_NAME);
   setText("proof-workspace", WORKSPACE_KEY);
   setText("proof-stack", STACK_LABEL);
   setText("proof-backend-base", BACKEND_BASE_URL);
+  restoreStoredForm(IDENTITY_STORAGE_KEY);
+  syncIdentityAdvancedVisibility();
+  renderEntryErrorFromQuery();
+  renderStoredIdentity(IDENTITY_STORAGE_KEY);
 
-  const form = $("entry-form");
-  const statusEl = $("status");
-  const launchBtn = $("launch-btn");
-  const nameInput = $("name");
-  const emailInput = $("email");
-  const xappIdInput = $("xappId");
   const localeSelect = $("host-locale-select");
+  if (localeSelect instanceof HTMLSelectElement) {
+    const initialLocale = applyLocalePreference(
+      localeStorageKey,
+      readLocalePreference(localeStorageKey),
+      { persist: false },
+    );
+    localeSelect.value = initialLocale;
+    localeSelect.addEventListener("change", () => {
+      applyLocalePreference(localeStorageKey, localeSelect.value);
+    });
+  }
+
   $("identity-preset-individual")?.addEventListener("click", () =>
     applyIdentityPreset("individual"),
   );
   $("identity-preset-company-a")?.addEventListener("click", () => applyIdentityPreset("company-a"));
   $("identity-preset-company-b")?.addEventListener("click", () => applyIdentityPreset("company-b"));
   $("identity-preset-clear")?.addEventListener("click", () => applyIdentityPreset("clear"));
-  const dashboardLink = $("dashboard-link");
-  if (dashboardLink instanceof HTMLAnchorElement) {
-    const dashboardHref = String(DASHBOARD_HREF || "").trim();
-    if (dashboardHref) {
-      dashboardLink.href = dashboardHref;
-      dashboardLink.textContent =
-        String(DASHBOARD_LABEL || "Back to dashboard").trim() || "Back to dashboard";
-      dashboardLink.hidden = false;
-    } else {
-      dashboardLink.hidden = true;
-    }
-  }
-  renderStoredIdentity();
-  renderEntryErrorFromQuery();
-  applyLocalePreference(readLocalePreference(), { persist: false });
-  syncIdentityAdvancedVisibility();
 
-  localeSelect?.addEventListener("change", () => {
-    applyLocalePreference(localeSelect.value);
-  });
-
-  form?.addEventListener("submit", async (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     let identityOverride;
     try {
@@ -337,67 +292,104 @@ function main() {
       );
     } catch (error) {
       statusEl.className = "status error";
-      statusEl.textContent = String(error?.message || "Identity override is invalid");
-      return;
-    }
-    const name = String(nameInput?.value || "").trim();
-    const email = String(emailInput?.value || "")
-      .trim()
-      .toLowerCase();
-    const modeInput = form.querySelector('input[name="mode"]:checked');
-    const mode = modeInput ? String(modeInput.value || "").trim() : "single-panel";
-    const xappId = String(xappIdInput?.value || "").trim();
-    if (!identityOverride.subjectId && !identityOverride.identifier && (!name || !email)) return;
-    if (mode === "single-xapp" && !xappId) {
-      statusEl.className = "status error";
-      statusEl.textContent = "An xapp id is required for single xapp mode.";
+      statusEl.textContent = String(error?.message || "Identity override is invalid.");
       return;
     }
 
-    launchBtn.disabled = true;
-    statusEl.className = "status";
-    statusEl.textContent = `Resolving subject via ${BACKEND_BASE_URL} ...`;
+    const subjectId = readOptionalString($("subjectId")?.value);
+    const email = readOptionalString($("email")?.value).toLowerCase();
+    const name = readOptionalString($("name")?.value);
+    const modeInput = form.querySelector('input[name="mode"]:checked');
+    const mode = modeInput ? readOptionalString(modeInput.value) : "single-panel";
+    const xappId = readOptionalString($("xappId")?.value);
+    const metadata = mergeIdentityOverrides(identityOverride, subjectId ? { subjectId } : {});
+
+    if (!metadata.subjectId && !metadata.identifier && !email) {
+      statusEl.className = "status error";
+      statusEl.textContent = "Provide subject identity or email before bootstrapping.";
+      return;
+    }
 
     try {
-      const resolved = await resolveSubject({
-        ...identityOverride,
+      statusEl.className = "status";
+      statusEl.textContent = "Bootstrapping hosted session...";
+      const bootstrapInput = {
+        ...metadata,
         ...(email ? { email } : {}),
         ...(name ? { name } : {}),
+      };
+      const result = await executeHostBootstrap(bootstrapInput, {
+        hostBootstrapUrl: HOST_BOOTSTRAP_URL,
       });
-      window.localStorage.setItem(
-        IDENTITY_STORAGE_KEY,
-        JSON.stringify({
-          name,
-          email,
+      const nextIdentity = buildStoredHostIdentity(
+        readStoredHostIdentity(IDENTITY_STORAGE_KEY),
+        result,
+        bootstrapInput,
+        {
           mode,
           xappId,
-          ...(identityOverride.type ? { type: identityOverride.type } : {}),
-          ...(identityOverride.identifier ? { identifier: identityOverride.identifier } : {}),
-          ...(identityOverride.metadata ? { metadata: identityOverride.metadata } : {}),
-          subjectId: resolved.subjectId,
-          bootstrapToken: resolved.bootstrapToken,
-          bootstrapExpiresAt: new Date(Date.now() + resolved.expiresIn * 1000).toISOString(),
-          resolvedAt: new Date().toISOString(),
-        }),
+        },
       );
-      renderStoredIdentity();
+      writeStoredHostIdentity(IDENTITY_STORAGE_KEY, nextIdentity);
+      renderStoredIdentity(IDENTITY_STORAGE_KEY);
+      const locale = readLocalePreference(localeStorageKey);
       if (mode === "single-xapp") {
         const target = new URL("/single-xapp.html", window.location.href);
-        target.searchParams.set("locale", readLocalePreference());
-        target.searchParams.set("xappId", xappId);
-        window.location.href = target.toString();
+        target.searchParams.set("locale", locale);
+        if (xappId) target.searchParams.set("xappId", xappId);
+        window.location.assign(target.toString());
         return;
       }
       const target = new URL("/marketplace.html", window.location.href);
-      target.searchParams.set("locale", readLocalePreference());
-      target.searchParams.set("mode", mode);
-      window.location.href = target.toString();
+      target.searchParams.set("locale", locale);
+      target.searchParams.set("mode", mode === "split-panel" ? "split-panel" : "single-panel");
+      window.location.assign(target.toString());
     } catch (error) {
       statusEl.className = "status error";
-      statusEl.textContent = String(error?.message || "Subject resolution failed");
-      launchBtn.disabled = false;
+      statusEl.textContent = String(error?.message || "host bootstrap failed");
     }
   });
 }
 
-main();
+function restoreStoredForm(identityStorageKey) {
+  const identity = readStoredIdentity(identityStorageKey);
+  if (!identity) return;
+  const mappings = {
+    name: identity.name,
+    email: identity.email,
+    xappId: identity.xappId,
+    subjectType: identity.type,
+    subjectIdentifierType: identity.identifier?.idType,
+    subjectIdentifierValue: identity.identifier?.value,
+    subjectIdentifierHint: identity.identifier?.hint,
+    subjectMetadata:
+      identity.metadata &&
+      typeof identity.metadata === "object" &&
+      !Array.isArray(identity.metadata)
+        ? JSON.stringify(identity.metadata)
+        : "",
+  };
+  Object.entries(mappings).forEach(([id, value]) => {
+    const node = $(id);
+    if (
+      (node instanceof HTMLInputElement || node instanceof HTMLSelectElement) &&
+      typeof value === "string" &&
+      value.trim()
+    ) {
+      node.value = value.trim();
+    }
+  });
+  if (typeof identity.mode === "string" && identity.mode.trim()) {
+    const input = document.querySelector(`input[name="mode"][value="${identity.mode.trim()}"]`);
+    if (input instanceof HTMLInputElement) input.checked = true;
+  }
+}
+
+void main().catch((error) => {
+  console.error("[host-proof] launcher bootstrap failed", error);
+  renderPageFailure({
+    title: "Hosted tenant launcher failed",
+    message: String(error?.message || "Unknown error"),
+    backHref: "/",
+  });
+});

@@ -8,8 +8,8 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "../../..");
-const commonPublicDir = path.join(__dirname, "public");
-const commonHostDir = path.join(__dirname, "host");
+const referencePublicDir = path.join(__dirname, "public");
+const referenceHostDir = path.join(__dirname, "host");
 
 function firstExistingPath(candidates: string[], fallback: string) {
   for (const candidate of candidates) {
@@ -106,7 +106,7 @@ export async function startHostProofServer(config: HostProofServerConfig) {
   const fastify = Fastify({ logger: true });
 
   await fastify.register(fastifyStatic, {
-    root: commonPublicDir,
+    root: referencePublicDir,
     prefix: "/",
     wildcard: false,
   });
@@ -173,6 +173,7 @@ export async function startHostProofServer(config: HostProofServerConfig) {
       `export const BACKEND_BASE_URL = ${JSON.stringify(backendBaseUrl)};`,
       `export const PUBLIC_BASE_URL = ${JSON.stringify(publicBaseUrl)};`,
       `export const HOST_BOOTSTRAP_URL = "/api/host-bootstrap";`,
+      `export const ENTRY_HREF = "/";`,
       `export const DASHBOARD_HREF = "";`,
       `export const DASHBOARD_LABEL = "Back to dashboard";`,
       `export const PROOF_NAME = ${JSON.stringify(config.proofName)};`,
@@ -186,9 +187,9 @@ export async function startHostProofServer(config: HostProofServerConfig) {
 
   fastify.get("/host/:assetName", async (request, reply) => {
     const assetName = String((request.params as any)?.assetName || "").trim();
-    const localFile = path.join(commonHostDir, assetName);
-    if (fs.existsSync(localFile)) {
-      return sendFile(reply, localFile, contentTypeForAsset(assetName));
+    const referenceFile = path.join(referenceHostDir, assetName);
+    if (fs.existsSync(referenceFile)) {
+      return sendFile(reply, referenceFile, contentTypeForAsset(assetName));
     }
     const sharedFile = path.join(browserHostDistDir, assetName);
     if (fs.existsSync(sharedFile)) {

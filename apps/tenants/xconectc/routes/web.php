@@ -46,6 +46,7 @@ Route::post('/catalog/api/host-bootstrap', array(HostProofController::class, 'ca
 Route::get('/marketplace.html', array(HostProofController::class, 'marketplace'));
 Route::get('/single-xapp.html', array(HostProofController::class, 'singleXapp'));
 Route::get('/embed/sdk/xapps-embed-sdk.esm.js', array(HostProofController::class, 'embedSdk'));
+Route::get('/host/starter-config.js', array(HostProofController::class, 'starterConfig'));
 Route::get('/host/proof-config.js', array(HostProofController::class, 'proofConfig'));
 Route::get('/host/{assetName}', array(HostProofController::class, 'hostAsset'))->where('assetName', '.*');
 Route::get('/tenant-payment.html', function () {

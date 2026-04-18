@@ -55,7 +55,7 @@ function xconectb_load_config(): array
 
     $xconectbHostDir = dirname($backendDir, 1) . '/host';
     $xconectHostDir = dirname($backendDir, 2) . '/xconect/host';
-    $sharedHostProofDir = dirname($backendDir, 2) . '/host-proof-common/host';
+    $referenceHostCommonDir = $repoRoot . '/apps/tenants/reference-host-common/host';
     $browserHostDirCandidates = [
         $repoRoot . '/packages/browser-host/dist',
         $repoRoot . '/node_modules/@xapps-platform/browser-host/dist',
@@ -124,19 +124,24 @@ function xconectb_load_config(): array
             $repoRoot . '/node_modules/@xapps-platform/embed-sdk/dist/xapps-embed-sdk.esm.js',
         ],
         'hostAssets' => [
-            'host-shell.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/host-shell.js'],
-            'backend-base.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/backend-base.js'],
+            'host-shell-core.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/host-shell-core.js'],
+            'launcher-core.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/launcher-core.js'],
+            'embed-surface.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/embed-surface.js'],
+            'page-utils.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/page-utils.js'],
+            'standard-runtime.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/standard-runtime.js'],
             'marketplace-runtime.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/marketplace-runtime.js'],
-            'reference-runtime.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/reference-runtime.js'],
-            'marketplace-host.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/marketplace-host.js'],
-            'host-status.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/host-status.js'],
-            'proof-identity.js' => ['type' => 'js', 'filePath' => $sharedHostProofDir . '/proof-identity.js'],
-            'single-xapp-host.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/single-xapp-host.js'],
+            'backend-base.js' => ['type' => 'js', 'filePath' => $browserHostDir . '/backend-base.js'],
+            'reference-runtime.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-host-runtime.js'],
+            'reference-launcher-page.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/reference-launcher-page.js'],
+            'reference-marketplace-page.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/reference-marketplace-page.js'],
+            'reference-single-xapp-page.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/reference-single-xapp-page.js'],
+            'reference-shell.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-host-shell.js'],
+            'reference-config.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-reference-config.js'],
             'xconectb-host-base.css' => ['type' => 'css', 'filePath' => $xconectHostDir . '/xconect-host-base.css'],
             'xconectb-host-entry.css' => ['type' => 'css', 'filePath' => $xconectHostDir . '/xconect-host-entry.css'],
             'xconectb-host-marketplace.css' => ['type' => 'css', 'filePath' => $xconectHostDir . '/xconect-host-marketplace.css'],
-            'xconectb-marketplace-host.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-marketplace-host.js'],
-            'xconectb-single-xapp-host.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-single-xapp-host.js'],
+            'xconectb-marketplace-host.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/reference-marketplace-page.js'],
+            'xconectb-single-xapp-host.js' => ['type' => 'js', 'filePath' => $referenceHostCommonDir . '/reference-single-xapp-page.js'],
             'xconectb-host-shell.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-host-shell.js'],
             'xconectb-host-runtime.js' => ['type' => 'js', 'filePath' => $xconectbHostDir . '/xconectb-host-runtime.js'],
         ],

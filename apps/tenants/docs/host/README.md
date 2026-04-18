@@ -97,11 +97,12 @@ Do not add page-local expand/focus rules just for `single-xapp`.
 Start from the shared browser host layer and keep the tenant layer thin:
 
 - `@xapps-platform/browser-host`
-- `createStandardMarketplaceRuntime(...)`
-- `createHostDomUiController(...)`
-- `createHostPaymentResumeState(...)`
+- `bootstrapXappsEmbedSession(...)`
+- `mountCatalogEmbed(...)`
+- `mountSingleXappEmbed(...)`
 
-Use the lower-level host helpers only when the tenant truly needs a custom host shape.
+Use the lower-level browser-host helpers or `@xapps-platform/embed-sdk` only
+when the tenant truly needs a custom host shape.
 
 ## Hosted-Integrator Variant
 
@@ -111,7 +112,7 @@ on-another-origin shape.
 Reference pieces:
 
 - proof/common host scaffold:
-  - [../host-proof-common/README.md](../../host-proof-common/README.md)
+  - [../reference-host-common/README.md](../../reference-host-common/README.md)
 - Node proof host:
   - [../xconect-host/README.md](../../xconect-host/README.md)
 - PHP proof host:
@@ -119,9 +120,15 @@ Reference pieces:
 - Laravel proof host:
   - [../xconectc-host/README.md](../../xconectc-host/README.md)
 
+Current boundary:
+
+- `xconect-host` and `xconectc-host` are self-contained hosted-integrator references
+- `reference-host-common` is the shared repo reference layer for the secondary proof lanes
+- `xconect` and `xconectc` are self-contained on the same-origin tenant side
+
 In that mode:
 
-- integrator browser/frontend mounts `@xapps-platform/browser-host`
+- integrator browser/frontend mounts the unified `@xapps-platform/browser-host` surface
 - integrator backend performs the server-to-server bootstrap call
 - tenant backend still owns subject resolution, catalog/widget session minting,
   bridge routes, and payment/runtime behavior
@@ -155,7 +162,7 @@ Practical meaning:
 
 The same browser-host package also supports a same-origin tenant launcher that
 resolves identity first, stores short-lived bootstrap state locally, and then
-hands off to shared host pages on the same tenant origin.
+hands off to local thin host pages on the same tenant origin.
 
 Reference piece:
 
@@ -165,7 +172,8 @@ Reference piece:
 In that mode:
 
 - the tenant app owns the launcher page and local bootstrap POST
-- shared host pages still come from `@xapps-platform/browser-host`
+- the tenant serves the local thin host pages/assets
+- those local pages call `@xapps-platform/browser-host` for the SDK/runtime
 - `entryHref` should point back to the launcher instead of `/`
 - the backend can stay same-origin, so `host.allowedOrigins` can remain empty
   unless another frontend origin is introduced later
@@ -176,7 +184,7 @@ In that mode:
 sequenceDiagram
   participant U as User Browser
   participant A as Tenant App
-  participant H as Shared Host Pages
+  participant H as Local Thin Host Pages
   participant G as Gateway
 
   U->>A: open /catalog launcher
@@ -239,7 +247,7 @@ That applies to:
 
 - `xconect`
 - `xconectb`
-- `host-proof-common`
+- `reference-host-common`
 - launcher-backed `xconectc`
 
 Practical rule:
@@ -259,10 +267,14 @@ Reference planning note:
 - local host overview: [../xconect/host/README.md](../../xconect/host/README.md)
 - runtime config: [../xconect/host/xconect-host-runtime.js](../../xconect/host/xconect-host-runtime.js)
 - shell/chrome: [../xconect/host/xconect-host-shell.js](../../xconect/host/xconect-host-shell.js)
-- thin entrypoint: [../xconect/host/xconect-marketplace-host.js](../../xconect/host/xconect-marketplace-host.js)
-- focused xapp demo entrypoint: [../xconect/host/xconect-single-xapp-host.js](../../xconect/host/xconect-single-xapp-host.js)
+- tenant config: [../xconect/host/xconect-reference-config.js](../../xconect/host/xconect-reference-config.js)
+- repo reference launcher controller: [../reference-host-common/host/reference-launcher-page.js](../../reference-host-common/host/reference-launcher-page.js)
+- repo reference marketplace page controller: [../reference-host-common/host/reference-marketplace-page.js](../../reference-host-common/host/reference-marketplace-page.js)
+- repo reference single-xapp page controller: [../reference-host-common/host/reference-single-xapp-page.js](../../reference-host-common/host/reference-single-xapp-page.js)
+- tenant asset aliases for those controllers: [../xconect/backend/routes/host/shared.js](../../xconect/backend/routes/host/shared.js)
 - shared browser-host package: [packages/browser-host/README.md](../../../../packages/browser-host/README.md)
-- hosted-integrator proof/common scaffold: [../host-proof-common/README.md](../../host-proof-common/README.md)
+- canonical hosted-integrator handoff: [../tooling/first-hosted-tenant-integrator-handoff.md](../tooling/first-hosted-tenant-integrator-handoff.md)
+- hosted-integrator proof/common scaffold: [../reference-host-common/README.md](../../reference-host-common/README.md)
 - hosted-integrator proof hosts:
   - [../xconect-host/README.md](../../xconect-host/README.md)
   - [../xconectb-host/README.md](../../xconectb-host/README.md)
@@ -270,10 +282,16 @@ Reference planning note:
 - same-origin launcher-backed tenant:
   - [../../../apps/tenants/xconectc/README.md](../../xconectc/README.md)
 
+Important boundary:
+
+- `@xapps-platform/browser-host` is the browser SDK
+- the repo reference launcher/page controllers live under `apps/tenants/reference-host-common`
+- those reference files are not the public SDK contract
+
 Publication rule:
 
 - the public starter/reference family keeps the canonical app names
-- `host-proof-common` is public shared support in that family
+- `reference-host-common` is the shared repo reference layer for `xconecta-host` and `xconectb-host`
 - use `-example` only for deploy hostnames/domains in the example lane
 
 ## Current Code Anchors
@@ -282,10 +300,16 @@ Publication rule:
 - [../xconect/host/index.html](../../xconect/host/index.html)
 - [../xconect/host/marketplace.html](../../xconect/host/marketplace.html)
 - [../xconect/host/single-xapp.html](../../xconect/host/single-xapp.html)
-- [../xconect/host/xconect-marketplace-host.js](../../xconect/host/xconect-marketplace-host.js)
-- [../xconect/host/xconect-single-xapp-host.js](../../xconect/host/xconect-single-xapp-host.js)
+- [../xconect/host/xconect-reference-config.js](../../xconect/host/xconect-reference-config.js)
 - [../xconect/host/xconect-host-runtime.js](../../xconect/host/xconect-host-runtime.js)
 - [../xconect/host/xconect-host-shell.js](../../xconect/host/xconect-host-shell.js)
+- [../xconect/backend/routes/host/shared.js](../../xconect/backend/routes/host/shared.js)
+- [../reference-host-common/host/reference-launcher-page.js](../../reference-host-common/host/reference-launcher-page.js)
+- [../reference-host-common/host/reference-marketplace-page.js](../../reference-host-common/host/reference-marketplace-page.js)
+- [../reference-host-common/host/reference-single-xapp-page.js](../../reference-host-common/host/reference-single-xapp-page.js)
+  These are repo-owned reference host controllers. They help our tenant/reference
+  hosts stay aligned, but integrators should start from the browser SDK surface
+  in [packages/browser-host/README.md](../../../../packages/browser-host/README.md).
 
 ## Practical Rule
 
