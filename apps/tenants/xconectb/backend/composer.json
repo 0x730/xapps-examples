@@ -5,8 +5,8 @@
   "description": "Plain PHP public reference tenant backend for the Xapps tenant contract.",
   "require": {
     "php": "^8.2",
-    "xapps-platform/xapps-backend-kit": "^0.2.9",
-    "xapps-platform/xapps-php": "^0.2.8"
+    "xapps-platform/xapps-backend-kit": "^0.2.10",
+    "xapps-platform/xapps-php": "^0.2.9"
   },
   "config": {
     "preferred-install": "dist",
