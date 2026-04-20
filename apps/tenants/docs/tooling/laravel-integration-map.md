@@ -84,7 +84,7 @@ flowchart LR
   GW[Gateway]
 
   U -->|host shell / launcher| LH
-  LH -->|serves host pages + local /api/host-bootstrap| BH
+  LH -->|serves host pages + local /api/browser/host-bootstrap| BH
   LH -->|server-to-server bootstrap| LT
   BH -->|cross-origin host API calls + bootstrap token| LT
   LT -->|backend-kit host API surface| BK
@@ -191,7 +191,7 @@ Key file anchors in the current reference:
 
 - local bootstrap/app routes:
   - [apps/tenants/xconectc-host/routes/web.php](../../xconectc-host/routes/web.php)
-    - host-only Laravel routes and local `/api/host-bootstrap`
+    - host-only Laravel routes and local `/api/browser/host-bootstrap`
 - local bootstrap controller:
   - [apps/tenants/xconectc-host/app/Http/Controllers/HostProofController.php](../../xconectc-host/app/Http/Controllers/HostProofController.php)
     - server-side bootstrap proxy into the paired tenant backend
@@ -227,7 +227,8 @@ The same tenant backend contract still applies:
 - `POST /api/update`
 - `POST /api/uninstall`
 - optional hosted-integrator bootstrap:
-  - `POST /api/host-bootstrap`
+  - browser-safe local entry: `POST /api/browser/host-bootstrap`
+  - tenant canonical bootstrap: `POST /api/host-bootstrap`
 
 The same host runtime rule still applies:
 

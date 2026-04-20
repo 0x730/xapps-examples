@@ -14,9 +14,9 @@ if (!class_exists(\Xapps\BackendKit\BackendKit::class)) {
     require_once dirname(__DIR__, 6) . '/packages/xapps-backend-kit-php/src/BackendKit.php';
 }
 
-use App\Support\Xapps\BackendKitBootstrap;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Cookie;
 use Xapps\BackendKit\BackendKit;
 
 class XappsBackendKitController extends Controller
@@ -28,23 +28,39 @@ class XappsBackendKitController extends Controller
         $responseBody = '';
 
         if (function_exists('header_remove')) {
+            // BackendKit dispatch may emit raw header() calls. Clear PHP's header buffer before
+            // and after capture so the Laravel response only reflects the dispatch result.
             @header_remove();
         }
         http_response_code(200);
 
         ob_start();
-        BackendKit::dispatch(BackendKitBootstrap::app(), $this->requestContext($request), [
+        BackendKit::dispatch(app('xapps.backendKit'), $this->requestContext($request), [
             'sendJson' => static function (array $payload, int $statusCode = 200, array $headers = []) use (&$status, &$responseHeaders, &$responseBody): void {
                 $status = $statusCode;
-                $responseHeaders = array_merge($responseHeaders, $headers, [
-                    'Content-Type' => 'application/json; charset=utf-8',
-                ]);
+                foreach ($headers as $name => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $entry) {
+                            self::appendCapturedHeader($responseHeaders, (string) $name, (string) $entry);
+                        }
+                        continue;
+                    }
+                    self::appendCapturedHeader($responseHeaders, (string) $name, (string) $value);
+                }
+                self::appendCapturedHeader(
+                    $responseHeaders,
+                    'Content-Type',
+                    'application/json; charset=utf-8',
+                );
                 $responseBody = (string) json_encode($payload, JSON_UNESCAPED_SLASHES);
             },
         ]);
         $echoedBody = (string) ob_get_clean();
 
-        $status = http_response_code() ?: $status;
+        $phpStatus = http_response_code() ?: 0;
+        if ($responseBody === '' && $echoedBody !== '') {
+            $status = $phpStatus ?: $status;
+        }
         foreach (headers_list() as $headerLine) {
             $idx = strpos($headerLine, ':');
             if ($idx === false) {
@@ -53,7 +69,7 @@ class XappsBackendKitController extends Controller
             $name = trim(substr($headerLine, 0, $idx));
             $value = trim(substr($headerLine, $idx + 1));
             if ($name !== '') {
-                $responseHeaders[$name] = $value;
+                self::appendCapturedHeader($responseHeaders, $name, $value);
             }
         }
         if (function_exists('header_remove')) {
@@ -62,11 +78,40 @@ class XappsBackendKitController extends Controller
 
         $body = $responseBody !== '' ? $responseBody : $echoedBody;
         $response = response($body, $status);
-        foreach ($responseHeaders as $name => $value) {
-            $response->headers->set((string) $name, (string) $value);
+        foreach ($responseHeaders as $header) {
+            $name = (string) ($header['name'] ?? '');
+            $value = (string) ($header['value'] ?? '');
+            if ($name === '' || $value === '') {
+                continue;
+            }
+            if (strcasecmp($name, 'Set-Cookie') === 0) {
+                $response->headers->setCookie(Cookie::fromString($value));
+                continue;
+            }
+            $response->headers->set($name, $value);
         }
 
         return $response;
+    }
+
+    private static function appendCapturedHeader(array &$responseHeaders, string $name, string $value): void
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return;
+        }
+
+        if (strcasecmp($name, 'Content-Type') === 0) {
+            $responseHeaders = array_values(array_filter(
+                $responseHeaders,
+                static fn (array $header): bool => strcasecmp((string) ($header['name'] ?? ''), 'Content-Type') !== 0,
+            ));
+        }
+
+        $responseHeaders[] = [
+            'name' => $name,
+            'value' => $value,
+        ];
     }
 
     private function requestContext(Request $request): array

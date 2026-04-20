@@ -2,8 +2,14 @@
 
 declare(strict_types=1);
 
+require_once dirname(__DIR__, 4) . '/reference-host-common/backend/reference_host_bootstrap.php';
+
 function xconectb_register_host_page_routes(array &$routes, array $app): void
 {
+    $hostOptions = is_array($app['hostOptions'] ?? null) ? $app['hostOptions'] : [];
+    $allowedOrigins = is_array($hostOptions['allowedOrigins'] ?? null) ? $hostOptions['allowedOrigins'] : [];
+    $bootstrap = is_array($hostOptions['bootstrap'] ?? null) ? $hostOptions['bootstrap'] : [];
+
     xapps_backend_kit_register_embed_sdk_route($routes, $app);
 
     $routes[] = [
@@ -44,6 +50,8 @@ function xconectb_register_host_page_routes(array &$routes, array $app): void
             );
         },
     ];
+
+    xapps_reference_register_host_bootstrap_routes($routes, $app, $allowedOrigins, $bootstrap);
 
     $routes[] = [
         'method' => 'GET',

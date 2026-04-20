@@ -1,24 +1,34 @@
 import { mountSingleXappEmbed } from "/host/embed-surface.js";
 import { importBrowserAssetModule, renderPageFailure } from "/host/page-utils.js";
+import { readRecoverableHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
 
 let controller = null;
+
+async function refreshReferenceIdentity(identityStorageKey, hostBootstrapUrl) {
+  return refreshStoredHostIdentity(identityStorageKey, hostBootstrapUrl);
+}
 
 async function mountCurrentXapp(runtime) {
   const input = document.getElementById("xappId");
   const xappId = input instanceof HTMLInputElement ? String(input.value || "").trim() : "";
   const locale = runtime.readLocalePreference();
   const themeKey = runtime.applyThemePreference(runtime.readThemePreference(), { persist: false });
+  const identity = readRecoverableHostIdentity(runtime.IDENTITY_STORAGE_KEY);
   runtime.renderSingleXappShell();
   controller?.destroy?.();
   controller = await mountSingleXappEmbed({
     backendBaseUrl: window.location.origin,
     entryHref: runtime.ENTRY_HREF || "/",
     identityStorageKey: runtime.IDENTITY_STORAGE_KEY,
+    hostBootstrapUrl: runtime.HOST_BOOTSTRAP_URL,
     sdkPath: "/embed/sdk/xapps-embed-sdk.esm.js",
     container: document.getElementById("catalog"),
     xappId,
     locale,
     themeKey,
+    ...(identity ? { identity } : {}),
+    refreshIdentity: (storageKey) =>
+      refreshReferenceIdentity(storageKey, runtime.HOST_BOOTSTRAP_URL),
     resolveTheme: runtime.resolveReferenceHostTheme,
     onSessionExpired: () => {
       runtime.renderSessionExpiredShell({

@@ -38,8 +38,9 @@ host contract against the Node tenant backend.
 flowchart LR
   U[User browser] --> H[Laravel host app<br/>xconectc-host]
   H -->|launcher, branding, local auth shell| P[marketplace.html or single-xapp.html]
-  H -->|POST /api/host-bootstrap| T[Laravel tenant backend<br/>xconectc]
-  P -->|bootstrap token + host API calls| T
+  H -->|POST /api/browser/host-bootstrap| T[Laravel tenant backend<br/>xconectc]
+  P -->|POST /api/host-session/exchange| T
+  P -->|session-backed host API calls| T
   T --> G[Gateway and runtime authority]
 ```
 
@@ -48,8 +49,9 @@ Read it as:
 - the Laravel host app owns the visible shell and local bootstrap proxy
 - the paired tenant backend still owns subject resolution, catalog/widget
   sessions, bridge routes, and payment/runtime authority
-- the browser only carries a short-lived bootstrap token, not raw backend
-  credentials
+- the browser uses bootstrap only as entry state; ongoing hosted control-plane
+  authority moves to the tenant-issued host session
+- the browser never receives raw backend credentials
 
 Use this when:
 
@@ -81,7 +83,7 @@ It provides:
     - `GET /marketplace.html`
     - `GET /single-xapp.html`
 - Local bootstrap proxy:
-    - `POST /api/host-bootstrap`
+    - `POST /api/browser/host-bootstrap`
 - Host assets and SDK delivery:
     - `GET /host/starter-config.js`
     - `GET /host/proof-config.js` compatibility alias
@@ -152,9 +154,13 @@ Then open:
     - `XCONECTC_HOST_BOOTSTRAP_BACKEND_BASE_URL`
     - `XCONECTC_HOST_BOOTSTRAP_API_KEY` should match the target backend bootstrap key
 
-- `XAPPS_API_KEY` may still exist in local env examples, but it is not the key
-  used by the host proof proxy route. The local `POST /api/host-bootstrap`
-  path uses `XCONECTC_HOST_BOOTSTRAP_API_KEY`.
+- Required env on the paired tenant backend for hosted cross-origin use:
+    - `XCONECTC_HOST_BOOTSTRAP_API_KEYS`
+    - `XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET`
+    - `XCONECTC_HOST_BOOTSTRAP_SIGNING_KEY_ID` / `XCONECTC_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON`
+    - `XCONECTC_HOST_SESSION_SIGNING_SECRET`
+    - `XCONECTC_HOST_SESSION_SIGNING_KEY_ID` / `XCONECTC_HOST_SESSION_VERIFIER_KEYS_JSON`
+    - `XCONECTC_ALLOWED_ORIGINS`
 
 - To point this same Laravel host at the Node `xconect` backend instead:
     - `XCONECTC_HOST_BACKEND_BASE_URL=http://localhost:3312`

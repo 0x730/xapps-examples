@@ -13,6 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // xapps_host_session is already a signed backend-kit token. Laravel must not wrap it in
+        // its own cookie encryption layer or the host-session verifier will only see ciphertext.
+        $middleware->encryptCookies(except: array(
+            'xapps_host_session',
+        ));
+
         // Behind Nginx TLS (especially on non-443 ports like :8000), we must trust forwarded
         // headers so Laravel generates correct absolute URLs (https + port) and redirects.
         // This is safe in our deployment because the app is only reachable via the trusted
@@ -30,7 +36,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth/*',
             'api/auth/*',
             'api/*',
-            'catalog/api/host-bootstrap',
             'guard/*',
             // The launcher/browser-host pages call these endpoints via `fetch()` from browser JS
             // (not a Blade form post), so CSRF would otherwise return 419.

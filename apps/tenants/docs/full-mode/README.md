@@ -17,9 +17,11 @@ flowchart LR
 
 Read it as:
 
-- the tenant app owns the backend contract
-- the tenant app also owns the visible application shell
-- shared host pages and shared widget runtime still remain shared
+- tenant app owns backend contract and shell
+- host surface rules still come from
+  [host/README.md](../host/README.md)
+- backend contract rules still come from
+  [backend/README.md](../backend/README.md)
 
 ## Start Here
 
@@ -46,6 +48,10 @@ PHP thin backend reference:
   - [../tooling/laravel-integration-map.md](../tooling/laravel-integration-map.md)
 - shared/common concerns:
   - [../common/README.md](../common/README.md)
+- capability matrix:
+  - [../modules/README.md](../modules/README.md)
+- ownership tradeoffs:
+  - [../reference-options/README.md](../reference-options/README.md)
 
 ## Practical Rule
 

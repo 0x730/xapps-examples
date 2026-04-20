@@ -69,6 +69,9 @@ The backend kit now owns the default tenant backend behavior for:
 - `GET /health`
 - `GET /api/reference`
 - `GET /api/host-config`
+- `POST /api/host-session/exchange`
+- `POST /api/host-session/logout`
+- `POST /api/reference-host-bootstrap`
 - `POST /api/resolve-subject`
 - `POST /api/create-catalog-session`
 - `POST /api/create-widget-session`
@@ -81,6 +84,10 @@ The backend kit now owns the default tenant backend behavior for:
 - `POST /guard/subject-profiles/tenant-candidates`
 - default tenant payment routes
 - default tenant mode tree
+
+`/api/reference-host-bootstrap` is the browser-safe local bootstrap seam for the
+same-origin reference host pages. Ongoing hosted control-plane access still goes
+through host-session exchange, not caller-supplied `subjectId`.
 
 Source anchors:
 
@@ -96,7 +103,27 @@ cd apps/tenants/xconecta/backend
 npm run dev
 ```
 
-Default port: `3312`
+Default port: `3314`
+
+Provisioning note:
+
+- `XCONECTA_PUBLIC_BASE_URL` is still part of the tenant publish/provision
+  path, even though the backend server itself mainly reads
+  `XCONECTA_ALLOWED_ORIGINS` and the host/session secrets at runtime.
+
+Required env for the hardened hosted/session contract:
+
+- `XAPPS_GATEWAY_URL`
+- `XCONECTA_GATEWAY_API_KEY`
+- `XCONECTA_ALLOWED_ORIGINS`
+- `XCONECTA_HOST_BOOTSTRAP_API_KEYS`
+- `XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET`
+- `XCONECTA_HOST_BOOTSTRAP_SIGNING_KEY_ID` / `XCONECTA_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON`
+- `XCONECTA_HOST_SESSION_SIGNING_SECRET`
+- `XCONECTA_HOST_SESSION_SIGNING_KEY_ID` / `XCONECTA_HOST_SESSION_VERIFIER_KEYS_JSON`
+- `XCONECTA_TENANT_PAYMENT_URL`
+- `XCONECTA_TENANT_PAYMENT_RETURN_SECRET` or `XCONECTA_TENANT_PAYMENT_RETURN_SECRET_REF`
+- `XCONECTA_TENANT_PAYMENT_RETURN_URL_ALLOWLIST`
 
 ## Practical Rule
 

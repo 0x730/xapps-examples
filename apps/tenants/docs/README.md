@@ -1,77 +1,100 @@
 # Tenant Integrator Guide
 
-Use this page to choose the tenant integration shape before opening deeper docs.
+This is the entrypoint for tenant integration docs.
 
-## Choose The Shape First
+## 1) Choose Mode First
 
-There are only two starting shapes:
+- hosted-integrator first:
+  - [host-mode/README.md](./host-mode/README.md)
+- tenant-owned backend second:
+  - [full-mode/README.md](./full-mode/README.md)
 
-1. hosted-integrator first
-2. full tenant backend second
+For the current hosted-integrator onboarding path, subject profiles are
+mandatory for the first hosted-integrator tenant lane.
 
-### Hosted-integrator first
+## Mode + Topology Map
 
-Use this first when the integrator already has a local application shell and we
-keep the tenant backend hosted on our side.
+```mermaid
+flowchart LR
+  M[Mode decision]
+  M --> HM[host-mode]
+  M --> FM[full-mode]
 
-For the current hosted-integrator path, subject profiles are mandatory for the
-first hosted-integrator tenant lane.
+  HM --> HH1[xconect-host]
+  HM --> HH2[xconectc-host]
+  HM --> HH3[xconecta-host]
+  HM --> HH4[xconectb-host]
 
-Read in this order:
+  FM --> TT1[xconect]
+  FM --> TT2[xconectc]
+  FM --> TT3[xconecta]
+  FM --> TT4[xconectb]
 
-1. [tooling/first-hosted-tenant-integrator-handoff.md](./tooling/first-hosted-tenant-integrator-handoff.md)
-2. [tooling/hosted-integrator-starter-contract.md](./tooling/hosted-integrator-starter-contract.md)
-3. stack wrapper:
-   - [tooling/nodejs-hosted-integrator-platform-tenant.md](./tooling/nodejs-hosted-integrator-platform-tenant.md)
-   - [tooling/laravel-hosted-integrator-platform-tenant.md](./tooling/laravel-hosted-integrator-platform-tenant.md)
+  TT3 --> RHC[reference-host-common]
+  TT4 --> RHC
+  HH3 --> RHC
+  HH4 --> RHC
+```
 
-Practical meaning:
+## 2) Use Contract Docs (Shared Across Modes)
 
-- local app owns shell, auth, and bootstrap proxy
-- hosted tenant owns runtime authority
-- browser host uses the shared `browser-host` surface
+- host surface contract:
+  - [host/README.md](./host/README.md)
+- backend contract:
+  - [backend/README.md](./backend/README.md)
 
-### Full tenant backend second
+These two pages now include the protocol diagrams:
 
-Use this when the integrator needs to own the tenant backend contract too.
+- host bootstrap/session sequence:
+  - [host/README.md](./host/README.md)
+- backend route-family contract flow:
+  - [backend/README.md](./backend/README.md)
 
-Read in this order:
+## 3) Then Open Capability/Ownership Maps
 
-1. [full-mode/README.md](./full-mode/README.md)
-2. [backend/README.md](./backend/README.md)
-3. [host/README.md](./host/README.md)
+- module/capability matrix:
+  - [modules/README.md](./modules/README.md)
+- integration consequences:
+  - [integrations/README.md](./integrations/README.md)
+- shared concerns:
+  - [common/README.md](./common/README.md)
 
-## Current Recommended Reading Order
+## Implementation Topology (Current)
 
-If you only open three pages first, open these:
+Tenant backend/protocol anchors:
 
-1. [tooling/first-hosted-tenant-integrator-handoff.md](./tooling/first-hosted-tenant-integrator-handoff.md)
-2. [tooling/hosted-integrator-starter-contract.md](./tooling/hosted-integrator-starter-contract.md)
-3. [tooling/README.md](./tooling/README.md)
+- [xconect](../xconect/README.md)
+- [xconectc](../xconectc/README.md)
 
-## Current References
+Reference-driven tenant variants:
 
-Reference tenants and hosts remain useful, but they are examples, not the
-integrator contract:
+- [xconecta](../xconecta/README.md)
+- [xconectb](../xconectb/README.md)
 
-- Node reference tenant:
-  - [xconect](../xconect/README.md)
-- PHP reference tenant:
-  - [xconectb](../xconectb/README.md)
-- Laravel reference tenant:
-  - [xconectc](../xconectc/README.md)
-- hosted reference shells:
+Hosted-integrator shells:
+
+- self-contained:
   - [xconect-host](../xconect-host/README.md)
-  - [xconectb-host](../xconectb-host/README.md)
   - [xconectc-host](../xconectc-host/README.md)
-- proof/reference shared assets:
-  - [reference-host-common](../reference-host-common/README.md)
-    - shared repo reference layer for `xconecta-host` and `xconectb-host`
+- reference-layer based:
+  - [xconecta-host](../xconecta-host/README.md)
+  - [xconectb-host](../xconectb-host/README.md)
+
+Shared repo reference layer:
+
+- [reference-host-common](../reference-host-common/README.md)
 
 ## Practical Rule
 
-For the current integration lane:
+- do mode selection once (`host-mode` vs `full-mode`)
+- keep host rules in `host/README`
+- keep backend rules in `backend/README`
+- avoid repeating topology details in every page
 
-- keep the public browser contract in `@xapps-platform/browser-host`
-- keep the backend contract in backend-kit
-- treat reference hosts as examples, not required architecture
+## Suggested Reading Order (Complete Pass)
+
+1. [host-mode/README.md](./host-mode/README.md) or [full-mode/README.md](./full-mode/README.md)
+2. [integrations/README.md](./integrations/README.md)
+3. [host/README.md](./host/README.md)
+4. [backend/README.md](./backend/README.md)
+5. [modules/README.md](./modules/README.md)

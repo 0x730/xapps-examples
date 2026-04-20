@@ -61,6 +61,16 @@ final class BackendKitBootstrap
         return $value !== '' ? $value : $fallback;
     }
 
+    private static function envJsonRecord(string $key, string $fallback = ''): array
+    {
+        $raw = self::envString($key, $fallback);
+        if ($raw === '') {
+            return [];
+        }
+        $parsed = json_decode($raw, true);
+        return is_array($parsed) ? $parsed : [];
+    }
+
     private static function appendOrigin(string $origins, string $origin): string
     {
         $items = array_values(array_filter(array_map(
@@ -145,14 +155,37 @@ final class BackendKitBootstrap
             ),
             'hostBootstrapApiKeys' => self::envString(
                 'XCONECTC_HOST_BOOTSTRAP_API_KEYS',
-                self::envString('XAPPS_API_KEY', ''),
+                '',
             ),
             'hostBootstrapSigningSecret' => self::envString(
                 'XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET',
-                'xconectc-host-bootstrap-dev-secret',
+                '',
+            ),
+            'hostBootstrapSigningKeyId' => self::envString(
+                'XCONECTC_HOST_BOOTSTRAP_SIGNING_KEY_ID',
+                '',
+            ),
+            'hostBootstrapVerifierKeys' => self::envJsonRecord(
+                'XCONECTC_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON',
+                self::envString('XCONECTC_HOST_BOOTSTRAP_VERIFIER_KEYS', ''),
+            ),
+            'hostSessionSigningSecret' => self::envString(
+                'XCONECTC_HOST_SESSION_SIGNING_SECRET',
+                '',
+            ),
+            'hostSessionSigningKeyId' => self::envString(
+                'XCONECTC_HOST_SESSION_SIGNING_KEY_ID',
+                '',
+            ),
+            'hostSessionVerifierKeys' => self::envJsonRecord(
+                'XCONECTC_HOST_SESSION_VERIFIER_KEYS_JSON',
+                self::envString('XCONECTC_HOST_SESSION_VERIFIER_KEYS', ''),
             ),
             'storage' => [
                 'paymentSessionsFile' => storage_path('app/xconectc-payment-sessions.json'),
+                'hostBootstrapReplayFile' => storage_path('app/xconectc-host-bootstrap-replay.json'),
+                'hostSessionRevocationsFile' => storage_path('app/xconectc-host-session-revocations.json'),
+                'hostSessionStateFile' => storage_path('app/xconectc-host-session-state.json'),
             ],
             'hostPages' => [
                 'tenantPayment' => public_path('tenant-payment.html'),
@@ -167,6 +200,14 @@ final class BackendKitBootstrap
 
     private static function options(array $config): array
     {
+        $hostBootstrapReplayConsumer = BackendKit::createFileHostBootstrapReplayConsumer([
+            'replayFile' => (string) (($config['storage']['hostBootstrapReplayFile'] ?? '')),
+        ]);
+        $hostSessionStore = BackendKit::createFileHostSessionStore([
+            'stateFile' => (string) (($config['storage']['hostSessionStateFile'] ?? '')),
+            'revocationsFile' => (string) (($config['storage']['hostSessionRevocationsFile'] ?? '')),
+        ]);
+
         return [
             'gateway' => [
                 'baseUrl' => (string) ($config['gatewayUrl'] ?? ''),
@@ -190,7 +231,26 @@ final class BackendKitBootstrap
                 'bootstrap' => [
                     'apiKeys' => (string) ($config['hostBootstrapApiKeys'] ?? ''),
                     'signingSecret' => (string) ($config['hostBootstrapSigningSecret'] ?? ''),
+                    'signingKeyId' => (string) ($config['hostBootstrapSigningKeyId'] ?? ''),
+                    'verifierKeys' => is_array($config['hostBootstrapVerifierKeys'] ?? null)
+                        ? $config['hostBootstrapVerifierKeys']
+                        : [],
                     'ttlSeconds' => 300,
+                    'consumeJti' => $hostBootstrapReplayConsumer,
+                ],
+                'session' => [
+                    'signingSecret' => (string) ($config['hostSessionSigningSecret'] ?? ''),
+                    'signingKeyId' => (string) ($config['hostSessionSigningKeyId'] ?? ''),
+                    'verifierKeys' => is_array($config['hostSessionVerifierKeys'] ?? null)
+                        ? $config['hostSessionVerifierKeys']
+                        : [],
+                    'cookieName' => 'xapps_host_session',
+                    'absoluteTtlSeconds' => 1800,
+                    'idleTtlSeconds' => 900,
+                    'cookiePath' => '/',
+                    'cookieSameSite' => 'auto',
+                    'cookieSecure' => 'auto',
+                    'store' => $hostSessionStore,
                 ],
             ],
             'payments' => [
@@ -237,18 +297,6 @@ final class BackendKitBootstrap
             'normalizeOptions' => static function (array $input): array {
                 return BackendKit::normalizeOptions($input, [
                     'normalizeEnabledModes' => 'xapps_backend_kit_normalize_enabled_backend_modes',
-                    'defaults' => [
-                        'gateway' => [
-                            'baseUrl' => '',
-                            'apiKey' => '',
-                        ],
-                        'payments' => [
-                            'paymentUrl' => '',
-                            'returnSecret' => '',
-                            'returnSecretRef' => '',
-                            'returnUrlAllowlist' => '',
-                        ],
-                    ],
                 ]);
             },
             'applyGatewayOverrides' => static fn (array $resolvedConfig, array $gateway): array => BackendKit::applyGatewayOverrides($resolvedConfig, $gateway),
@@ -287,4 +335,5 @@ final class BackendKitBootstrap
             ],
         ]);
     }
+
 }

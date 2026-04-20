@@ -25,6 +25,9 @@ This is the core route surface a tenant host needs to participate in the ecosyst
 Routes:
 
 - `GET /api/host-config`
+- `POST /api/host-session/exchange`
+- `POST /api/host-session/logout`
+- `POST /api/reference-host-bootstrap`
 - `POST /api/resolve-subject`
 - `POST /api/create-catalog-session`
 - `POST /api/create-widget-session`
@@ -34,7 +37,7 @@ Implement this first. Keep it stable. Everything else is layered on top.
 Canonical request shape for tenant implementations:
 
 - prefer camelCase request fields
-- treat snake_case aliases in the xconecta reference as boundary-only compatibility helpers
+- do not add parallel snake_case aliases for the same request fields
 - the main canonical fields are:
   - `hostReturnUrl`
   - `resultPresentation`
@@ -80,11 +83,11 @@ This is the current composition layer for the tenant host contract. It should st
 
 ## Contract boundary helper
 
-This helper keeps alias normalization and small ingestion compatibility out of the actual route logic.
+This helper keeps request shaping and validation out of the actual route logic.
 
 - [hostContractBoundary.js](../../../../../packages/backend-kit/src/backend/routes/gateway/hostContractBoundary.ts)
 
-Treat this as the only place where the Node reference should translate legacy/snake_case payloads into the canonical camelCase contract.
+Treat this as the place that enforces the canonical camelCase contract.
 
 ## Folder rule
 

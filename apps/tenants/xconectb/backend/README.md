@@ -68,6 +68,8 @@ The PHP backend kit now owns the default tenant backend behavior for:
 - `GET /health`
 - `GET /api/reference`
 - `GET /api/host-config`
+- `POST /api/host-session/exchange`
+- `POST /api/host-session/logout`
 - `POST /api/resolve-subject`
 - `POST /api/create-catalog-session`
 - `POST /api/create-widget-session`
@@ -80,6 +82,11 @@ The PHP backend kit now owns the default tenant backend behavior for:
 - `POST /guard/subject-profiles/tenant-candidates`
 - default tenant payment routes
 - default tenant mode tree
+
+`/api/reference-host-bootstrap` is the local browser-safe bootstrap seam exposed
+by [routes/host/pages.php](./routes/host/pages.php)
+for the same-origin reference host pages. Ongoing control-plane access still
+goes through host-session exchange, not caller-supplied `subjectId`.
 
 Source anchors:
 
@@ -97,6 +104,27 @@ Default port: `3313`
 The local script starts the PHP CLI server with `PHP_CLI_SERVER_WORKERS=4` by default. Keep that
 concurrency in manual runs too, because gateway-driven widget requests can call back into this same
 tenant backend while `/api/widget-tool-request` is still waiting.
+
+Provisioning note:
+
+- `XCONECTB_PUBLIC_BASE_URL` and optional `XCONECTB_API_URL` are still used by
+  the tenant publish/provision path, even though the backend server itself
+  mainly reads `XCONECTB_ALLOWED_ORIGINS` and the host/session secrets at
+  runtime.
+
+Required env for the hardened hosted/session contract:
+
+- `XAPPS_GATEWAY_URL`
+- `XCONECTB_GATEWAY_API_KEY`
+- `XCONECTB_ALLOWED_ORIGINS`
+- `XCONECTB_HOST_BOOTSTRAP_API_KEYS`
+- `XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET`
+- `XCONECTB_HOST_BOOTSTRAP_SIGNING_KEY_ID` / `XCONECTB_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON`
+- `XCONECTB_HOST_SESSION_SIGNING_SECRET`
+- `XCONECTB_HOST_SESSION_SIGNING_KEY_ID` / `XCONECTB_HOST_SESSION_VERIFIER_KEYS_JSON`
+- `XCONECTB_TENANT_PAYMENT_URL`
+- `XCONECTB_TENANT_PAYMENT_RETURN_SECRET` or `XCONECTB_TENANT_PAYMENT_RETURN_SECRET_REF`
+- `XCONECTB_TENANT_PAYMENT_RETURN_URL_ALLOWLIST`
 
 ## Practical Rule
 

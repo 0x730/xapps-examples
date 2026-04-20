@@ -33,6 +33,8 @@ Recommended local routing rule:
 
 Routes:
 
+- `POST /api/host-session/exchange`
+- `POST /api/host-session/logout`
 - `GET /api/host-config`
 - `POST /api/resolve-subject`
 - `POST /api/create-catalog-session`
@@ -41,6 +43,12 @@ Routes:
 Code anchor:
 
 - [hostApiCore.php](../../../../../packages/xapps-backend-kit-php/src/Backend/Routes/Gateway/hostApiCore.php)
+
+Local same-origin bootstrap seam:
+
+- `POST /api/reference-host-bootstrap`
+- source:
+  [host/pages.php](./host/pages.php)
 
 ## Required Marketplace Lifecycle
 

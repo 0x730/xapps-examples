@@ -137,6 +137,19 @@ Prefer config and hook seams before replacing route or mode behavior.
 
 This is the mandatory ecosystem integration surface for the tenant browser host.
 
+```mermaid
+flowchart TD
+  H[Host browser surfaces] --> B1["POST /api/browser/host-bootstrap<br/>or /api/reference-host-bootstrap"]
+  B1 --> B2["POST /api/host-bootstrap (canonical)"]
+  H --> S["POST /api/host-session/exchange"]
+  H --> C["Control-plane APIs<br/>/api/host-config<br/>/api/resolve-subject<br/>/api/create-catalog-session<br/>/api/create-widget-session"]
+  H --> L["Lifecycle APIs<br/>/api/install*"]
+  H --> BR["Bridge APIs<br/>/api/bridge/*"]
+  C --> G[Gateway/runtime authority]
+  L --> G
+  BR --> G
+```
+
 Required routes:
 
 - `GET /api/host-config`
@@ -144,9 +157,19 @@ Required routes:
 - `POST /api/create-catalog-session`
 - `POST /api/create-widget-session`
 
-Hosted-integrator bootstrap route when the frontend lives on another origin:
+Hosted-integrator bootstrap split when the frontend lives on another origin:
 
-- `POST /api/host-bootstrap`
+- browser-safe local entry: `POST /api/browser/host-bootstrap`
+- tenant canonical bootstrap: `POST /api/host-bootstrap`
+
+Same-origin local adapter variants:
+
+- self-contained `xconect` host pages use:
+  - `POST /api/browser/host-bootstrap`
+- reference-layer variants (`xconecta`, `xconectb`) use:
+  - `POST /api/reference-host-bootstrap`
+- both have the same responsibility: browser-safe local entry only; no direct
+  browser calls to `POST /api/host-bootstrap`
 
 Same-origin launcher note:
 
@@ -162,8 +185,7 @@ Code anchors:
 Canonical request shape rule:
 
 - implement the tenant contract in camelCase
-- treat snake_case aliases as ingestion-boundary compatibility only
-- do not design the tenant contract around multiple equivalent field names
+- do not add parallel snake_case aliases for the same request fields
 
 ## Marketplace Lifecycle
 
@@ -197,7 +219,8 @@ Code anchor:
 The backend contract owns two different session layers:
 
 - browser bootstrap session
-  - `POST /api/host-bootstrap`
+  - browser-safe local `POST /api/browser/host-bootstrap`
+  - server-side tenant `POST /api/host-bootstrap`
   - signs the short-lived browser bootstrap token
   - used by browser-host calls to `/api/host-config`, catalog/widget session minting, lifecycle routes, and bridge routes
 - widget session

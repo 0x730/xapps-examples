@@ -11,17 +11,17 @@ This is the recommended first delivery path.
 flowchart LR
   U[User browser] --> H[Local integrator app]
   H -->|launcher, branding, auth shell| P[marketplace.html or single-xapp.html]
-  H -->|bootstrap proxy when cross-origin| T[Tenant backend]
-  P -->|host API calls + bootstrap token| T
+  H -->|local browser-safe bootstrap route| T[Tenant backend]
+  P -->|host-session exchange and host APIs| T
   T --> G[Gateway and runtime authority]
 ```
 
 Read it as:
 
 - the local app owns the visible shell
-- the shared host pages and widget runtime stay shared
-- the tenant backend still owns subject resolution, sessions, guards, payment,
-  and runtime authority
+- the tenant backend remains runtime authority
+- browser host contract still follows
+  [host/README.md](../host/README.md)
 
 ## Choose The Host Shape
 
@@ -36,11 +36,14 @@ Start here:
 2. [../tooling/hosted-integrator-starter-contract.md](../tooling/hosted-integrator-starter-contract.md)
 3. [../tooling/README.md](../tooling/README.md)
 4. [../host/README.md](../host/README.md)
+5. [../backend/README.md](../backend/README.md)
 
 Additional references:
 
 - [../../xconect-host/README.md](../../xconect-host/README.md)
+- [../../xconecta-host/README.md](../../xconecta-host/README.md)
 - [../../xconectb-host/README.md](../../xconectb-host/README.md)
+- [../../xconectc-host/README.md](../../xconectc-host/README.md)
 - [../../reference-host-common/README.md](../../reference-host-common/README.md)
 
 Practical boundary:
@@ -48,34 +51,29 @@ Practical boundary:
 - `xconect-host` and `xconectc-host` are now self-contained primary references
 - `reference-host-common` is the shared repo reference layer
 - `xconecta-host` and `xconectb-host` use that layer
+- same-origin tenant side:
+  - backend/protocol anchors: `xconect`, `xconectc`
+  - self-contained host-page layer: `xconect`, `xconectc`
+  - reference-layer host-page variants: `xconecta`, `xconectb`
 - it is not the mandatory runtime dependency for host mode
 - the mandatory part is the host contract described by backend-kit plus the unified `@xapps-platform/browser-host` surface
 
-### 2. Same-origin launcher-backed host
+### 2. Same-origin launcher-backed tenant host
 
 Use this when the tenant app owns the origin and resolves identity first, then
-hands off to shared host pages.
+hands off to host surfaces without splitting frontend/backend ownership.
 
 Start here:
 
 1. [../host/README.md](../host/README.md)
 2. [../../xconectc/README.md](../../xconectc/README.md)
 
-### 3. Same-origin tenant host
-
-Use this when the tenant app already owns both the visible shell and the tenant
-backend contract.
-
-Start here:
-
-1. [../host/README.md](../host/README.md)
-2. [../../xconect/README.md](../../xconect/README.md)
-3. [../../xconectb/README.md](../../xconectb/README.md)
-
 ## What To Read Next
 
 - host/browser contract:
   - [../host/README.md](../host/README.md)
+- backend contract:
+  - [../backend/README.md](../backend/README.md)
 - stack-specific quickstarts:
   - [../tooling/README.md](../tooling/README.md)
   - [../tooling/nodejs-quickstart.md](../tooling/nodejs-quickstart.md)
@@ -90,5 +88,4 @@ For host-mode:
 
 - keep local code focused on shell, branding, auth, and bootstrap
 - keep shared runtime behavior in `@xapps-platform/browser-host`
-- keep widget renewal in shared runtime packages
-- keep bootstrap renewal in the local launcher/bootstrap seam
+- keep backend authority in the tenant backend contract

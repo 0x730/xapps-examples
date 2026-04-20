@@ -13,11 +13,12 @@ to that process.
 
 The starter must make the hosted-integrator flow feel like one small product:
 
-1. local app calls `POST /api/host-bootstrap`
+1. local app calls `POST /api/browser/host-bootstrap`
 2. backend forwards to our hosted tenant
-3. tenant returns `subjectId` and `bootstrapToken`
-4. browser stores that state
-5. browser mounts marketplace or single-xapp
+3. tenant returns `subjectId` and short-lived `bootstrapToken`
+4. browser stores bootstrap state
+5. browser exchanges bootstrap into host-local session
+6. browser mounts marketplace or single-xapp on host-session authority
 
 For the first real hosted tenant lane:
 
@@ -36,14 +37,23 @@ For the first real hosted tenant lane:
 
 ## What The Starter Must Include
 
-- one local `POST /api/host-bootstrap` example
+- one local `POST /api/browser/host-bootstrap` example
 - one launcher page example
 - one marketplace page example
 - one single-xapp page example
 - bootstrap state storage
 - silent re-bootstrap support
+- host-session exchange
 - exact identity payload examples
 - exact env/config meanings
+
+Route naming note:
+
+- hosted-integrator starters should use local `POST /api/browser/host-bootstrap`
+- same-origin reference tenant pages can use local
+  `POST /api/reference-host-bootstrap`
+- both are local browser-safe adapter routes to tenant canonical
+  `POST /api/host-bootstrap`
 
 ## What The Starter Must Not Include
 
@@ -60,6 +70,12 @@ The browser starter should use the unified `browser-host` surface:
 - `bootstrapXappsEmbedSession(...)`
 - `mountCatalogEmbed(...)`
 - `mountSingleXappEmbed(...)`
+
+Hosted contract rule:
+
+- `bootstrapToken` is entry state only
+- browser uses `X-Xapps-Host-Bootstrap` only for `POST /api/host-session/exchange`
+- ongoing hosted control-plane calls must use the host session cookie
 
 That is the public browser entrypoint for complete embedding in both:
 

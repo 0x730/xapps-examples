@@ -42,9 +42,12 @@ It provides:
     - `GET /catalog`
     - `GET /marketplace.html`
     - `GET /single-xapp.html`
+    - `POST /api/browser/host-bootstrap`
 - Xapps tenant surface via the PHP backend kit:
     - `GET /api/host-config`
     - `POST /api/host-bootstrap`
+    - `POST /api/host-session/exchange`
+    - `POST /api/host-session/logout`
     - `POST /api/resolve-subject`
     - `POST /api/create-catalog-session`
     - `POST /api/create-widget-session`
@@ -120,11 +123,16 @@ IDP_BASE_URL=https://xconectc-example.0x730.com/api
     - `XAPPS_GATEWAY_URL` (default `http://localhost:3000`)
     - `XAPPS_API_KEY` (tenant gateway/host API key)
     - `XCONECTC_GUARD_INGEST_API_KEY` (default `xconectc-tenant-guard-dev-key`)
-    - `PUBLISHER_API_URL` (default `http://localhost:3002`, used for vendor assertion exchange)
-    - `XCONECTC_ALLOWED_ORIGINS`
+    - `XCONECTC_HOST_PUBLIC_BASE_URL` (hosted proof/browser origin, default `http://localhost:8002`)
+    - `XCONECTC_HOST_BACKEND_BASE_URL` (used only by xconectc's local starter/runtime assets, default `APP_URL`; `xconectc-host` has its own separate backend-base env)
+    - `XCONECTC_ALLOWED_ORIGINS` (must include every browser origin calling `/api/*`; include `:5177` when testing portal/OIDC callback flows)
     - `XCONECTC_HOST_BOOTSTRAP_API_KEYS`
     - `XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET`
+    - `XCONECTC_HOST_BOOTSTRAP_SIGNING_KEY_ID` / `XCONECTC_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON` when rotating bootstrap keys
+    - `XCONECTC_HOST_SESSION_SIGNING_SECRET`
+    - `XCONECTC_HOST_SESSION_SIGNING_KEY_ID` / `XCONECTC_HOST_SESSION_VERIFIER_KEYS_JSON` when rotating session keys
     - `XCONECTC_TENANT_PAYMENT_URL`
+    - `XCONECTC_TENANT_PAYMENT_RETURN_SECRET` or `XCONECTC_TENANT_PAYMENT_RETURN_SECRET_REF`
     - `XCONECTC_TENANT_PAYMENT_RETURN_URL_ALLOWLIST`
 
 - Current package status:

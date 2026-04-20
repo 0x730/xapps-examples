@@ -4,6 +4,12 @@ import {
   parseObjectJson,
   readOptionalString,
 } from "/host/page-utils.js";
+import {
+  buildStoredHostIdentity,
+  executeHostBootstrap,
+  readStoredHostIdentity,
+  writeStoredHostIdentity,
+} from "/host/launcher-core.js";
 
 function readStoredIdentity(identityStorageKey) {
   try {
@@ -280,38 +286,6 @@ function applyIdentityPreset(kind) {
   syncIdentityAdvancedVisibility({});
 }
 
-async function resolveSubject(resolveSubjectUrl, input) {
-  const response = await fetch(resolveSubjectUrl || "/api/resolve-subject", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  const raw = await response.text();
-  const data = (() => {
-    try {
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  })();
-  if (!response.ok) throw new Error(String(data?.message || "resolve-subject failed"));
-  return data;
-}
-
-function extractSubjectId(payload) {
-  const candidates = [
-    payload?.subjectId,
-    payload?.subject_id,
-    payload?.result?.subjectId,
-    payload?.result?.subject_id,
-  ];
-  for (const value of candidates) {
-    const normalized = readOptionalString(value);
-    if (normalized) return normalized;
-  }
-  return "";
-}
-
 function renderEntryErrorFromQuery() {
   const currentUrl = new URL(window.location.href);
   const statusEl = document.getElementById("status");
@@ -335,7 +309,7 @@ async function main() {
     ENTRY_HREF,
     IDENTITY_STORAGE_KEY,
     LOCALE_STORAGE_KEY,
-    RESOLVE_SUBJECT_URL,
+    HOST_BOOTSTRAP_URL,
     THEME_STORAGE_KEY,
   } = referenceConfig;
   const form = document.getElementById("entry-form");
@@ -396,7 +370,17 @@ async function main() {
     const modeInput = form.querySelector('input[name="mode"]:checked');
     const mode = modeInput ? readOptionalString(modeInput.value) : "single-panel";
     const xappId = readOptionalString(xappIdInput?.value);
-    if (!identityOverride.subjectId && !identityOverride.identifier && (!name || !email)) return;
+    if (!identityOverride.subjectId && !identityOverride.identifier && !email) {
+      statusEl.className = "status error";
+      statusEl.textContent = "Provide subject identity or email before bootstrapping.";
+      return;
+    }
+    if (identityOverride.subjectId && !identityOverride.identifier && !email) {
+      statusEl.className = "status error";
+      statusEl.textContent =
+        "Subject id bootstrap requires email or identifier so the tenant can validate it.";
+      return;
+    }
     if (mode === "single-xapp" && !xappId) {
       statusEl.className = "status error";
       statusEl.textContent = "A demo xapp id is required for single xapp mode.";
@@ -405,46 +389,38 @@ async function main() {
 
     if (launchBtn) launchBtn.disabled = true;
     statusEl.className = "status";
-    statusEl.textContent = "Resolving tenant subject and preparing the host...";
+    statusEl.textContent = "Bootstrapping hosted session...";
 
     try {
-      const resolved = await resolveSubject(RESOLVE_SUBJECT_URL, {
+      const bootstrapInput = {
         ...identityOverride,
         ...(email ? { email } : {}),
         ...(name ? { name } : {}),
-      });
-      const subjectId = extractSubjectId(resolved);
-      if (!subjectId) {
-        const preview = JSON.stringify(resolved).replace(/\s+/g, " ").slice(0, 220);
-        throw new Error(
-          `resolve-subject response missing subjectId${preview ? `: ${preview}` : ""}`,
-        );
-      }
-      const identity = {
-        ...(resolved && typeof resolved === "object" ? resolved : {}),
-        name,
-        email,
-        mode,
-        xappId,
-        ...(identityOverride.type ? { type: identityOverride.type } : {}),
-        ...(identityOverride.identifier ? { identifier: identityOverride.identifier } : {}),
-        ...(identityOverride.metadata ? { metadata: identityOverride.metadata } : {}),
-        subjectId,
-        resolvedAt: new Date().toISOString(),
       };
-      window.localStorage.setItem(IDENTITY_STORAGE_KEY, JSON.stringify(identity));
+      const result = await executeHostBootstrap(bootstrapInput, {
+        hostBootstrapUrl: HOST_BOOTSTRAP_URL,
+      });
+      const identity = buildStoredHostIdentity(
+        readStoredHostIdentity(IDENTITY_STORAGE_KEY),
+        result,
+        bootstrapInput,
+        { mode, xappId },
+      );
+      writeStoredHostIdentity(IDENTITY_STORAGE_KEY, identity);
       renderStoredIdentity(IDENTITY_STORAGE_KEY);
       const locale = readLocale(LOCALE_STORAGE_KEY);
       if (mode === "single-xapp") {
         const target = new URL("/single-xapp.html", window.location.href);
         target.searchParams.set("locale", locale);
         target.searchParams.set("xappId", xappId);
+        if (identity.subjectId) target.searchParams.set("subjectId", identity.subjectId);
         window.location.href = target.toString();
         return;
       }
       const target = new URL("/marketplace.html", window.location.href);
       target.searchParams.set("locale", locale);
       target.searchParams.set("mode", mode);
+      if (identity.subjectId) target.searchParams.set("subjectId", identity.subjectId);
       window.location.href = target.toString();
     } catch (error) {
       statusEl.className = "status error";

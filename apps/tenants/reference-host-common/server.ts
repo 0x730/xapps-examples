@@ -119,7 +119,7 @@ export async function startHostProofServer(config: HostProofServerConfig) {
     publicBaseUrl,
   }));
 
-  fastify.post("/api/host-bootstrap", async (request, reply) => {
+  async function handleBrowserHostBootstrap(request: any, reply: any) {
     if (!bootstrapApiKey) {
       return reply.code(500).send({ message: "Host bootstrap api key is not configured" });
     }
@@ -127,32 +127,47 @@ export async function startHostProofServer(config: HostProofServerConfig) {
       request.body && typeof request.body === "object" && !Array.isArray(request.body)
         ? (request.body as Record<string, unknown>)
         : {};
-    const response = await fetch(`${bootstrapBackendBaseUrl}/api/host-bootstrap`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-Key": bootstrapApiKey,
-      },
-      body: JSON.stringify({
-        ...(typeof body.subjectId === "string" && body.subjectId.trim()
-          ? { subjectId: body.subjectId.trim() }
-          : {}),
-        ...(typeof body.type === "string" && body.type.trim() ? { type: body.type.trim() } : {}),
-        ...(body.identifier &&
-        typeof body.identifier === "object" &&
-        !Array.isArray(body.identifier)
-          ? { identifier: body.identifier }
-          : {}),
-        ...(typeof body.email === "string" && body.email.trim()
-          ? { email: body.email.trim() }
-          : {}),
-        ...(typeof body.name === "string" && body.name.trim() ? { name: body.name.trim() } : {}),
-        ...(body.metadata && typeof body.metadata === "object" && !Array.isArray(body.metadata)
-          ? { metadata: body.metadata }
-          : {}),
-        origin: publicBaseUrl,
-      }),
-    });
+    let response;
+    try {
+      response = await fetch(`${bootstrapBackendBaseUrl}/api/host-bootstrap`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": bootstrapApiKey,
+        },
+        body: JSON.stringify({
+          ...(typeof body.subjectId === "string" && body.subjectId.trim()
+            ? { subjectId: body.subjectId.trim() }
+            : {}),
+          ...(typeof body.type === "string" && body.type.trim() ? { type: body.type.trim() } : {}),
+          ...(body.identifier &&
+          typeof body.identifier === "object" &&
+          !Array.isArray(body.identifier)
+            ? { identifier: body.identifier }
+            : {}),
+          ...(typeof body.email === "string" && body.email.trim()
+            ? { email: body.email.trim() }
+            : {}),
+          ...(typeof body.name === "string" && body.name.trim() ? { name: body.name.trim() } : {}),
+          ...(body.metadata && typeof body.metadata === "object" && !Array.isArray(body.metadata)
+            ? { metadata: body.metadata }
+            : {}),
+          origin: publicBaseUrl,
+        }),
+      });
+    } catch (error) {
+      fastify.log.warn(
+        {
+          err: error,
+          bootstrapBackendBaseUrl,
+        },
+        `[${config.logScope}] host bootstrap backend unavailable`,
+      );
+      return reply.code(502).send({
+        message: "host bootstrap backend unavailable",
+        code: "HOST_BOOTSTRAP_BACKEND_UNAVAILABLE",
+      });
+    }
     const text = await response.text();
     const payload = (() => {
       try {
@@ -162,7 +177,9 @@ export async function startHostProofServer(config: HostProofServerConfig) {
       }
     })();
     return reply.code(response.status).send(payload);
-  });
+  }
+
+  fastify.post("/api/browser/host-bootstrap", handleBrowserHostBootstrap);
 
   fastify.get("/embed/sdk/xapps-embed-sdk.esm.js", async (_request, reply) =>
     sendFile(reply, embedSdkEsmFile, "application/javascript; charset=utf-8"),
@@ -172,7 +189,7 @@ export async function startHostProofServer(config: HostProofServerConfig) {
     const body = [
       `export const BACKEND_BASE_URL = ${JSON.stringify(backendBaseUrl)};`,
       `export const PUBLIC_BASE_URL = ${JSON.stringify(publicBaseUrl)};`,
-      `export const HOST_BOOTSTRAP_URL = "/api/host-bootstrap";`,
+      `export const HOST_BOOTSTRAP_URL = "/api/browser/host-bootstrap";`,
       `export const ENTRY_HREF = "/";`,
       `export const DASHBOARD_HREF = "";`,
       `export const DASHBOARD_LABEL = "Back to dashboard";`,

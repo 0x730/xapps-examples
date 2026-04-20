@@ -1,5 +1,7 @@
+import { createHash } from "node:crypto";
 import dotenv from "dotenv";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,11 +18,27 @@ function firstExistingPath(candidates, fallback) {
   return fallback;
 }
 
+function parseEnvJsonRecord(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 const explicitEnvPath = process.env.XCONECTA_ENV_FILE || process.env.ENV_FILE;
 if (explicitEnvPath) dotenv.config({ path: explicitEnvPath });
 const envLocalPath = path.join(backendDir, ".env.dev");
 const envPath = fs.existsSync(envLocalPath) ? envLocalPath : path.join(backendDir, ".env");
 dotenv.config({ path: envPath });
+const hostStateScope = createHash("sha1").update(backendDir).digest("hex").slice(0, 12);
+const hostStateDir = path.resolve(
+  process.env.XCONECTA_HOST_STATE_DIR ||
+    path.join(os.tmpdir(), "xapps", `xconecta-host-state-${hostStateScope}`),
+);
 
 export const PORT = Number(process.env.XCONECTA_PORT || 3314);
 
@@ -49,19 +67,36 @@ export const TENANT_PAYMENT_RETURN_URL_ALLOWLIST = String(
 
 export const ALLOWED_ORIGINS = String(process.env.XCONECTA_ALLOWED_ORIGINS || "").trim();
 export const HOST_BOOTSTRAP_API_KEYS = String(
-  process.env.XCONECTA_HOST_BOOTSTRAP_API_KEYS ||
-    process.env.XCONECTA_TENANT_API_KEY ||
-    process.env.XCONECTA_GATEWAY_API_KEY ||
-    process.env.XAPPS_API_KEY ||
-    "",
+  process.env.XCONECTA_HOST_BOOTSTRAP_API_KEYS || "",
 ).trim();
 export const HOST_BOOTSTRAP_SIGNING_SECRET = String(
   process.env.XCONECTA_HOST_BOOTSTRAP_SIGNING_SECRET || "",
 ).trim();
-
-export const TENANT_SUBJECT_PROFILE_CANDIDATES_JSON = String(
-  process.env.XCONECTA_SUBJECT_PROFILE_CANDIDATES_JSON || "",
+export const HOST_BOOTSTRAP_SIGNING_KEY_ID = String(
+  process.env.XCONECTA_HOST_BOOTSTRAP_SIGNING_KEY_ID || "",
 ).trim();
+export const HOST_BOOTSTRAP_VERIFIER_KEYS = parseEnvJsonRecord(
+  process.env.XCONECTA_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON ||
+    process.env.XCONECTA_HOST_BOOTSTRAP_VERIFIER_KEYS ||
+    "",
+);
+export const HOST_SESSION_SIGNING_SECRET = String(
+  process.env.XCONECTA_HOST_SESSION_SIGNING_SECRET || "",
+).trim();
+export const HOST_SESSION_SIGNING_KEY_ID = String(
+  process.env.XCONECTA_HOST_SESSION_SIGNING_KEY_ID || "",
+).trim();
+export const HOST_SESSION_VERIFIER_KEYS = parseEnvJsonRecord(
+  process.env.XCONECTA_HOST_SESSION_VERIFIER_KEYS_JSON ||
+    process.env.XCONECTA_HOST_SESSION_VERIFIER_KEYS ||
+    "",
+);
+export const HOST_BOOTSTRAP_REPLAY_FILE = path.resolve(hostStateDir, "host-bootstrap-replay.json");
+export const HOST_SESSION_REVOCATIONS_FILE = path.resolve(
+  hostStateDir,
+  "host-session-revocations.json",
+);
+export const HOST_SESSION_STATE_FILE = path.resolve(hostStateDir, "host-session-state.json");
 
 export const GATEWAY_URL = String(
   process.env.XAPPS_GATEWAY_URL || process.env.GATEWAY_BASE_URL || "http://localhost:3000",
@@ -162,7 +197,3 @@ export const EMBED_SDK_ESM_CANDIDATE_FILES = [
   ),
 ];
 export const TENANT_SEED_LOGO_FILE = path.resolve(backendDir, "public/xconecta-seed-logo.svg");
-
-// Magic strings
-export const GUARD_SLUG_DEFAULT = "xconect-tenant-payment-policy";
-export const GUARD_TOOL_NAME = "evaluate_tenant_payment_policy";

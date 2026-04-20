@@ -4,19 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-if (!function_exists('xapps_backend_kit_build_host_bootstrap_result')) {
-    $vendorAutoload = dirname(__DIR__, 3) . '/vendor/autoload.php';
-    if (is_file($vendorAutoload)) {
-        require_once $vendorAutoload;
-    }
-}
-if (!function_exists('xapps_backend_kit_build_host_bootstrap_result')) {
-    require_once dirname(__DIR__, 6) . '/packages/xapps-php/src/index.php';
-    require_once dirname(__DIR__, 6) . '/packages/xapps-backend-kit-php/src/functions.php';
-}
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response;
 
 class HostProofController extends Controller
@@ -64,16 +52,6 @@ class HostProofController extends Controller
         ], $this->repoRoot() . '/dist/sdk/xapps-embed-sdk.esm.js');
     }
 
-    private function gatewayUrl(): string
-    {
-        return rtrim((string) env('XAPPS_GATEWAY_URL', 'http://localhost:3000'), '/');
-    }
-
-    private function apiKey(): string
-    {
-        return trim((string) env('XAPPS_API_KEY', ''));
-    }
-
     private function backendBaseUrl(): string
     {
         return rtrim((string) env('XCONECTC_HOST_BACKEND_BASE_URL', env('APP_URL', 'http://localhost:8001')), '/');
@@ -84,15 +62,21 @@ class HostProofController extends Controller
         return rtrim((string) env('XCONECTC_HOST_PUBLIC_BASE_URL', env('APP_URL', 'http://localhost:8001')), '/');
     }
 
-    private function hostBootstrapSigningSecret(): string
+    private function bootstrapApiKey(): string
     {
-        return trim((string) env('XCONECTC_HOST_BOOTSTRAP_SIGNING_SECRET', 'xconectc-host-bootstrap-dev-secret'));
-    }
+        $raw = trim((string) env('XCONECTC_HOST_BOOTSTRAP_API_KEYS', ''));
+        if ($raw === '') {
+            return '';
+        }
 
-    private function hostBootstrapTtlSeconds(): int
-    {
-        $ttlSeconds = (int) env('XCONECTC_HOST_BOOTSTRAP_TTL_SECONDS', 300);
-        return $ttlSeconds > 0 ? $ttlSeconds : 300;
+        foreach (preg_split('/[\s,]+/', $raw) ?: [] as $candidate) {
+            $candidate = trim((string) $candidate);
+            if ($candidate !== '') {
+                return $candidate;
+            }
+        }
+
+        return '';
     }
 
     private function sendFile(string $filePath, string $contentType): Response
@@ -133,80 +117,6 @@ class HostProofController extends Controller
         return 'application/javascript; charset=utf-8';
     }
 
-    public function catalogBootstrap(Request $request): Response
-    {
-        if ($this->apiKey() === '') {
-            return response()->json(['message' => 'XAPPS_API_KEY not configured'], 500);
-        }
-
-        $subjectId = trim((string) $request->input('subjectId', ''));
-        $requestedSubjectId = $subjectId;
-        $type = trim((string) $request->input('type', ''));
-        $identifier = $request->input('identifier');
-        $identifier = is_array($identifier) ? $identifier : null;
-        $email = trim((string) $request->input('email', ''));
-        $name = trim((string) $request->input('name', ''));
-        $metadata = $request->input('metadata');
-        $metadata = is_array($metadata) ? $metadata : null;
-        $origin = trim((string) $request->input('origin', ''));
-        if ($origin === '') {
-            $origin = trim((string) $request->headers->get('origin', ''));
-        }
-        if ($origin === '') {
-            $origin = $this->publicBaseUrl();
-        }
-
-        if ($subjectId === '' && $email === '' && $identifier === null) {
-            return response()->json(['message' => 'subjectId, identifier, or email is required'], 400);
-        }
-        if ($subjectId !== '' && $email === '' && $identifier === null) {
-            return response()->json(['message' => 'subjectId requires identifier or email for validation'], 400);
-        }
-
-        if ($subjectId === '' || $email !== '' || $identifier !== null) {
-            $resolvePayload = [
-                'type' => $type !== '' ? $type : 'user',
-                'identifier' => $identifier ?? [
-                    'idType' => 'email',
-                    'value' => $email,
-                    'hint' => $email,
-                ],
-                ...($email !== '' ? ['email' => $email] : []),
-                ...($metadata !== null ? ['metadata' => $metadata] : []),
-            ];
-
-            $resolveResponse = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'X-API-Key' => $this->apiKey(),
-            ])->post($this->gatewayUrl() . '/v1/subjects/resolve', $resolvePayload);
-
-            $resolveData = $resolveResponse->json();
-            if (!$resolveResponse->ok()) {
-                return response()->json(
-                    is_array($resolveData) ? $resolveData : ['message' => 'subject resolution failed'],
-                    $resolveResponse->status(),
-                );
-            }
-
-            $subjectId = trim((string) ($resolveData['subjectId'] ?? $resolveData['subject_id'] ?? ''));
-            if ($subjectId === '') {
-                return response()->json(['message' => 'resolve-subject response missing subjectId'], 502);
-            }
-            if ($requestedSubjectId !== '' && $requestedSubjectId !== $subjectId) {
-                return response()->json(['message' => 'subjectId does not match the resolved subject for the provided identity'], 400);
-            }
-        }
-
-        return response()->json(xapps_backend_kit_build_host_bootstrap_result([
-            'subjectId' => $subjectId,
-            'email' => $email !== '' ? $email : null,
-            'name' => $name !== '' ? $name : null,
-            'origin' => $origin,
-            'signingSecret' => $this->hostBootstrapSigningSecret(),
-            'ttlSeconds' => $this->hostBootstrapTtlSeconds(),
-        ]));
-    }
-
     public function entry(): Response
     {
         return $this->sendFile($this->localPublicDir() . '/index.html', 'text/html; charset=utf-8');
@@ -222,6 +132,39 @@ class HostProofController extends Controller
         return $this->sendFile($this->localPublicDir() . '/single-xapp.html', 'text/html; charset=utf-8');
     }
 
+    public function hostBootstrap(Request $request): Response
+    {
+        if ($this->bootstrapApiKey() === '') {
+            return response()->json(['message' => 'Host bootstrap api key is not configured'], 500);
+        }
+
+        $subjectId = trim((string) $request->input('subjectId', ''));
+        $type = trim((string) $request->input('type', ''));
+        $identifier = $request->input('identifier');
+        $identifier = is_array($identifier) ? $identifier : null;
+        $email = trim((string) $request->input('email', ''));
+        $name = trim((string) $request->input('name', ''));
+        $metadata = $request->input('metadata');
+        $metadata = is_array($metadata) ? $metadata : null;
+
+        $payload = [
+            ...($subjectId !== '' ? ['subjectId' => $subjectId] : []),
+            ...($type !== '' ? ['type' => $type] : []),
+            ...($identifier !== null ? ['identifier' => $identifier] : []),
+            ...($email !== '' ? ['email' => $email] : []),
+            ...($name !== '' ? ['name' => $name] : []),
+            ...($metadata !== null ? ['metadata' => $metadata] : []),
+            'origin' => $this->publicBaseUrl(),
+        ];
+
+        $proxyRequest = Request::create('/api/host-bootstrap', 'POST', [], [], [], [
+            'HTTP_X_API_KEY' => $this->bootstrapApiKey(),
+            'CONTENT_TYPE' => 'application/json',
+        ], (string) json_encode($payload, JSON_UNESCAPED_SLASHES));
+
+        return app(XappsBackendKitController::class)->dispatch($proxyRequest);
+    }
+
     public function embedSdk(): Response
     {
         return $this->sendFile($this->embedSdkFile(), 'application/javascript; charset=utf-8');
@@ -233,7 +176,7 @@ class HostProofController extends Controller
             'export const STARTER_NAME = ' . json_encode('xconectc') . ';',
             'export const BACKEND_BASE_URL = ' . json_encode($this->backendBaseUrl()) . ';',
             'export const PUBLIC_BASE_URL = ' . json_encode($this->publicBaseUrl()) . ';',
-            'export const HOST_BOOTSTRAP_URL = "/catalog/api/host-bootstrap";',
+            'export const HOST_BOOTSTRAP_URL = "/api/browser/host-bootstrap";',
             'export const ENTRY_HREF = "/catalog";',
             'export const DASHBOARD_HREF = "/dashboard";',
             'export const DASHBOARD_LABEL = "Back to dashboard";',

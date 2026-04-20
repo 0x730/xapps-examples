@@ -4,36 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6a840b6b1ba09c08ff052a2e8a6ee34e",
+    "content-hash": "f1cf2a6dd49bce8477ce70ce0035f6e3",
     "packages": [
         {
             "name": "xapps-platform/xapps-backend-kit",
-            "version": "0.2.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/0x730/xapps-backend-kit-php.git",
-                "reference": "99b53fe29c5e0916e398f44028d72bbceb1430d3"
-            },
+            "version": "0.2.11",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-backend-kit-php/zipball/99b53fe29c5e0916e398f44028d72bbceb1430d3",
-                "reference": "99b53fe29c5e0916e398f44028d72bbceb1430d3",
-                "shasum": ""
+                "type": "path",
+                "url": "../../../../packages/xapps-backend-kit-php",
+                "reference": "1bebf885d61a1a1474b35963f8a7ee37c65eb092"
             },
             "require": {
                 "php": "^8.2",
-                "xapps-platform/xapps-php": "^0.2.8"
+                "xapps-platform/xapps-php": "^0.2.10"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/functions.php"
-                ],
                 "psr-4": {
                     "Xapps\\BackendKit\\": "src/"
-                }
+                },
+                "files": [
+                    "src/functions.php"
+                ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "@php test/run.php"
+                ],
+                "smoke": [
+                    "@php examples/smoke/smoke.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -49,21 +50,18 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-backend-kit-php"
             },
-            "time": "2026-04-18T18:57:05+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.2.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/0x730/xapps-php.git",
-                "reference": "474f700730529702d0bbf1b6e2aaf342eefed176"
-            },
+            "version": "0.2.10",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/474f700730529702d0bbf1b6e2aaf342eefed176",
-                "reference": "474f700730529702d0bbf1b6e2aaf342eefed176",
-                "shasum": ""
+                "type": "path",
+                "url": "../../../../packages/xapps-php",
+                "reference": "e5e09553ea1cc163baf50babb492a4a1848f54a5"
             },
             "require": {
                 "php": "^8.2"
@@ -74,7 +72,17 @@
                     "Xapps\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "@php test/run.php"
+                ],
+                "smoke": [
+                    "@php examples/smoke/smoke.php"
+                ],
+                "parity": [
+                    "@php test/run.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -90,7 +98,10 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
             },
-            "time": "2026-04-18T18:57:19+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "packages-dev": [],

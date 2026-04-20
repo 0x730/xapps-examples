@@ -1,12 +1,18 @@
 import { mountCatalogEmbed } from "/host/embed-surface.js";
 import { importBrowserAssetModule, renderPageFailure } from "/host/page-utils.js";
+import { readRecoverableHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
 
 let controller = null;
+
+async function refreshReferenceIdentity(identityStorageKey, hostBootstrapUrl) {
+  return refreshStoredHostIdentity(identityStorageKey, hostBootstrapUrl);
+}
 
 async function mount(mode, runtime) {
   const resolvedMode = mode === "split-panel" ? "split-panel" : "single-panel";
   const locale = runtime.readLocalePreference();
   const themeKey = runtime.applyThemePreference(runtime.readThemePreference(), { persist: false });
+  const identity = readRecoverableHostIdentity(runtime.IDENTITY_STORAGE_KEY);
   runtime.renderMode(resolvedMode);
   runtime.renderModeShell(resolvedMode);
   runtime.setModeInUrl(resolvedMode);
@@ -15,12 +21,16 @@ async function mount(mode, runtime) {
     backendBaseUrl: window.location.origin,
     entryHref: runtime.ENTRY_HREF || "/",
     identityStorageKey: runtime.IDENTITY_STORAGE_KEY,
+    hostBootstrapUrl: runtime.HOST_BOOTSTRAP_URL,
     sdkPath: "/embed/sdk/xapps-embed-sdk.esm.js",
     container: document.getElementById("catalog"),
     widgetContainer: document.getElementById("widget"),
     mode: resolvedMode,
     locale,
     themeKey,
+    ...(identity ? { identity } : {}),
+    refreshIdentity: (storageKey) =>
+      refreshReferenceIdentity(storageKey, runtime.HOST_BOOTSTRAP_URL),
     createMarketplaceRuntime: runtime.createReferenceHostMarketplaceRuntime,
     onSessionExpired: () => {
       runtime.renderSessionExpiredShell({

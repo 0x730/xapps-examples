@@ -42,13 +42,13 @@ Route::get('/dashboard', function () {
 
 // XconectC launcher + shared browser-host surfaces.
 Route::get('/catalog', array(HostProofController::class, 'entry'));
-Route::post('/catalog/api/host-bootstrap', array(HostProofController::class, 'catalogBootstrap'));
 Route::get('/marketplace.html', array(HostProofController::class, 'marketplace'));
 Route::get('/single-xapp.html', array(HostProofController::class, 'singleXapp'));
 Route::get('/embed/sdk/xapps-embed-sdk.esm.js', array(HostProofController::class, 'embedSdk'));
 Route::get('/host/starter-config.js', array(HostProofController::class, 'starterConfig'));
 Route::get('/host/proof-config.js', array(HostProofController::class, 'proofConfig'));
 Route::get('/host/{assetName}', array(HostProofController::class, 'hostAsset'))->where('assetName', '.*');
+Route::post('/api/browser/host-bootstrap', array(HostProofController::class, 'hostBootstrap'));
 Route::get('/tenant-payment.html', function () {
     return response(file_get_contents(public_path('tenant-payment.html')), 200)
         ->header('Content-Type', 'text/html; charset=utf-8');
@@ -58,6 +58,8 @@ $xappsBackendKitPaths = [
     '/api/reference',
     '/api/host-config',
     '/api/host-bootstrap',
+    '/api/host-session/exchange',
+    '/api/host-session/logout',
     '/api/resolve-subject',
     '/api/create-catalog-session',
     '/api/catalog-customer-profile',

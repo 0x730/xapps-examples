@@ -2,11 +2,10 @@ import { mountSingleXappEmbed } from "/host/embed-surface.js";
 import {
   importBrowserAssetModule,
   normalizeLocaleTag,
-  readOptionalString,
   renderPageFailure,
   setText,
 } from "/host/page-utils.js";
-import { readStoredHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
+import { readRecoverableHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
 
 let controller = null;
 
@@ -19,6 +18,7 @@ async function mountCurrentXapp(runtime) {
   const xappId = input instanceof HTMLInputElement ? readOptionalString(input.value) : "";
   const themeKey = runtime.applyThemePreference(runtime.readThemePreference(), { persist: false });
   const locale = runtime.readLocalePreference();
+  const identity = readRecoverableHostIdentity(runtime.IDENTITY_STORAGE_KEY);
   runtime.renderSingleXappShell();
   controller?.destroy?.();
   controller = await mountSingleXappEmbed({
@@ -31,7 +31,7 @@ async function mountCurrentXapp(runtime) {
     xappId,
     locale,
     themeKey,
-    identity: readStoredHostIdentity(runtime.IDENTITY_STORAGE_KEY),
+    ...(identity ? { identity } : {}),
     refreshIdentity: (storageKey) => refreshProofIdentity(storageKey, runtime.HOST_BOOTSTRAP_URL),
     resolveTheme: runtime.resolveProofTheme,
     onSessionExpired: () =>

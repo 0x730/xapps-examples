@@ -138,18 +138,27 @@ class HostProofController extends Controller
         $metadata = $request->input('metadata');
         $metadata = is_array($metadata) ? $metadata : null;
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'X-API-Key' => $this->bootstrapApiKey(),
-        ])->post($this->bootstrapBackendBaseUrl() . '/api/host-bootstrap', [
-            ...($subjectId !== '' ? ['subjectId' => $subjectId] : []),
-            ...($type !== '' ? ['type' => $type] : []),
-            ...($identifier !== null ? ['identifier' => $identifier] : []),
-            ...($email !== '' ? ['email' => $email] : []),
-            ...($name !== '' ? ['name' => $name] : []),
-            ...($metadata !== null ? ['metadata' => $metadata] : []),
-            'origin' => $this->publicBaseUrl(),
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-API-Key' => $this->bootstrapApiKey(),
+            ])->post($this->bootstrapBackendBaseUrl() . '/api/host-bootstrap', [
+                ...($subjectId !== '' ? ['subjectId' => $subjectId] : []),
+                ...($type !== '' ? ['type' => $type] : []),
+                ...($identifier !== null ? ['identifier' => $identifier] : []),
+                ...($email !== '' ? ['email' => $email] : []),
+                ...($name !== '' ? ['name' => $name] : []),
+                ...($metadata !== null ? ['metadata' => $metadata] : []),
+                'origin' => $this->publicBaseUrl(),
+            ]);
+        } catch (\Throwable $error) {
+            report($error);
+
+            return response()->json([
+                'message' => 'host bootstrap backend unavailable',
+                'code' => 'HOST_BOOTSTRAP_BACKEND_UNAVAILABLE',
+            ], 502);
+        }
 
         return response($response->body(), $response->status())
             ->header('Content-Type', (string) $response->header('Content-Type', 'application/json; charset=utf-8'));
@@ -166,7 +175,7 @@ class HostProofController extends Controller
             'export const STARTER_NAME = ' . json_encode('xconectc-host') . ';',
             'export const BACKEND_BASE_URL = ' . json_encode($this->backendBaseUrl()) . ';',
             'export const PUBLIC_BASE_URL = ' . json_encode($this->publicBaseUrl()) . ';',
-            'export const HOST_BOOTSTRAP_URL = "/api/host-bootstrap";',
+            'export const HOST_BOOTSTRAP_URL = "/api/browser/host-bootstrap";',
             'export const ENTRY_HREF = "/";',
             'export const DASHBOARD_HREF = "/dashboard";',
             'export const DASHBOARD_LABEL = "Back to dashboard";',

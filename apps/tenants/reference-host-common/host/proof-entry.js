@@ -337,12 +337,14 @@ async function main() {
         const target = new URL("/single-xapp.html", window.location.href);
         target.searchParams.set("locale", locale);
         if (xappId) target.searchParams.set("xappId", xappId);
+        if (nextIdentity.subjectId) target.searchParams.set("subjectId", nextIdentity.subjectId);
         window.location.assign(target.toString());
         return;
       }
       const target = new URL("/marketplace.html", window.location.href);
       target.searchParams.set("locale", locale);
       target.searchParams.set("mode", mode === "split-panel" ? "split-panel" : "single-panel");
+      if (nextIdentity.subjectId) target.searchParams.set("subjectId", nextIdentity.subjectId);
       window.location.assign(target.toString());
     } catch (error) {
       statusEl.className = "status error";

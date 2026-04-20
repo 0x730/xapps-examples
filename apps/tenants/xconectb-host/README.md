@@ -13,9 +13,10 @@ This app is intentionally frontend-only:
 Important:
 
 - this app is a proof/reference host, not a production integrator backend
-- its local `/api/host-bootstrap` route is only the minimal dev bridge to the tenant backend
+- its local `/api/browser/host-bootstrap` route is only the minimal dev bridge to the tenant backend
 - real integrator deployments should authenticate their own user first, then call the tenant backend server-to-server
-- bootstrap tokens are short-lived; the proof host now attempts silent re-bootstrap first and falls back to the launcher if renewal fails
+- bootstrap tokens are short-lived entry state only; ongoing hosted control-plane access moves to host session after exchange
+- the proof host now attempts silent re-bootstrap first and falls back to the launcher if renewal fails
 
 Dependency rule:
 
@@ -32,6 +33,7 @@ For the backend to allow this cross-origin proof, set:
 - `XCONECTB_ALLOWED_ORIGINS=http://localhost:3413`
 - `XCONECTB_HOST_BOOTSTRAP_API_KEYS=<shared-server-to-server-key>`
 - `XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET=<shared-signing-secret>`
+- `XCONECTB_HOST_SESSION_SIGNING_SECRET=<host-session-signing-secret>`
 
 For the local proof host, set:
 
@@ -51,6 +53,7 @@ Browser contract:
 
 - this proof host now exercises the unified `@xapps-platform/browser-host` surface
 - the proof/reference launcher/pages come from `apps/tenants/reference-host-common`
+- local `/api/browser/host-bootstrap` only bootstraps the session; ongoing hosted API authority is the tenant-issued host session
 - real integrators should start from the browser starter, not from this proof app line-by-line
 
 Run:

@@ -1,10 +1,11 @@
 # xconecta (tenant workspace)
 
-`xconecta` is the canonical Node tenant starter/reference workspace.
+`xconecta` is the Node reference-driven tenant variant.
 
 It is also the current tenant base used in the first `xconecta + xplace` production lane.
 
-Use this as the second option when an integrator wants to own the tenant backend itself.
+Use this when you want the same tenant contract with the reference-driven host-page
+layer.
 
 ## What This Shape Looks Like
 
@@ -19,7 +20,8 @@ flowchart LR
 Read it as:
 
 - the tenant app owns both the visible shell and the tenant backend contract
-- shared host pages and widget runtime still stay shared
+- host pages are reference-driven (via `reference-host-common`) while runtime
+  and protocol behavior stay on the same tenant contract
 - use this when backend ownership is intentional, not just because a host shell
   needs to go live quickly
 
@@ -65,6 +67,7 @@ This workspace exists to show, in code, what a tenant must implement independent
 - the tenant host/embed seam
 - tenant-owned guards and policy choices
 - tenant-specific configuration and secrets
+- reference-host-common host-page controller reuse
 
 Current mode families documented here:
 
@@ -83,6 +86,8 @@ It is intentionally still a lean reference, not a full tenant product shell.
 Important boundary:
 
 - `xconecta` is public-starter material
+- `xconect` and `xconectc` are the standalone primary tenant implementations
+- `xconecta` is the reference-driven variant of that same contract
 - production-specific behavior should live in private deploy/runtime overlays around it
 - do not fork a second private Node tenant codebase unless the code actually proves that need
 

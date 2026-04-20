@@ -20,7 +20,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/marketplace.html', array(HostProofController::class, 'marketplace'));
 Route::get('/single-xapp.html', array(HostProofController::class, 'singleXapp'));
-Route::post('/api/host-bootstrap', array(HostProofController::class, 'hostBootstrap'));
+Route::post('/api/browser/host-bootstrap', array(HostProofController::class, 'hostBootstrap'));
 Route::get('/embed/sdk/xapps-embed-sdk.esm.js', array(HostProofController::class, 'embedSdk'));
 Route::get('/host/starter-config.js', array(HostProofController::class, 'starterConfig'));
 Route::get('/host/proof-config.js', array(HostProofController::class, 'proofConfig'));

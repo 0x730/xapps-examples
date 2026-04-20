@@ -64,3 +64,19 @@ For the current lane:
 - start from the canonical hosted-integrator handoff
 - keep `@xapps-platform/browser-host` as the browser contract
 - keep `reference-host-common` as repo reference only, not an integrator requirement
+
+## Release Preflight (Packages + Examples)
+
+Before running public package/example release procedure, do this preflight:
+
+1. docs consistency pass for tenant host/backend contract pages
+2. verify route/auth wording still matches implementation:
+   - local browser-safe bootstrap adapter (`/api/browser/host-bootstrap` or
+     `/api/reference-host-bootstrap`)
+   - canonical tenant bootstrap (`/api/host-bootstrap`)
+   - host-session exchange/logout
+3. verify allowed-origins guidance is present for cross-origin/OIDC callback
+   flows
+4. run host-session contract suites (Node + PHP + browser-host contracts)
+5. only then execute release/publish procedure for public packages and
+   `xapps-examples`

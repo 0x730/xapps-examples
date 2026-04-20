@@ -1,7 +1,7 @@
 # xconectb (PHP tenant workspace)
 
-`xconectb` is the PHP reference tenant for the same tenant contract used by
-`xconect`.
+`xconectb` is the PHP reference-driven tenant variant for the same tenant
+contract used by `xconect`.
 
 It is the public vanilla-PHP starter/reference variant of that contract.
 
@@ -9,6 +9,8 @@ Practical rule:
 
 - `xconect` remains the canonical tenant documentation source
 - `xconectb` proves the same tenant contract on the PHP backend-kit path
+- `xconectb` host pages use the shared reference layer from
+  `apps/tenants/reference-host-common`
 - if behavior is unclear, fix the shared tenant docs instead of inventing a
   separate PHP tenant story
 

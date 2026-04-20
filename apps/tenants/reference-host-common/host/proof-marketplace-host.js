@@ -2,11 +2,10 @@ import { mountCatalogEmbed } from "/host/embed-surface.js";
 import {
   importBrowserAssetModule,
   normalizeLocaleTag,
-  readOptionalString,
   renderPageFailure,
   setText,
 } from "/host/page-utils.js";
-import { readStoredHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
+import { readRecoverableHostIdentity, refreshStoredHostIdentity } from "/host/launcher-core.js";
 
 let controller = null;
 
@@ -17,6 +16,7 @@ async function refreshProofIdentity(identityStorageKey, hostBootstrapUrl) {
 async function mount(mode, runtime) {
   const resolvedMode = mode === "split-panel" ? "split-panel" : "single-panel";
   const themeKey = runtime.applyThemePreference(runtime.readThemePreference(), { persist: false });
+  const identity = readRecoverableHostIdentity(runtime.IDENTITY_STORAGE_KEY);
   runtime.renderMode(resolvedMode);
   runtime.renderModeShell(resolvedMode);
   runtime.setModeInUrl(resolvedMode);
@@ -32,7 +32,7 @@ async function mount(mode, runtime) {
     mode: resolvedMode,
     themeKey,
     locale: runtime.readLocalePreference(),
-    identity: readStoredHostIdentity(runtime.IDENTITY_STORAGE_KEY),
+    ...(identity ? { identity } : {}),
     refreshIdentity: (storageKey) => refreshProofIdentity(storageKey, runtime.HOST_BOOTSTRAP_URL),
     createMarketplaceRuntime: runtime.createProofMarketplaceRuntime,
     onSessionExpired: () =>

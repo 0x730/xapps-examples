@@ -3,11 +3,18 @@
 declare(strict_types=1);
 
 $vendorAutoload = __DIR__ . '/vendor/autoload.php';
-if (is_file($vendorAutoload)) {
+$repoRoot = dirname(__DIR__, 4);
+$localXappsPhp = $repoRoot . '/packages/xapps-php/src/index.php';
+$localBackendKit = $repoRoot . '/packages/xapps-backend-kit-php/src/functions.php';
+
+if (is_file($localXappsPhp) && is_file($localBackendKit)) {
+    require_once $localXappsPhp;
+    require_once $localBackendKit;
+} elseif (is_file($vendorAutoload)) {
     require_once $vendorAutoload;
-} else {
-    require_once dirname(__DIR__, 4) . '/packages/xapps-php/src/index.php';
-    require_once dirname(__DIR__, 4) . '/packages/xapps-backend-kit-php/src/functions.php';
+} elseif (!class_exists(\Xapps\BackendKit\BackendKit::class)) {
+    require_once $localXappsPhp;
+    require_once $localBackendKit;
 }
 
 require_once __DIR__ . '/lib/config.php';
@@ -26,18 +33,6 @@ function xconectb_bootstrap_backend_kit(array $config, array $options = []): arr
         'normalizeOptions' => static function (array $input): array {
             return BackendKit::normalizeOptions($input, [
                 'normalizeEnabledModes' => 'xapps_backend_kit_normalize_enabled_backend_modes',
-                'defaults' => [
-                    'gateway' => [
-                        'baseUrl' => '',
-                        'apiKey' => '',
-                    ],
-                    'payments' => [
-                        'paymentUrl' => '',
-                        'returnSecret' => '',
-                        'returnSecretRef' => '',
-                        'returnUrlAllowlist' => '',
-                    ],
-                ],
             ]);
         },
         'applyGatewayOverrides' => static fn (array $resolvedConfig, array $gateway): array => BackendKit::applyGatewayOverrides($resolvedConfig, $gateway),
@@ -76,6 +71,14 @@ function xconectb_bootstrap_backend_kit(array $config, array $options = []): arr
 
 function xconectb_backend_kit_options(array $config): array
 {
+    $hostBootstrapReplayConsumer = BackendKit::createFileHostBootstrapReplayConsumer([
+        'replayFile' => (string) (($config['storage']['hostBootstrapReplayFile'] ?? '')),
+    ]);
+    $hostSessionStore = BackendKit::createFileHostSessionStore([
+        'stateFile' => (string) (($config['storage']['hostSessionStateFile'] ?? '')),
+        'revocationsFile' => (string) (($config['storage']['hostSessionRevocationsFile'] ?? '')),
+    ]);
+
     return [
         'gateway' => [
             'baseUrl' => (string) ($config['gatewayUrl'] ?? ''),
@@ -104,7 +107,26 @@ function xconectb_backend_kit_options(array $config): array
             'bootstrap' => [
                 'apiKeys' => (string) ($config['hostBootstrapApiKeys'] ?? ''),
                 'signingSecret' => (string) ($config['hostBootstrapSigningSecret'] ?? ''),
+                'signingKeyId' => (string) ($config['hostBootstrapSigningKeyId'] ?? ''),
+                'verifierKeys' => is_array($config['hostBootstrapVerifierKeys'] ?? null)
+                    ? $config['hostBootstrapVerifierKeys']
+                    : [],
                 'ttlSeconds' => 300,
+                'consumeJti' => $hostBootstrapReplayConsumer,
+            ],
+            'session' => [
+                'signingSecret' => (string) ($config['hostSessionSigningSecret'] ?? ''),
+                'signingKeyId' => (string) ($config['hostSessionSigningKeyId'] ?? ''),
+                'verifierKeys' => is_array($config['hostSessionVerifierKeys'] ?? null)
+                    ? $config['hostSessionVerifierKeys']
+                    : [],
+                'cookieName' => 'xapps_host_session',
+                'absoluteTtlSeconds' => 1800,
+                'idleTtlSeconds' => 900,
+                'cookiePath' => '/',
+                'cookieSameSite' => 'auto',
+                'cookieSecure' => 'auto',
+                'store' => $hostSessionStore,
             ],
         ],
         'payments' => [
@@ -147,7 +169,6 @@ function xconectb_backend_kit_options(array $config): array
                     ['method' => 'GET', 'path' => '/host/xconectb-single-xapp-host.js', 'purpose' => 'Browser bootstrap for the single-xapp host reference.'],
                     ['method' => 'GET', 'path' => '/host/xconectb-host-shell.js', 'purpose' => 'Tenant-specific host-shell wrapper over the shared tenant host implementation.'],
                     ['method' => 'GET', 'path' => '/host/xconectb-host-runtime.js', 'purpose' => 'xconectb runtime/theme configuration over the shared browser SDK contract.'],
-                    ['method' => 'GET', 'path' => '/host/host-status.js', 'purpose' => 'Shared host proof/status renderer used by xconect and xconectb host surfaces.'],
                 ],
             ],
         ],

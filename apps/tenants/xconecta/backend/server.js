@@ -8,6 +8,8 @@ import {
   createHostReferenceModule as createHostReferenceModuleBase,
   createReferenceSurfaceModule as createReferenceSurfaceModuleBase,
   createBackendKit as createBackendKitBase,
+  createFileHostBootstrapReplayConsumer,
+  createFileHostSessionStore,
   createHostProxyService as createHostProxyServiceBase,
   normalizeBackendKitOptions as normalizeBackendKitOptionsBase,
 } from "@xapps-platform/backend-kit";
@@ -28,7 +30,15 @@ import {
   GUARD_INGEST_API_KEY,
   ALLOWED_ORIGINS,
   HOST_BOOTSTRAP_API_KEYS,
+  HOST_BOOTSTRAP_REPLAY_FILE,
   HOST_BOOTSTRAP_SIGNING_SECRET,
+  HOST_BOOTSTRAP_SIGNING_KEY_ID,
+  HOST_BOOTSTRAP_VERIFIER_KEYS,
+  HOST_SESSION_SIGNING_SECRET,
+  HOST_SESSION_SIGNING_KEY_ID,
+  HOST_SESSION_VERIFIER_KEYS,
+  HOST_SESSION_STATE_FILE,
+  HOST_SESSION_REVOCATIONS_FILE,
 } from "./lib/config.js";
 import { createAppSurfaceModule } from "./lib/appSurfaceModule.js";
 import { DEFAULT_SUBJECT_PROFILES } from "./lib/subjectProfiles/defaultProfiles.js";
@@ -39,20 +49,16 @@ import referenceRoutesBase from "@xapps-platform/backend-kit/backend/routes/refe
 function normalizeBackendKitOptions(input = {}) {
   return normalizeBackendKitOptionsBase(input, {
     normalizeEnabledModes: normalizeEnabledBackendModes,
-    defaults: {
-      gateway: {
-        baseUrl: GATEWAY_URL,
-        apiKey: GATEWAY_API_KEY,
-      },
-      payments: {
-        paymentUrl: TENANT_PAYMENT_URL,
-        returnSecret: TENANT_PAYMENT_RETURN_SECRET,
-        returnSecretRef: TENANT_PAYMENT_RETURN_SECRET_REF,
-        returnUrlAllowlist: TENANT_PAYMENT_RETURN_URL_ALLOWLIST,
-      },
-    },
   });
 }
+
+const hostBootstrapReplayConsumer = createFileHostBootstrapReplayConsumer({
+  replayFile: HOST_BOOTSTRAP_REPLAY_FILE,
+});
+const hostSessionStore = createFileHostSessionStore({
+  stateFile: HOST_SESSION_STATE_FILE,
+  revocationsFile: HOST_SESSION_REVOCATIONS_FILE,
+});
 
 async function createBackendKit(input = {}) {
   return createBackendKitBase(input, {
@@ -120,7 +126,22 @@ const BACKEND_KIT_OPTIONS = normalizeBackendKitOptions({
     bootstrap: {
       apiKeys: HOST_BOOTSTRAP_API_KEYS,
       signingSecret: HOST_BOOTSTRAP_SIGNING_SECRET,
+      signingKeyId: HOST_BOOTSTRAP_SIGNING_KEY_ID,
+      verifierKeys: HOST_BOOTSTRAP_VERIFIER_KEYS,
       ttlSeconds: 300,
+      consumeJti: hostBootstrapReplayConsumer,
+    },
+    session: {
+      signingSecret: HOST_SESSION_SIGNING_SECRET,
+      signingKeyId: HOST_SESSION_SIGNING_KEY_ID,
+      verifierKeys: HOST_SESSION_VERIFIER_KEYS,
+      cookieName: "xapps_host_session",
+      absoluteTtlSeconds: 1800,
+      idleTtlSeconds: 900,
+      cookiePath: "/",
+      cookieSameSite: "auto",
+      cookieSecure: "auto",
+      store: hostSessionStore,
     },
   },
   payments: {
@@ -195,11 +216,6 @@ const BACKEND_KIT_OPTIONS = normalizeBackendKitOptions({
           method: "GET",
           path: "/host/xconecta-host-runtime.js",
           purpose: "xconecta runtime/theme configuration over the shared browser SDK contract.",
-        },
-        {
-          method: "GET",
-          path: "/host/host-status.js",
-          purpose: "Shared host proof/status renderer used by xconecta and xconectb host surfaces.",
         },
         {
           method: "GET",

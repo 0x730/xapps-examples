@@ -12,6 +12,16 @@ function xconectb_env_or_default(string $name, string $default = ''): string
     return $trimmed !== '' ? $trimmed : $default;
 }
 
+function xconectb_env_json_record(string $name, string $fallback = ''): array
+{
+    $raw = xconectb_env_or_default($name, $fallback);
+    if ($raw === '') {
+        return [];
+    }
+    $parsed = json_decode($raw, true);
+    return is_array($parsed) ? $parsed : [];
+}
+
 function xconectb_load_env_file(string $filePath): void
 {
     if (!is_file($filePath)) {
@@ -89,24 +99,22 @@ function xconectb_load_config(): array
             'http://localhost:3313,http://127.0.0.1:3313',
         ),
         'allowedOrigins' => xconectb_env_or_default('XCONECTB_ALLOWED_ORIGINS', ''),
-        'hostBootstrapApiKeys' => xconectb_env_or_default(
-            'XCONECTB_HOST_BOOTSTRAP_API_KEYS',
-            xconectb_env_or_default(
-                'XCONECTB_TENANT_API_KEY',
-                xconectb_env_or_default(
-                    'XCONECTB_GATEWAY_API_KEY',
-                    xconectb_env_or_default('XAPPS_API_KEY', ''),
-                ),
-            ),
-        ),
+        'hostBootstrapApiKeys' => xconectb_env_or_default('XCONECTB_HOST_BOOTSTRAP_API_KEYS', ''),
         'hostBootstrapSigningSecret' => xconectb_env_or_default('XCONECTB_HOST_BOOTSTRAP_SIGNING_SECRET', ''),
+        'hostBootstrapSigningKeyId' => xconectb_env_or_default('XCONECTB_HOST_BOOTSTRAP_SIGNING_KEY_ID', ''),
+        'hostBootstrapVerifierKeys' => xconectb_env_json_record(
+            'XCONECTB_HOST_BOOTSTRAP_VERIFIER_KEYS_JSON',
+            xconectb_env_or_default('XCONECTB_HOST_BOOTSTRAP_VERIFIER_KEYS', ''),
+        ),
+        'hostSessionSigningSecret' => xconectb_env_or_default('XCONECTB_HOST_SESSION_SIGNING_SECRET', ''),
+        'hostSessionSigningKeyId' => xconectb_env_or_default('XCONECTB_HOST_SESSION_SIGNING_KEY_ID', ''),
+        'hostSessionVerifierKeys' => xconectb_env_json_record(
+            'XCONECTB_HOST_SESSION_VERIFIER_KEYS_JSON',
+            xconectb_env_or_default('XCONECTB_HOST_SESSION_VERIFIER_KEYS', ''),
+        ),
         'tenantPaymentReturnSecret' => xconectb_env_or_default('XCONECTB_TENANT_PAYMENT_RETURN_SECRET', ''),
         'tenantPaymentReturnSecretRef' => xconectb_env_or_default(
             'XCONECTB_TENANT_PAYMENT_RETURN_SECRET_REF',
-            '',
-        ),
-        'tenantSubjectProfileCandidatesJson' => xconectb_env_or_default(
-            'XCONECTB_SUBJECT_PROFILE_CANDIDATES_JSON',
             '',
         ),
         'hostPages' => [
@@ -117,6 +125,9 @@ function xconectb_load_config(): array
         ],
         'storage' => [
             'paymentSessionsFile' => $backendDir . '/storage/payment-sessions.json',
+            'hostBootstrapReplayFile' => $backendDir . '/storage/host-bootstrap-replay.json',
+            'hostSessionRevocationsFile' => $backendDir . '/storage/host-session-revocations.json',
+            'hostSessionStateFile' => $backendDir . '/storage/host-session-state.json',
         ],
         'embedSdkCandidateFiles' => [
             $repoRoot . '/dist/sdk/xapps-embed-sdk.esm.js',

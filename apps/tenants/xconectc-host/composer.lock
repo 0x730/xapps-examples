@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16b1e0bfeb3eb828aaf8f2000f656fab",
+    "content-hash": "4ee2e5077989c9b666abdab926a8108f",
     "packages": [
         {
             "name": "brick/math",
@@ -6069,17 +6069,11 @@
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.2.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/0x730/xapps-php.git",
-                "reference": "474f700730529702d0bbf1b6e2aaf342eefed176"
-            },
+            "version": "0.2.10",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/0x730/xapps-php/zipball/474f700730529702d0bbf1b6e2aaf342eefed176",
-                "reference": "474f700730529702d0bbf1b6e2aaf342eefed176",
-                "shasum": ""
+                "type": "path",
+                "url": "../../../packages/xapps-php",
+                "reference": "e5e09553ea1cc163baf50babb492a4a1848f54a5"
             },
             "require": {
                 "php": "^8.2"
@@ -6090,7 +6084,17 @@
                     "Xapps\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "@php test/run.php"
+                ],
+                "smoke": [
+                    "@php examples/smoke/smoke.php"
+                ],
+                "parity": [
+                    "@php test/run.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -6106,7 +6110,10 @@
                 "issues": "https://github.com/0x730/xapps-sdk-php/issues",
                 "source": "https://github.com/0x730/xapps-sdk-php/tree/main/packages/xapps-php"
             },
-            "time": "2026-04-18T18:57:19+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
