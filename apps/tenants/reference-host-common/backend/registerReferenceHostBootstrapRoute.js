@@ -25,6 +25,12 @@ function readRequestBaseUrl(request) {
   return host ? `${protocol}://${host}` : "";
 }
 
+function isAcceptedRateLimitResult(value) {
+  if (value === true) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  return value.allowed !== false;
+}
+
 export async function registerReferenceHostBootstrapRoute(fastify, options = {}) {
   const { allowedOrigins = [], bootstrap = {}, hostProxyService = null } = options;
   const service = requireHostProxyService(hostProxyService);
@@ -38,6 +44,8 @@ export async function registerReferenceHostBootstrapRoute(fastify, options = {})
     try {
       const body = readBodyRecord(request.body);
       const requestedSubjectId = String(body.subjectId || "").trim();
+      const rateLimitBootstrap =
+        typeof bootstrap?.rateLimitBootstrap === "function" ? bootstrap.rateLimitBootstrap : null;
       const type = String(body.type || "").trim();
       const identifier =
         body.identifier && typeof body.identifier === "object" && !Array.isArray(body.identifier)
@@ -53,6 +61,21 @@ export async function registerReferenceHostBootstrapRoute(fastify, options = {})
         body.origin || readRequestOrigin(request) || readRequestBaseUrl(request),
         allowedOrigins,
       );
+      if (rateLimitBootstrap) {
+        const allowed = await rateLimitBootstrap({
+          request,
+          subjectId: requestedSubjectId || null,
+          origin,
+          jti: null,
+          iat: null,
+          exp: null,
+          token: null,
+          type: "host_bootstrap",
+        });
+        if (!isAcceptedRateLimitResult(allowed)) {
+          throw new Error("Reference host bootstrap rate limit exceeded");
+        }
+      }
       if (!requestedSubjectId && !email && !identifier) {
         return reply.code(400).send({ message: "subjectId, identifier, or email is required" });
       }

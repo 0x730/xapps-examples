@@ -59,26 +59,26 @@ sequenceDiagram
 
 ## Responsibility Map
 
-| Layer | Responsibility | Must not own |
-| --- | --- | --- |
-| `@xapps-platform/browser-host` | browser runtime behavior, host session exchange lifecycle, embed orchestration | tenant business policy, gateway secrets |
-| `@xapps-platform/backend-kit` | tenant backend route contract and secure host-session protocol | tenant-specific branding/shell UX |
-| `reference-host-common` | shared reference host-page controllers for reference variants | canonical contract ownership |
-| tenant backend (`xconect`, `xconectc`, etc.) | env/config mapping, local adapters, tenant policy/data seams | browser runtime duplication |
-| tenant/integrator host pages | launcher UX, branding, local shell state | direct gateway credential handling |
+| Layer                                        | Responsibility                                                                 | Must not own                            |
+| -------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+| `@xapps-platform/browser-host`               | browser runtime behavior, host session exchange lifecycle, embed orchestration | tenant business policy, gateway secrets |
+| `@xapps-platform/backend-kit`                | tenant backend route contract and secure host-session protocol                 | tenant-specific branding/shell UX       |
+| `reference-host-common`                      | shared reference host-page controllers for reference variants                  | canonical contract ownership            |
+| tenant backend (`xconect`, `xconectc`, etc.) | env/config mapping, local adapters, tenant policy/data seams                   | browser runtime duplication             |
+| tenant/integrator host pages                 | launcher UX, branding, local shell state                                       | direct gateway credential handling      |
 
 ## Workspace Topology
 
-| Workspace | Mode role | Host-page layer |
-| --- | --- | --- |
-| `xconect` | full-mode tenant (Node) | self-contained |
-| `xconectc` | full-mode tenant (Laravel) | self-contained |
-| `xconecta` | full-mode tenant variant (Node) | reference-layer |
-| `xconectb` | full-mode tenant variant (PHP) | reference-layer |
-| `xconect-host` | host-mode shell (Node) | self-contained |
-| `xconectc-host` | host-mode shell (Laravel) | self-contained |
-| `xconecta-host` | host-mode shell variant (Node) | reference-layer |
-| `xconectb-host` | host-mode shell variant (PHP) | reference-layer |
+| Workspace       | Mode role                       | Host-page layer |
+| --------------- | ------------------------------- | --------------- |
+| `xconect`       | full-mode tenant (Node)         | self-contained  |
+| `xconectc`      | full-mode tenant (Laravel)      | self-contained  |
+| `xconecta`      | full-mode tenant variant (Node) | reference-layer |
+| `xconectb`      | full-mode tenant variant (PHP)  | reference-layer |
+| `xconect-host`  | host-mode shell (Node)          | self-contained  |
+| `xconectc-host` | host-mode shell (Laravel)       | self-contained  |
+| `xconecta-host` | host-mode shell variant (Node)  | reference-layer |
+| `xconectb-host` | host-mode shell variant (PHP)   | reference-layer |
 
 ## Route Families
 

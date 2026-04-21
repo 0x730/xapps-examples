@@ -16,9 +16,9 @@ $allowedOrigins = array_values(array_filter(array_map(
 )));
 
 return [
-    // Keep this aligned with the browser-facing host/API routes mounted in routes/web.php.
+    // Keep this aligned with the browser-facing host/API routes mounted in routes/web.php/api.php.
     // If a new public prefix is added there, it must be added here too for credentialed CORS.
-    'paths' => ['api/*', 'guard/*', 'xapps/*'],
+    'paths' => ['api/*', 'api/.well-known/*', '.well-known/*', 'guard/*', 'xapps/*'],
     'allowed_methods' => ['*'],
     'allowed_origins' => $allowedOrigins,
     'allowed_origins_patterns' => [],

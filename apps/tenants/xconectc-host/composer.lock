@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ee2e5077989c9b666abdab926a8108f",
+    "content-hash": "b690f8c920f415bb47e2bef939921d46",
     "packages": [
         {
             "name": "brick/math",
@@ -6069,11 +6069,11 @@
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.2.10",
+            "version": "0.2.11",
             "dist": {
                 "type": "path",
                 "url": "../../../packages/xapps-php",
-                "reference": "e5e09553ea1cc163baf50babb492a4a1848f54a5"
+                "reference": "e2dfaabd11300465b10339fa4ef94b959bb4948b"
             },
             "require": {
                 "php": "^8.2"

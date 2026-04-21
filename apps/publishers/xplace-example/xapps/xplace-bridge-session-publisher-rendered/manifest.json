@@ -9,7 +9,7 @@
     "en": "Publisher-rendered bridge-session reference that keeps the iframe bootstrap public, verifies widget runtime with the gateway, then exchanges a vendor assertion into a publisher-local session.",
     "ro": "Referință publisher-rendered pentru bridge-session care păstrează bootstrap-ul iframe public, verifică runtime-ul widget-ului cu gateway-ul, apoi schimbă vendor assertion într-o sesiune locală de publisher."
   },
-  "version": "1.0.192",
+  "version": "1.0.195",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -33,9 +33,7 @@
         "kind": "iframe_url",
         "url": "__XPLACE_BACKEND_BASE_URL__/widgets/xplace-bridge-session-publisher-rendered.html"
       },
-      "capabilities": [
-        "ui:notification"
-      ],
+      "capabilities": ["ui:notification"],
       "config": {
         "xapps": {
           "bootstrap_transport": "signed_ticket"

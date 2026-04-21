@@ -63,6 +63,18 @@ It provides:
     - `POST /xapps/requests`
     - `POST /guard/subject-profiles/tenant-candidates`
 
+Gateway revocation surface consumed by host-session logout propagation:
+
+- `POST /v1/host-sessions/revocations`
+- `POST /v1/host-sessions/revocations/bulk`
+- `GET /v1/host-sessions/revocations/{hostSessionJti}`
+
+Execution-token linkage expectation:
+
+- include `host_session_jti`
+- include `host_session_bound: true`
+- include `aud_client_id` matching `clientId`
+
 #### Local run
 
 ```bash

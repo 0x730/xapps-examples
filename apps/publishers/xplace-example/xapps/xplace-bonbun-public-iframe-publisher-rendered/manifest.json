@@ -9,16 +9,10 @@
     "en": "Exploratory publisher-rendered BonBun lane in xplace-example. Keeps the iframe public for partner review and does not enable bootstrap verification or linking yet.",
     "ro": "Referință exploratorie publisher-rendered pentru BonBun în xplace-example. Păstrează iframe-ul public pentru review cu partenerul și nu activează încă verificarea de bootstrap sau linking."
   },
-  "version": "1.0.185",
+  "version": "1.0.188",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
-  "tags": [
-    "xplace-example",
-    "publisher-rendered",
-    "bonbun",
-    "public-iframe",
-    "partner-review"
-  ],
+  "tags": ["xplace-example", "publisher-rendered", "bonbun", "public-iframe", "partner-review"],
   "tools": [],
   "widgets": [
     {
@@ -38,9 +32,7 @@
           "publisher_runtime_mode": "passive"
         }
       },
-      "capabilities": [
-        "ui:notification"
-      ]
+      "capabilities": ["ui:notification"]
     }
   ]
 }

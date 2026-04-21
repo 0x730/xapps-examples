@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f1cf2a6dd49bce8477ce70ce0035f6e3",
+    "content-hash": "9b1228fe7feb4dfbe9072c65b6bd6902",
     "packages": [
         {
             "name": "xapps-platform/xapps-backend-kit",
-            "version": "0.2.11",
+            "version": "0.2.12",
             "dist": {
                 "type": "path",
                 "url": "../../../../packages/xapps-backend-kit-php",
-                "reference": "1bebf885d61a1a1474b35963f8a7ee37c65eb092"
+                "reference": "af2381a52a792c14ae244951741c4d45e50cc9ed"
             },
             "require": {
                 "php": "^8.2",
-                "xapps-platform/xapps-php": "^0.2.10"
+                "xapps-platform/xapps-php": "^0.2.11"
             },
             "type": "library",
             "autoload": {
@@ -57,11 +57,11 @@
         },
         {
             "name": "xapps-platform/xapps-php",
-            "version": "0.2.10",
+            "version": "0.2.11",
             "dist": {
                 "type": "path",
                 "url": "../../../../packages/xapps-php",
-                "reference": "e5e09553ea1cc163baf50babb492a4a1848f54a5"
+                "reference": "e2dfaabd11300465b10339fa4ef94b959bb4948b"
             },
             "require": {
                 "php": "^8.2"

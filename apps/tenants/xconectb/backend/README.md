@@ -126,6 +126,18 @@ Required env for the hardened hosted/session contract:
 - `XCONECTB_TENANT_PAYMENT_RETURN_SECRET` or `XCONECTB_TENANT_PAYMENT_RETURN_SECRET_REF`
 - `XCONECTB_TENANT_PAYMENT_RETURN_URL_ALLOWLIST`
 
+Host-session revocation behavior:
+
+- local logout revokes tenant-side host session state first
+- backend then best-effort reports revocation to gateway so execution-token
+  decoders can reject `host_session_jti`-bound tokens
+
+Gateway revocation endpoints used by this flow:
+
+- `POST /v1/host-sessions/revocations`
+- `POST /v1/host-sessions/revocations/bulk` (operational/batch use)
+- `GET /v1/host-sessions/revocations/{hostSessionJti}` (reconciliation/read)
+
 ## Practical Rule
 
 Do not treat this backend as a separate product lane.

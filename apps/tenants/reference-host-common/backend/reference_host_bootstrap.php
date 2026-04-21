@@ -2,6 +2,20 @@
 
 declare(strict_types=1);
 
+function xapps_reference_host_bootstrap_rate_limit_allowed(mixed $value): bool
+{
+    if ($value === true) {
+        return true;
+    }
+    if (!is_array($value)) {
+        return false;
+    }
+    if (!array_key_exists('allowed', $value)) {
+        return true;
+    }
+    return $value['allowed'] !== false;
+}
+
 function xapps_reference_register_host_bootstrap_routes(
     array &$routes,
     array $app,
@@ -35,6 +49,22 @@ function xapps_reference_register_host_bootstrap_routes(
                     $body['origin'] ?? xapps_backend_kit_request_origin($request) ?: xapps_backend_kit_request_base_url($request),
                     $allowedOrigins,
                 );
+                $rateLimitBootstrap = $bootstrap['rateLimitBootstrap'] ?? null;
+                if (is_callable($rateLimitBootstrap)) {
+                    $allowed = $rateLimitBootstrap([
+                        'request' => $request,
+                        'subjectId' => $requestedSubjectId !== '' ? $requestedSubjectId : null,
+                        'origin' => $origin,
+                        'jti' => null,
+                        'iat' => null,
+                        'exp' => null,
+                        'token' => null,
+                        'type' => 'host_bootstrap',
+                    ]);
+                    if (!xapps_reference_host_bootstrap_rate_limit_allowed($allowed)) {
+                        throw new RuntimeException('Reference host bootstrap rate limit exceeded');
+                    }
+                }
                 if ($requestedSubjectId === '' && $email === '' && $identifier === null) {
                     xapps_backend_kit_send_json(['message' => 'subjectId, identifier, or email is required'], 400);
                     return;

@@ -47,11 +47,11 @@ Not allowed:
 
 ## Surface Matrix
 
-| Surface        | Role                                           | Must stay aligned with |
-| -------------- | ---------------------------------------------- | ---------------------- |
-| `single-panel` | default marketplace entry                      | shared shell/runtime   |
-| `split-panel`  | marketplace with dedicated widget pane         | shared shell/runtime   |
-| `single-xapp`  | direct one-xapp demo/validation entry          | shared shell/runtime   |
+| Surface        | Role                                   | Must stay aligned with |
+| -------------- | -------------------------------------- | ---------------------- |
+| `single-panel` | default marketplace entry              | shared shell/runtime   |
+| `split-panel`  | marketplace with dedicated widget pane | shared shell/runtime   |
+| `single-xapp`  | direct one-xapp demo/validation entry  | shared shell/runtime   |
 
 `single-xapp` is not a second host model. It only changes initial mount target.
 
@@ -82,7 +82,15 @@ sequenceDiagram
   T-->>B: Set-Cookie xapps_host_session (HttpOnly)
   B->>T: /api/host-config, /api/create-*
   T->>G: gateway/runtime operations
+  B->>T: POST /api/host-session/logout
+  T->>G: POST /v1/host-sessions/revocations (best-effort)
 ```
+
+Revocation note:
+
+- tenant logout should revoke local host session state first
+- then tenant should best-effort report revocation to gateway so execution-token
+  consumers can reject `host_session_jti`-bound tokens after logout
 
 ## Route Naming Rule
 

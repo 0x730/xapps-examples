@@ -7,7 +7,7 @@
     "dev": "vite"
   },
   "devDependencies": {
-    "@xapps-platform/browser-host": "^0.1.20",
+    "@xapps-platform/browser-host": "^0.1.21",
     "@xapps-platform/embed-sdk": "^0.1.18",
     "@tailwindcss/vite": "^4.0.0",
     "axios": "^1.11.0",

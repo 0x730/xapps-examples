@@ -238,6 +238,31 @@ Practical rule:
 - backend kit already gives you the default session routes
 - local tenant code should only supply config, local launcher/bootstrap surface, and any explicit override
 
+## Gateway Revocation Contract (Execution Plane)
+
+When widget/catalog execution tokens are minted with host-session linkage:
+
+- include `host_session_jti`
+- include `host_session_bound: true`
+- include `aud_client_id` (must match token `clientId`)
+
+On host-session logout:
+
+- revoke local host-session state first
+- then report revocation to gateway (best-effort) so execution-token decoders
+  can reject bound tokens globally
+
+Gateway revocation surface:
+
+- `POST /v1/host-sessions/revocations`
+- `POST /v1/host-sessions/revocations/bulk`
+- `GET /v1/host-sessions/revocations/{hostSessionJti}`
+
+Semantics:
+
+- revocations are isolated by `(client_id, host_session_jti)`
+- writes are idempotent and monotonic for `revoked_at`/`exp`
+
 ## Other Default Tenant Seams
 
 The default tenant kit also includes:

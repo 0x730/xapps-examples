@@ -6,7 +6,7 @@
   "description": "Shared reference host support for public xconect host examples",
   "dependencies": {
     "@fastify/static": "^9.0.0",
-    "@xapps-platform/browser-host": "^0.1.20",
+    "@xapps-platform/browser-host": "^0.1.21",
     "@xapps-platform/embed-sdk": "^0.1.18",
     "dotenv": "^17.2.3",
     "fastify": "^5.7.4"

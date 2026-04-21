@@ -247,7 +247,7 @@ final class BackendKitBootstrap
                     'cookieName' => 'xapps_host_session',
                     'absoluteTtlSeconds' => 1800,
                     'idleTtlSeconds' => 900,
-                    'cookiePath' => '/',
+                    'cookiePath' => '/api',
                     'cookieSameSite' => 'auto',
                     'cookieSecure' => 'auto',
                     'store' => $hostSessionStore,
