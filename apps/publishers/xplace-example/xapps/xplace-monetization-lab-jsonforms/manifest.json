@@ -9,7 +9,7 @@
     "en": "Reference JSON Forms xapp in xplace-example for exercising one-time unlock, subscription, credit-pack, and hybrid monetization families on the current XPO rail.",
     "ro": "Xapp de referință JSON Forms în xplace-example pentru exercitarea familiilor de monetizare one-time unlock, subscription, credit-pack și hybrid pe rail-ul XPO curent."
   },
-  "version": "1.0.185",
+  "version": "1.0.204",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -221,6 +221,7 @@
         "package_ref": "starter_unlock",
         "currency": "RON",
         "amount": 29,
+        "price_tax_mode": "gross",
         "status": "active"
       },
       {
@@ -228,6 +229,7 @@
         "package_ref": "pro_monthly",
         "currency": "RON",
         "amount": 49,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active"
@@ -237,6 +239,7 @@
         "package_ref": "pro_plus_monthly",
         "currency": "RON",
         "amount": 69,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active",
@@ -249,6 +252,7 @@
         "package_ref": "credits_500",
         "currency": "RON",
         "amount": 79,
+        "price_tax_mode": "gross",
         "status": "active"
       },
       {
@@ -256,6 +260,7 @@
         "package_ref": "team_hybrid",
         "currency": "RON",
         "amount": 129,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active",

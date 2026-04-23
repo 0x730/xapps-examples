@@ -9,7 +9,7 @@
     "en": "JSON Forms certificate request app for xplace publisher using xconect tenant-delegated Stripe payment guard and tenant-scoped follow-on hooks.",
     "ro": "Aplicație JSON Forms pentru cereri de certificate în xplace publisher, folosind garda xconect pentru Stripe delegat tenantului și hook-uri ulterioare specifice tenantului."
   },
-  "version": "1.0.441",
+  "version": "1.0.462",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [

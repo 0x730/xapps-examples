@@ -5,7 +5,7 @@
     "ro": "xplace • Vreme acum (Stripe gateway)"
   },
   "slug": "xplace-weather-now-gateway-stripe",
-  "version": "1.0.370",
+  "version": "1.0.389",
   "description": {
     "en": "Sample xplace publisher xapp (JSON Forms) for automatic weather lookups using xconect gateway-managed Stripe payment guard flow.",
     "ro": "Xapp de exemplu xplace publisher (JSON Forms) pentru interogări automate meteo, folosind fluxul xconect cu gardă Stripe gestionată de gateway."

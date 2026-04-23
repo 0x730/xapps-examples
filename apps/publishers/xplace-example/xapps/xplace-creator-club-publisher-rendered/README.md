@@ -2,6 +2,13 @@
 
 Publisher-rendered React playground for the next monetization proving lane in `xplace-example`.
 
+Commercial pricing posture:
+
+- shipped sellable prices in this manifest are explicit `gross`
+- runtime tax decomposes those payable totals from the canonical tax policy for invoices so this
+  publisher-rendered proving lane uses the same preferred contract as the rest of the XMS examples
+- new catalogs should prefer explicit `gross` authoring unless they are deliberately tax-exclusive
+
 Purpose:
 
 - provide one simple publisher-rendered app for:

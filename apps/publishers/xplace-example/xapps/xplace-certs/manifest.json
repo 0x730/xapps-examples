@@ -9,7 +9,7 @@
     "en": "JSON Forms certificate request app for xplace publisher (tenant-managed payment page + manual publisher review).",
     "ro": "Aplicație JSON Forms pentru cereri de certificate în xplace publisher (pagină de plată gestionată de tenant + revizuire manuală de către publisher)."
   },
-  "version": "1.0.386",
+  "version": "1.0.405",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": ["xplace", "json-forms", "certificates", "pay-per-request", "manual-review"],

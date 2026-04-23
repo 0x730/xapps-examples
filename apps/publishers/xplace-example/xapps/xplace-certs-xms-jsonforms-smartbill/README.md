@@ -1,12 +1,12 @@
-# xplace-certs-xms-jsonforms
+# xplace-certs-xms-jsonforms-smartbill
 
 Reference platform-rendered JSON Forms certificate app for `TASK-051`.
 
 Commercial pricing posture:
 
 - shipped sellable prices in this manifest are explicit `gross`
-- runtime tax decomposes those payable totals from the canonical tax policy for invoices without
-  changing the buyer-facing catalog amount
+- runtime tax decomposes those payable totals from the canonical tax policy for invoices so this
+  SmartBill sibling keeps the same buyer-facing commercial posture
 - new catalogs should prefer explicit `gross` authoring unless they are deliberately tax-exclusive
 
 This app proves XMS as a reusable system capability, not a certificate-specific shortcut:
@@ -16,14 +16,14 @@ This app proves XMS as a reusable system capability, not a certificate-specific 
   - `gateway_managed`
   - `tenant_delegated`
   - `publisher_delegated`
-  - Stripe only in this reference app
+  - Stripe hosted checkout definitions for payment
 - free trial subscription purchase through the existing XMS trial policy
 - one-time unlock request allowance before certificate request execution
 - credit-pack wallet top-up and request-time wallet consumption
 - one-time/hybrid/subscription products with manifest-owned `included_credits` consumed as request allowance
 - manifest-owned per-tool request cost through `monetization.usage_policies`
 - subject-profile guard capture before tool run
-- Stripe invoice hook after payment completion
+- SmartBill invoice hook after payment completion
 - gateway notification hook after response finalization
 - active-subject scoped access, wallet, request, invoice, notification, and history state
 
@@ -37,24 +37,28 @@ Hosted payment lane contract:
 - the app also exposes explicit tenant-delegated and publisher-delegated Stripe-hosted definitions
 - `mock_manual` is intentionally not exposed here; subscription and hybrid proving should stay on the real Stripe recurring lane
 - `after_payment_completed` invoice routing follows the selected `payment_guard_ref`
-  - `cert_xms_gateway_managed_hosted` -> `xms_gateway_stripe_payment_invoice` -> Stripe gateway invoice bundle
-  - `cert_xms_tenant_delegated_hosted` -> `xms_tenant_stripe_payment_invoice` -> Stripe tenant invoice bundle
-  - `cert_xms_publisher_delegated_hosted` -> `xms_publisher_stripe_payment_invoice` -> Stripe publisher invoice bundle
+  - `cert_xms_gateway_managed_hosted` -> `xms_gateway_smartbill_payment_invoice` -> SmartBill gateway invoice bundle
+  - `cert_xms_tenant_delegated_hosted` -> `xms_tenant_smartbill_payment_invoice` -> SmartBill tenant invoice bundle
+  - `cert_xms_publisher_delegated_hosted` -> `xms_publisher_smartbill_payment_invoice` -> SmartBill publisher invoice bundle
 - recurring renewals stay on the same rule: the provider payment webhook settles the renewal, then
   the runtime triggers the same `after_payment_completed` invoice hook path for the stored XMS
   product/payment context
 - the xapp uses xapp-specific invoice refs so the refs resolve from the consumer manifest, not from the internal invoice-handler owner manifest defaults
 - the invoice definitions use the same owner-scope split as payment:
-  - gateway lane reads `platform://invoice:gateway:stripe:bundle`
-  - tenant-delegated lane reads `platform://invoice:tenant:stripe:bundle?scope=client&scope_id=<tenantClientId>`
-  - publisher-delegated lane reads `platform://invoice:publisher:stripe:bundle?scope=publisher&scope_id=<publisherId>`
-- Stripe invoice descriptions and line-item fallback copy come from locale-aware invoice template families (`en`/`ro`) instead of hard-coded invoice definition text.
-- if a settled Stripe payment already established a provider customer, invoice issuance updates that
-  Stripe customer from the selected canonical billing profile before creating the invoice
-- seller legal/VAT presentation on Stripe-hosted invoice pages/PDFs comes from the Stripe account
-  plus optional bundle settings like `STRIPE_INVOICE_ACCOUNT_TAX_ID` /
-  `STRIPE_INVOICE_ACCOUNT_TAX_IDS_JSON`; the platform invoice record remains the canonical
-  operational record
+  - gateway lane reads `platform://invoice:gateway:smartbill:bundle`
+  - tenant-delegated lane reads `platform://invoice:tenant:smartbill:bundle?scope=client&scope_id=<tenantClientId>`
+  - publisher-delegated lane reads `platform://invoice:publisher:smartbill:bundle?scope=publisher&scope_id=<publisherId>`
+- SmartBill invoice descriptions and line-item fallback copy come from locale-aware invoice template families (`en`/`ro`) instead of hard-coded invoice definition text.
+
+Current status:
+
+- this xapp is the SmartBill-ready sibling of the Stripe invoice reference app
+- it is intentionally kept in the repo before live SmartBill test credentials are available
+- payment remains on the proven Stripe hosted lane; only the invoice-provider layer changes
+- SmartBill issuance/send/sync/settlement-registration behavior is code-backed behind the shared
+  provider seam, but still not production-validated with live SmartBill credentials
+- SmartBill webhook ingestion remains intentionally unsupported because the published vendor API
+  does not define webhook endpoints/signature semantics
 
 Settlement vs invoice lifecycle:
 

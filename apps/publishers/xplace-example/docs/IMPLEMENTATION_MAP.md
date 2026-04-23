@@ -377,9 +377,18 @@ Current deployment split:
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
   - `xplace-certs-xms-jsonforms`
+  - `xplace-certs-xms-jsonforms-smartbill`
   - `xplace-certs-xms-jsonforms-vc`
   - `xplace-creator-club-publisher-rendered`
   - `xplace-monetization-lab-jsonforms`
+
+Commercial pricing rule for the shipped example fleet:
+
+- the currently shipped monetization/XMS examples keep buyer-facing sellable prices explicit
+  `gross`
+- runtime tax decomposes those payable amounts from the canonical tax policy for invoices
+- new catalogs should declare `price_tax_mode` explicitly and should prefer `gross` unless they are
+  deliberately tax-exclusive
 
 Current tenant mapping:
 

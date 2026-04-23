@@ -9,7 +9,7 @@
     "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption.",
     "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere."
   },
-  "version": "1.0.118",
+  "version": "1.0.138",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -303,6 +303,7 @@
         "package_ref": "cert_single_unlock",
         "currency": "RON",
         "amount": 19,
+        "price_tax_mode": "gross",
         "status": "active",
         "metadata": {
           "included_credits": 2
@@ -313,6 +314,7 @@
         "package_ref": "cert_trial_monthly",
         "currency": "RON",
         "amount": 39,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "trial_policy": {
@@ -334,6 +336,7 @@
         "package_ref": "cert_credits_10",
         "currency": "RON",
         "amount": 49,
+        "price_tax_mode": "gross",
         "status": "active",
         "metadata": {
           "credits": 10
@@ -344,6 +347,7 @@
         "package_ref": "cert_hybrid_monthly",
         "currency": "RON",
         "amount": 99,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active",
@@ -392,21 +396,136 @@
     "hooks": {
       "after_payment_completed": {
         "enabled": true,
-        "invoice_ref": "gateway_payment_invoice",
+        "invoice_ref": "xms_gateway_stripe_payment_invoice",
         "by_payment_guard_ref": {
           "cert_xms_gateway_managed_hosted": {
-            "invoice_ref": "gateway_payment_invoice"
+            "invoice_ref": "xms_gateway_stripe_payment_invoice"
           },
           "cert_xms_tenant_delegated_hosted": {
-            "invoice_ref": "tenant_payment_invoice"
+            "invoice_ref": "xms_tenant_stripe_payment_invoice"
           },
           "cert_xms_publisher_delegated_hosted": {
-            "invoice_ref": "publisher_payment_invoice"
+            "invoice_ref": "xms_publisher_stripe_payment_invoice"
           }
         }
       }
     }
   },
+  "invoice_definitions": [
+    {
+      "name": "xms_gateway_stripe_payment_invoice",
+      "provider_key": "stripe",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_managed",
+      "provider_scope": "gateway",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "stripe_gateway_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    },
+    {
+      "name": "xms_tenant_stripe_payment_invoice",
+      "provider_key": "stripe",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_delegated",
+      "provider_scope": "tenant",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "stripe_tenant_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    },
+    {
+      "name": "xms_publisher_stripe_payment_invoice",
+      "provider_key": "stripe",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_delegated",
+      "provider_scope": "publisher",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "stripe_publisher_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    }
+  ],
+  "invoice_templates": [
+    {
+      "name": "stripe_gateway_payment_receipt_en",
+      "family": "stripe_gateway_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "Stripe invoice for the gateway-managed Certificates XMS payment.",
+      "defaultSeries": "XMS-GW",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "stripe_gateway_payment_receipt_ro",
+      "family": "stripe_gateway_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS administrata de gateway.",
+      "defaultSeries": "XMS-GW",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "stripe_tenant_payment_receipt_en",
+      "family": "stripe_tenant_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "Stripe invoice for the tenant-delegated Certificates XMS payment.",
+      "defaultSeries": "XMS-TEN",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "stripe_tenant_payment_receipt_ro",
+      "family": "stripe_tenant_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS delegata tenantului.",
+      "defaultSeries": "XMS-TEN",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "stripe_publisher_payment_receipt_en",
+      "family": "stripe_publisher_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "Stripe invoice for the publisher-delegated Certificates XMS payment.",
+      "defaultSeries": "XMS-PUB",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "stripe_publisher_payment_receipt_ro",
+      "family": "stripe_publisher_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS delegata publisherului.",
+      "defaultSeries": "XMS-PUB",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    }
+  ],
   "tools": [
     {
       "tool_name": "submit_xms_certificate_request",
@@ -739,7 +858,7 @@
       "trigger": "after:payment_completed",
       "headless": true,
       "config": {
-        "invoice_ref": "gateway_payment_invoice"
+        "invoice_ref": "xms_gateway_stripe_payment_invoice"
       }
     },
     {

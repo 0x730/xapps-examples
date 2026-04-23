@@ -79,6 +79,9 @@ Current workspace pieces:
 - isolated JSON Forms XMS certificate reference lane:
   - [xapps/xplace-certs-xms-jsonforms/manifest.json](./xapps/xplace-certs-xms-jsonforms/manifest.json)
   - [xapps/xplace-certs-xms-jsonforms/README.md](./xapps/xplace-certs-xms-jsonforms/README.md)
+- isolated JSON Forms XMS SmartBill invoice-provider sibling:
+  - [xapps/xplace-certs-xms-jsonforms-smartbill/manifest.json](./xapps/xplace-certs-xms-jsonforms-smartbill/manifest.json)
+  - [xapps/xplace-certs-xms-jsonforms-smartbill/README.md](./xapps/xplace-certs-xms-jsonforms-smartbill/README.md)
 - pay-by-request and weather reference families now owned by `xplace-example`:
   - [xapps/xplace-certs/manifest.json](./xapps/xplace-certs/manifest.json)
   - [xapps/xplace-certs/README.md](./xapps/xplace-certs/README.md)
@@ -125,6 +128,14 @@ npm run seed:xplace-example-publisher
 npm run seed:xplace-example-publisher-admin
 npm run xplace-example:prepare-republish -- --json --target-client-slug xconecta
 npm run -s xapps -- publish --yes \
+
+Commercial pricing note:
+
+- the shipped XMS/monetization example manifests keep buyer-facing sellable prices explicit
+  `gross`
+- runtime tax decomposes those payable amounts from the canonical tax policy for invoices
+- new catalogs should declare `price_tax_mode` explicitly and should prefer `gross` unless they are
+  deliberately tax-exclusive
   --from apps/publishers/xplace-example/xapps/xplace-bridge-session-publisher-rendered/manifest.json \
   --publisher-gateway-url http://localhost:3000 \
   --api-key xplace-example-dev-api-key \
@@ -203,6 +214,7 @@ Default republish behavior:
   - `xplace-bridge-session-publisher-rendered`
   - `xplace-certs-gateway-stripe-publisher-rendered`
   - `xplace-certs-xms-jsonforms`
+  - `xplace-certs-xms-jsonforms-smartbill`
   - `xplace-certs-xms-jsonforms-vc`
   - `xplace-creator-club-publisher-rendered`
   - `xplace-monetization-lab-jsonforms`

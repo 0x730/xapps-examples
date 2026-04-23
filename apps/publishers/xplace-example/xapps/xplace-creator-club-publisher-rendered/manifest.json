@@ -9,7 +9,7 @@
     "en": "Publisher-rendered React playground in xplace-example for testing login/register, package selection, access state, payment sessions, and in-app monetization actions on the current XMS and XPO rails.",
     "ro": "Playground React publisher-rendered în xplace-example pentru testarea login/register, selecției de pachete, stării de acces, sesiunilor de plată și acțiunilor de monetizare in-app pe rail-urile curente XMS și XPO."
   },
-  "version": "1.0.187",
+  "version": "1.0.206",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "linking": {
@@ -426,6 +426,7 @@
         "package_ref": "creator_starter_unlock",
         "currency": "RON",
         "amount": 29,
+        "price_tax_mode": "gross",
         "status": "active"
       },
       {
@@ -433,6 +434,7 @@
         "package_ref": "creator_pro_monthly",
         "currency": "RON",
         "amount": 49,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active"
@@ -442,6 +444,7 @@
         "package_ref": "creator_credits_500",
         "currency": "RON",
         "amount": 79,
+        "price_tax_mode": "gross",
         "status": "active"
       },
       {
@@ -449,6 +452,7 @@
         "package_ref": "creator_team_hybrid",
         "currency": "RON",
         "amount": 129,
+        "price_tax_mode": "gross",
         "billing_period": "month",
         "billing_period_count": 1,
         "status": "active",

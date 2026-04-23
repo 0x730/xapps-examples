@@ -2,6 +2,13 @@
 
 Reference platform-rendered JSON Forms certificate app for `TASK-054`.
 
+Commercial pricing posture:
+
+- shipped sellable prices in this manifest are explicit `gross`
+- runtime tax decomposes those payable totals from the canonical tax policy for invoices so this VC
+  sibling follows the same preferred contract as the rest of the XMS examples
+- new catalogs should prefer explicit `gross` authoring unless they are deliberately tax-exclusive
+
 This sibling app keeps the older certificate XMS lane stable while proving virtual currencies on the same certificate UX shape:
 
 - catalog-level package purchase in portal and embed

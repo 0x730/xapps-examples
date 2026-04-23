@@ -1,15 +1,15 @@
 {
-  "name": "xplace-example • Certificates XMS VC (JSON Forms)",
+  "name": "xplace-example • Certificates XMS (JSON Forms • SmartBill)",
   "title": {
-    "en": "xplace-example • Certificates XMS VC (JSON Forms)",
-    "ro": "xplace-example • Certificate XMS VC (JSON Forms)"
+    "en": "xplace-example • Certificates XMS (JSON Forms • SmartBill)",
+    "ro": "xplace-example • Certificate XMS (JSON Forms • SmartBill)"
   },
-  "slug": "xplace-certs-xms-jsonforms-vc",
+  "slug": "xplace-certs-xms-jsonforms-smartbill",
   "description": {
-    "en": "Platform-rendered JSON Forms certificate request app proving XMS virtual currencies across one-time unlock, subscriptions, credit packs, and hybrid request consumption.",
-    "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând monede virtuale XMS pentru one-time unlock, abonamente, pachete de credite și consum hibrid pe cerere."
+    "en": "Platform-rendered JSON Forms certificate request app proving XMS catalog purchase, trials, subscriptions, credit packs, and hybrid request consumption with SmartBill-backed invoicing.",
+    "ro": "Aplicație JSON Forms randată de platformă pentru cereri de certificate, demonstrând achiziții XMS din catalog, trial-uri, abonamente, pachete de credite și consum hibrid pe cerere cu facturare prin SmartBill."
   },
-  "version": "1.0.93",
+  "version": "1.0.9",
   "target_client_id": "__TENANT_CLIENT_ID__",
   "visibility": "public",
   "tags": [
@@ -17,7 +17,8 @@
     "json-forms",
     "certificates",
     "xms",
-    "virtual-currency",
+    "smartbill",
+    "trial",
     "subscription",
     "credit-pack",
     "hybrid-plan"
@@ -42,8 +43,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS VC checkout",
-            "ro": "Checkout certificate XMS VC"
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
           },
           "subtitle": {
             "en": "Gateway-managed hosted redirect",
@@ -86,8 +87,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS VC checkout",
-            "ro": "Checkout certificate XMS VC"
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
           },
           "subtitle": {
             "en": "Tenant-delegated hosted redirect",
@@ -130,8 +131,8 @@
       "payment_ui": {
         "copy": {
           "title": {
-            "en": "Certificates XMS VC checkout",
-            "ro": "Checkout certificate XMS VC"
+            "en": "Certificates XMS checkout",
+            "ro": "Checkout certificate XMS"
           },
           "subtitle": {
             "en": "Publisher-delegated hosted redirect",
@@ -155,70 +156,54 @@
     }
   ],
   "monetization": {
-    "virtual_currencies": [
-      {
-        "code": "CERT_CREDITS",
-        "name": "Certificate Credits",
-        "status": "active"
-      }
-    ],
     "products": [
       {
-        "slug": "cert_single_unlock_access_vc",
+        "slug": "cert_single_unlock_access",
         "title": {
-          "en": "Single Certificate Unlock VC",
-          "ro": "Deblocare certificat VC"
+          "en": "Single Certificate Unlock",
+          "ro": "Deblocare certificat"
         },
         "description": {
-          "en": "One-time unlock for the certificate request lane with bundled Certificate Credits.",
-          "ro": "Deblocare unică pentru fluxul de cerere certificat, cu Certificate Credits incluse."
+          "en": "One-time unlock for the certificate request lane.",
+          "ro": "Deblocare unică pentru fluxul de cerere certificat."
         },
         "product_family": "one_time_unlock",
-        "virtual_currency": {
-          "code": "CERT_CREDITS"
-        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_single_unlock_vc",
+          "access_tier": "cert_single_unlock",
           "access_scope": "subject",
           "included_credits": 2
         }
       },
       {
-        "slug": "cert_membership_access_vc",
+        "slug": "cert_membership_access",
         "title": {
-          "en": "Certificate Membership VC",
-          "ro": "Membership certificate VC"
+          "en": "Certificate Membership",
+          "ro": "Membership certificate"
         },
         "description": {
-          "en": "Recurring certificate membership with bundled Certificate Credits. The trial price proves XMS free-trial finalization without a hosted payment session.",
-          "ro": "Membership recurent pentru certificate, cu Certificate Credits incluse. Prețul cu trial demonstrează finalizarea XMS free-trial fără sesiune hosted de plată."
+          "en": "Recurring certificate membership. The trial price proves XMS free-trial finalization without a hosted payment session.",
+          "ro": "Membership recurent pentru certificate. Prețul cu trial demonstrează finalizarea XMS free-trial fără sesiune hosted de plată."
         },
         "product_family": "subscription_plan",
-        "virtual_currency": {
-          "code": "CERT_CREDITS"
-        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_membership_vc",
+          "access_tier": "cert_membership",
           "access_scope": "subject",
           "included_credits": 4
         }
       },
       {
-        "slug": "cert_credit_wallet_access_vc",
+        "slug": "cert_credit_wallet_access",
         "title": {
-          "en": "Certificate Credits VC",
-          "ro": "Certificate Credits VC"
+          "en": "Certificate Credits",
+          "ro": "Credite certificate"
         },
         "description": {
-          "en": "Wallet-backed Certificate Credits for certificate requests.",
-          "ro": "Certificate Credits în portofel pentru cereri de certificate."
+          "en": "Wallet-backed credits for certificate requests.",
+          "ro": "Credite în portofel pentru cereri de certificate."
         },
         "product_family": "credit_pack",
-        "virtual_currency": {
-          "code": "CERT_CREDITS"
-        },
         "status": "active",
         "metadata": {
           "credits_unit": "certificate_request",
@@ -226,22 +211,19 @@
         }
       },
       {
-        "slug": "cert_hybrid_access_vc",
+        "slug": "cert_hybrid_access",
         "title": {
-          "en": "Certificate Hybrid VC",
-          "ro": "Certificate Hybrid VC"
+          "en": "Certificate Hybrid",
+          "ro": "Certificate Hybrid"
         },
         "description": {
-          "en": "Recurring membership with bundled Certificate Credits.",
-          "ro": "Membership recurent cu Certificate Credits incluse."
+          "en": "Recurring membership with bundled certificate credits.",
+          "ro": "Membership recurent cu credite incluse pentru certificate."
         },
         "product_family": "hybrid_plan",
-        "virtual_currency": {
-          "code": "CERT_CREDITS"
-        },
         "status": "active",
         "metadata": {
-          "access_tier": "cert_hybrid_vc",
+          "access_tier": "cert_hybrid",
           "access_scope": "subject",
           "included_credits": 20
         }
@@ -249,19 +231,19 @@
     ],
     "offerings": [
       {
-        "slug": "cert_default_paywall_vc",
+        "slug": "cert_default_paywall",
         "title": {
-          "en": "Certificate VC Plans",
-          "ro": "Planuri certificate VC"
+          "en": "Certificate Plans",
+          "ro": "Planuri certificate"
         },
         "placement": "paywall",
         "status": "active"
       },
       {
-        "slug": "cert_credit_topups_vc",
+        "slug": "cert_credit_topups",
         "title": {
-          "en": "Certificate VC Top-ups",
-          "ro": "Top-up Certificate VC"
+          "en": "Certificate Credit Top-ups",
+          "ro": "Top-up credite certificate"
         },
         "placement": "upgrade",
         "status": "active"
@@ -269,9 +251,9 @@
     ],
     "packages": [
       {
-        "slug": "cert_single_unlock_vc",
-        "product_ref": "cert_single_unlock_access_vc",
-        "offering_ref": "cert_default_paywall_vc",
+        "slug": "cert_single_unlock",
+        "product_ref": "cert_single_unlock_access",
+        "offering_ref": "cert_default_paywall",
         "package_kind": "one_time_unlock",
         "display_order": 10,
         "status": "active",
@@ -281,9 +263,9 @@
         }
       },
       {
-        "slug": "cert_trial_monthly_vc",
-        "product_ref": "cert_membership_access_vc",
-        "offering_ref": "cert_default_paywall_vc",
+        "slug": "cert_trial_monthly",
+        "product_ref": "cert_membership_access",
+        "offering_ref": "cert_default_paywall",
         "package_kind": "subscription",
         "display_order": 20,
         "status": "active",
@@ -293,9 +275,9 @@
         }
       },
       {
-        "slug": "cert_credits_10_vc",
-        "product_ref": "cert_credit_wallet_access_vc",
-        "offering_ref": "cert_credit_topups_vc",
+        "slug": "cert_credits_10",
+        "product_ref": "cert_credit_wallet_access",
+        "offering_ref": "cert_credit_topups",
         "package_kind": "credit_pack",
         "display_order": 30,
         "status": "active",
@@ -304,9 +286,9 @@
         }
       },
       {
-        "slug": "cert_hybrid_monthly_vc",
-        "product_ref": "cert_hybrid_access_vc",
-        "offering_ref": "cert_default_paywall_vc",
+        "slug": "cert_hybrid_monthly",
+        "product_ref": "cert_hybrid_access",
+        "offering_ref": "cert_default_paywall",
         "package_kind": "standard",
         "display_order": 40,
         "status": "active",
@@ -318,8 +300,8 @@
     ],
     "prices": [
       {
-        "slug": "cert_single_unlock_vc_ron",
-        "package_ref": "cert_single_unlock_vc",
+        "slug": "cert_single_unlock_ron",
+        "package_ref": "cert_single_unlock",
         "currency": "RON",
         "amount": 19,
         "price_tax_mode": "gross",
@@ -329,8 +311,8 @@
         }
       },
       {
-        "slug": "cert_trial_monthly_vc_ron",
-        "package_ref": "cert_trial_monthly_vc",
+        "slug": "cert_trial_monthly_ron",
+        "package_ref": "cert_trial_monthly",
         "currency": "RON",
         "amount": 39,
         "price_tax_mode": "gross",
@@ -351,8 +333,8 @@
         }
       },
       {
-        "slug": "cert_credits_10_vc_ron",
-        "package_ref": "cert_credits_10_vc",
+        "slug": "cert_credits_10_ron",
+        "package_ref": "cert_credits_10",
         "currency": "RON",
         "amount": 49,
         "price_tax_mode": "gross",
@@ -362,8 +344,8 @@
         }
       },
       {
-        "slug": "cert_hybrid_monthly_vc_ron",
-        "package_ref": "cert_hybrid_monthly_vc",
+        "slug": "cert_hybrid_monthly_ron",
+        "package_ref": "cert_hybrid_monthly",
         "currency": "RON",
         "amount": 99,
         "price_tax_mode": "gross",
@@ -377,74 +359,184 @@
     ],
     "paywalls": [
       {
-        "slug": "cert_main_paywall_vc",
+        "slug": "cert_main_paywall",
         "title": {
-          "en": "Certificate VC access",
-          "ro": "Acces certificate VC"
+          "en": "Certificate access",
+          "ro": "Acces certificate"
         },
         "placement": "paywall",
-        "offering_refs": ["cert_default_paywall_vc"],
-        "package_refs": [
-          "cert_single_unlock_vc",
-          "cert_trial_monthly_vc",
-          "cert_hybrid_monthly_vc"
-        ],
-        "default_package_ref": "cert_single_unlock_vc",
+        "offering_refs": ["cert_default_paywall"],
+        "package_refs": ["cert_single_unlock", "cert_trial_monthly", "cert_hybrid_monthly"],
+        "default_package_ref": "cert_single_unlock",
         "status": "active"
       },
       {
-        "slug": "cert_credit_upgrade_vc",
+        "slug": "cert_credit_upgrade",
         "title": {
-          "en": "Need more Certificate Credits?",
-          "ro": "Ai nevoie de mai multe Certificate Credits?"
+          "en": "Need more certificate credits?",
+          "ro": "Ai nevoie de mai multe credite?"
         },
         "placement": "upgrade",
-        "offering_refs": ["cert_credit_topups_vc"],
-        "package_refs": ["cert_credits_10_vc"],
-        "default_package_ref": "cert_credits_10_vc",
+        "offering_refs": ["cert_credit_topups"],
+        "package_refs": ["cert_credits_10"],
+        "default_package_ref": "cert_credits_10",
         "status": "active"
       }
     ],
     "usage_policies": [
       {
-        "tool_name": "submit_xms_certificate_request_vc",
+        "tool_name": "submit_xms_certificate_request",
         "unit": "certificate_request",
         "credit_cost": 2,
-        "virtual_currency_code": "CERT_CREDITS",
         "status": "active",
         "metadata": {
-          "description": "Each submitted certificate request consumes two Certificate Credits from the active subject allowance."
+          "description": "Each submitted certificate request consumes two XMS credits from the active subject allowance when the selected reference mode permits request execution."
         }
       }
     ],
     "hooks": {
       "after_payment_completed": {
         "enabled": true,
-        "invoice_ref": "gateway_payment_invoice",
+        "invoice_ref": "xms_gateway_smartbill_payment_invoice",
         "by_payment_guard_ref": {
           "cert_xms_gateway_managed_hosted": {
-            "invoice_ref": "gateway_payment_invoice"
+            "invoice_ref": "xms_gateway_smartbill_payment_invoice"
           },
           "cert_xms_tenant_delegated_hosted": {
-            "invoice_ref": "tenant_payment_invoice"
+            "invoice_ref": "xms_tenant_smartbill_payment_invoice"
           },
           "cert_xms_publisher_delegated_hosted": {
-            "invoice_ref": "publisher_payment_invoice"
+            "invoice_ref": "xms_publisher_smartbill_payment_invoice"
           }
         }
       }
     }
   },
+  "invoice_definitions": [
+    {
+      "name": "xms_gateway_smartbill_payment_invoice",
+      "provider_key": "smartbill",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_managed",
+      "provider_scope": "gateway",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "smartbill_gateway_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    },
+    {
+      "name": "xms_tenant_smartbill_payment_invoice",
+      "provider_key": "smartbill",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_delegated",
+      "provider_scope": "tenant",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "smartbill_tenant_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    },
+    {
+      "name": "xms_publisher_smartbill_payment_invoice",
+      "provider_key": "smartbill",
+      "effect_kind": "invoice",
+      "execution_mode": "gateway_delegated",
+      "provider_scope": "publisher",
+      "provider_execution": "inline",
+      "failure_policy": "retry",
+      "idempotency_scope": "payment_session",
+      "invoice_template_ref": "smartbill_publisher_payment_receipt",
+      "invoice": {
+        "currency": "{{payment.currency}}",
+        "amount": "{{payment.amount}}"
+      }
+    }
+  ],
+  "invoice_templates": [
+    {
+      "name": "smartbill_gateway_payment_receipt_en",
+      "family": "smartbill_gateway_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "SmartBill invoice for the gateway-managed Certificates XMS payment.",
+      "defaultSeries": "XMS-GW",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "smartbill_gateway_payment_receipt_ro",
+      "family": "smartbill_gateway_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS administrata de gateway.",
+      "defaultSeries": "XMS-GW",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "smartbill_tenant_payment_receipt_en",
+      "family": "smartbill_tenant_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "SmartBill invoice for the tenant-delegated Certificates XMS payment.",
+      "defaultSeries": "XMS-TEN",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "smartbill_tenant_payment_receipt_ro",
+      "family": "smartbill_tenant_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS delegata tenantului.",
+      "defaultSeries": "XMS-TEN",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "smartbill_publisher_payment_receipt_en",
+      "family": "smartbill_publisher_payment_receipt",
+      "locale": "en",
+      "title": "Certificates XMS invoice",
+      "text": "SmartBill invoice for the publisher-delegated Certificates XMS payment.",
+      "defaultSeries": "XMS-PUB",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    },
+    {
+      "name": "smartbill_publisher_payment_receipt_ro",
+      "family": "smartbill_publisher_payment_receipt",
+      "locale": "ro",
+      "title": "Factura XMS certificate",
+      "text": "Factura Stripe pentru plata Certificates XMS delegata publisherului.",
+      "defaultSeries": "XMS-PUB",
+      "documentTemplate": "compact_ro",
+      "documentFormat": "pdf",
+      "allowHtmlFallback": true
+    }
+  ],
   "tools": [
     {
-      "tool_name": "submit_xms_certificate_request_vc",
+      "tool_name": "submit_xms_certificate_request",
       "title": {
-        "en": "Submit XMS Certificate Request VC",
-        "ro": "Trimite cerere certificat XMS VC"
+        "en": "Submit XMS Certificate Request",
+        "ro": "Trimite cerere certificat XMS"
       },
       "description": {
-        "en": "Submits a certificate request and enforces XMS virtual-currency access for the active subject.",
-        "ro": "Trimite o cerere de certificat și aplică accesul XMS cu monedă virtuală pentru subiectul activ."
+        "en": "Submits a certificate request and enforces XMS access or credit consumption for the active subject.",
+        "ro": "Trimite o cerere de certificat și aplică accesul XMS sau consumul de credite pentru subiectul activ."
       },
       "input_schema": {
         "type": "object",
@@ -581,12 +673,6 @@
           "subscriptionStatus": {
             "type": ["string", "null"]
           },
-          "virtualCurrencyCode": {
-            "type": ["string", "null"]
-          },
-          "virtualCurrencyName": {
-            "type": ["string", "null"]
-          },
           "requestRef": {
             "type": "string"
           },
@@ -609,7 +695,7 @@
           "renderer": "json-forms",
           "render": {
             "kind": "kv",
-            "title": "XMS Certificate VC Result",
+            "title": "XMS Certificate Result",
             "fields": [
               {
                 "label": "Status",
@@ -638,14 +724,6 @@
               {
                 "label": "Credits Remaining",
                 "path": "credits_remaining"
-              },
-              {
-                "label": "Virtual Currency Code",
-                "path": "virtualCurrencyCode"
-              },
-              {
-                "label": "Virtual Currency Name",
-                "path": "virtualCurrencyName"
               },
               {
                 "label": "Subscription Status",
@@ -690,14 +768,6 @@
           },
           {
             "type": "Control",
-            "scope": "#/properties/virtualCurrencyCode"
-          },
-          {
-            "type": "Control",
-            "scope": "#/properties/virtualCurrencyName"
-          },
-          {
-            "type": "Control",
             "scope": "#/properties/subscriptionStatus"
           },
           {
@@ -717,14 +787,14 @@
   ],
   "widgets": [
     {
-      "widget_name": "xplace_certs_xms_jsonforms_vc_widget",
+      "widget_name": "xplace_certs_xms_jsonforms_widget",
       "title": {
-        "en": "XMS Certificate Request VC",
-        "ro": "Cerere certificat XMS VC"
+        "en": "XMS Certificate Request",
+        "ro": "Cerere certificat XMS"
       },
       "type": "write",
       "renderer": "json-forms",
-      "bind_tool_name": "submit_xms_certificate_request_vc",
+      "bind_tool_name": "submit_xms_certificate_request",
       "entry": {
         "kind": "platform_template",
         "template": "write_form"
@@ -744,14 +814,14 @@
       "headless": false,
       "config": {
         "subject_profile_guard_ref": "xconect_tenant_billing_business",
-        "tools": ["submit_xms_certificate_request_vc"],
+        "tools": ["submit_xms_certificate_request"],
         "subject_profile_sources": {
           "publisher": {
             "provider_kind": "endpoint",
             "endpoint_base_url": "__XPLACE_BACKEND_BASE_URL__/guard/subject-profiles/publisher-candidates",
             "tool_payload": {
-              "xapp_slug": "xplace-certs-xms-jsonforms-vc",
-              "tool_name": "submit_xms_certificate_request_vc"
+              "xapp_slug": "xplace-certs-xms-jsonforms-smartbill",
+              "tool_name": "submit_xms_certificate_request"
             }
           }
         }
@@ -763,7 +833,7 @@
       "headless": true,
       "order": 20,
       "config": {
-        "tools": ["submit_xms_certificate_request_vc"],
+        "tools": ["submit_xms_certificate_request"],
         "required_credits_source": "manifest_usage_policy",
         "policy": {
           "kind": "credits",
@@ -789,7 +859,7 @@
       "trigger": "after:payment_completed",
       "headless": true,
       "config": {
-        "invoice_ref": "gateway_payment_invoice"
+        "invoice_ref": "xms_gateway_smartbill_payment_invoice"
       }
     },
     {
@@ -836,7 +906,7 @@
         "backoff": "exponential"
       },
       "labels": {
-        "profile": "xplace-certs-xms-jsonforms-vc",
+        "profile": "xplace-certs-xms-jsonforms-smartbill",
         "env": "dev"
       }
     }

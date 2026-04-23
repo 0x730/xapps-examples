@@ -2,6 +2,13 @@
 
 Reference JSON Forms xapp for the first `xplace-example` monetization app.
 
+Commercial pricing posture:
+
+- shipped sellable prices in this manifest are explicit `gross`
+- runtime tax decomposes those payable totals from the canonical tax policy for invoices so the lab
+  demonstrates the preferred catalog contract directly
+- new catalogs should prefer explicit `gross` authoring unless they are deliberately tax-exclusive
+
 Purpose:
 
 - give `OPEN-076` a real example xapp on the normal example publish/runtime rail
